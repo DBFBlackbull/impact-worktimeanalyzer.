@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeLog.TransactionalApi.SDK", "TimeLog.TransactionalApi.SDK\TimeLog.TransactionalApi.SDK.csproj", "{A1D54CAF-4BCB-43FB-917C-4F392C76A0E4}"
 EndProject
@@ -36,6 +36,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeLog.MicrosoftBiSync", "TimeLog.MicrosoftBiSync\TimeLog.MicrosoftBiSync.csproj", "{94841BE3-FF0D-456D-BABD-86C9A8541B14}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeLog.Library", "TimeLog.Library\TimeLog.Library.csproj", "{0ABB99CF-54EC-4415-9675-25096E7FC01E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impact.Website", "Impact.Website\Impact.Website.csproj", "{67213E17-57F1-43E5-85E9-E39E37F174F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impact.Core", "Impact.Core\Impact.Core.csproj", "{35CAC270-9123-4D86-AFB6-F77AB3271AB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impact.DataAccess", "Impact.DataAccess\Impact.DataAccess.csproj", "{70C6E5A5-4B58-45D6-92C1-65373B94AC01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impact.Business", "Impact.Business\Impact.Business.csproj", "{9BE88266-993F-4245-BAC1-C26D2B9D9774}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +83,22 @@ Global
 		{0ABB99CF-54EC-4415-9675-25096E7FC01E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0ABB99CF-54EC-4415-9675-25096E7FC01E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0ABB99CF-54EC-4415-9675-25096E7FC01E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67213E17-57F1-43E5-85E9-E39E37F174F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67213E17-57F1-43E5-85E9-E39E37F174F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67213E17-57F1-43E5-85E9-E39E37F174F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67213E17-57F1-43E5-85E9-E39E37F174F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35CAC270-9123-4D86-AFB6-F77AB3271AB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35CAC270-9123-4D86-AFB6-F77AB3271AB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35CAC270-9123-4D86-AFB6-F77AB3271AB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35CAC270-9123-4D86-AFB6-F77AB3271AB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70C6E5A5-4B58-45D6-92C1-65373B94AC01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70C6E5A5-4B58-45D6-92C1-65373B94AC01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70C6E5A5-4B58-45D6-92C1-65373B94AC01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70C6E5A5-4B58-45D6-92C1-65373B94AC01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BE88266-993F-4245-BAC1-C26D2B9D9774}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BE88266-993F-4245-BAC1-C26D2B9D9774}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BE88266-993F-4245-BAC1-C26D2B9D9774}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BE88266-993F-4245-BAC1-C26D2B9D9774}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

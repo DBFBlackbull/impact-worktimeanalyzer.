@@ -1,0 +1,69 @@
+﻿@model Impact.Website.Models.QuarterViewModel
+
+@{
+	ViewBag.Title = "User page";
+}
+<div class="container">
+	<h2>Choose date</h2>
+	<div class="row">
+		@using (Html.BeginForm())
+		{
+			<div class="col-md-4">
+				<form>
+					<div class="form-group form-inline">
+						@Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new { @class = "form-control" })
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</div>
+				</form>
+			</div>
+		}
+		<div class="col-md-3">
+			@Html.LabelFor(m => m.From):
+			@Html.DisplayFor(m => m.From)
+		</div>
+		<div class="col-md-3">
+			@Html.LabelFor(m => m.To):
+			@Html.DisplayFor(m => m.To)
+		</div>
+		<div class="col-md-2"></div>
+	</div>
+</div>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<div id="chart_div"></div>
+		</div>
+	</div>
+</div>
+
+<script>
+	google.charts.load('current', { packages: ['corechart'] });
+	google.charts.setOnLoadCallback(drawData);
+
+	function drawData(json, graphTitle) {
+		
+		var data = new google.visualization.arrayToDataTable(@Html.Raw(Model.Json));
+
+		var options = {
+			width: 1600,
+			height: 800,
+			isStacked: true,
+			title: '@Model.GraphTitle',
+			vAxis: {
+				title: 'Timer',
+				ticks: [2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 47.5, 50, 52.5, 55],
+				viewWindowMode: 'explicit',
+				viewWindow: {
+					max: 50,
+					min: 20
+				}
+			},
+			hAxis: {
+				title: 'Uge'
+			}
+		}
+		
+		var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+		chart.draw(data, options);
+	};
+</script>
