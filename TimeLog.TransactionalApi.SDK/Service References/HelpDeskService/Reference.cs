@@ -2772,10 +2772,64 @@ namespace TimeLog.TransactionalApi.SDK.HelpDeskService {
         ProjectSubContractStatus = 144,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        MilestoneType = 145,
+        Platform = 145,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        EmployeeHeader = 146,
+        PlatformLicenceOverview = 146,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlatformInvoiceInformation = 147,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        EventHeader = 148,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlatformPaymentMethod = 149,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        MilestoneType = 150,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        EmployeeHeader = 151,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        WorkerRequest = 152,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        WorkerItem = 153,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        WorkerItemLog = 154,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        OpportunityStatus = 155,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        DepartmentDimensionMapping = 156,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        ProductNumberDimensionMapping = 157,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        LegalEntity = 158,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        CalendarEvent = 159,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        CalendarEventAttendee = 160,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        HardBooking = 161,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        HardBookingDetail = 162,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Comment = 163,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        CommentActionLog = 164,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         NotSpecified = 0,

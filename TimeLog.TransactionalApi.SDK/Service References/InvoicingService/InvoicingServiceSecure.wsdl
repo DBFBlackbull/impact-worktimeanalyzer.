@@ -41,6 +41,12 @@
   <wsdl:message name="InvoicingService_IsAlive_OutputMessage">
     <wsdl:part xmlns:q2="http://www.timelog.com/api/tlp/v1_1" name="parameters" element="q2:IsAliveResponse" />
   </wsdl:message>
+  <wsdl:message name="InvoicingService_GetInvoiceSpecificationPDF_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetInvoiceSpecificationPDF" />
+  </wsdl:message>
+  <wsdl:message name="InvoicingService_GetInvoiceSpecificationPDF_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetInvoiceSpecificationPDFResponse" />
+  </wsdl:message>
   <wsdl:message name="InvoicingService_GetInvoiceByID_InputMessage">
     <wsdl:part name="parameters" element="tns:GetInvoiceByID" />
   </wsdl:message>
@@ -100,6 +106,10 @@
       <wsdl:input wsaw:Action="IsAliveRequest" message="tns:InvoicingService_IsAlive_InputMessage" />
       <wsdl:output wsaw:Action="IsAliveReponse" message="tns:InvoicingService_IsAlive_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="GetInvoiceSpecificationPDF">
+      <wsdl:input wsaw:Action="GetInvoiceSpecificationPDFRequest" message="tns:InvoicingService_GetInvoiceSpecificationPDF_InputMessage" />
+      <wsdl:output wsaw:Action="GetInvoiceSpecificationPDFResponse" message="tns:InvoicingService_GetInvoiceSpecificationPDF_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="GetInvoiceByID">
       <wsdl:input wsaw:Action="GetInvoiceByIDRequest" message="tns:InvoicingService_GetInvoiceByID_InputMessage" />
       <wsdl:output wsaw:Action="GetInvoiceByIDResponse" message="tns:InvoicingService_GetInvoiceByID_OutputMessage" />
@@ -142,6 +152,15 @@
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="IsAlive">
       <soap:operation soapAction="IsAliveRequest" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetInvoiceSpecificationPDF">
+      <soap:operation soapAction="GetInvoiceSpecificationPDFRequest" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

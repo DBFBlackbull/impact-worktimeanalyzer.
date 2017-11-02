@@ -1086,6 +1086,9 @@ namespace TimeLog.TransactionalApi.SDK.CrmService {
         private string NickNameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string OrganizationNumberField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private TimeLog.TransactionalApi.SDK.CrmService.CustomerDetails DetailsField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
@@ -1466,6 +1469,19 @@ namespace TimeLog.TransactionalApi.SDK.CrmService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(Order=29)]
+        public string OrganizationNumber {
+            get {
+                return this.OrganizationNumberField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.OrganizationNumberField, value) != true)) {
+                    this.OrganizationNumberField = value;
+                    this.RaisePropertyChanged("OrganizationNumber");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=30)]
         public TimeLog.TransactionalApi.SDK.CrmService.CustomerDetails Details {
             get {
                 return this.DetailsField;
@@ -2643,25 +2659,25 @@ namespace TimeLog.TransactionalApi.SDK.CrmService {
         ProjectSubContractStatus = 144,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        PlatformPaymentMethod = 145,
+        Platform = 145,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        MilestoneType = 146,
+        PlatformLicenceOverview = 146,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        EmployeeHeader = 147,
+        PlatformInvoiceInformation = 147,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Platform = 148,
+        EventHeader = 148,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        PlatformLicenceOverview = 149,
+        PlatformPaymentMethod = 149,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        PlatformInvoiceInformation = 150,
+        MilestoneType = 150,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        OpportunityStatus = 151,
+        EmployeeHeader = 151,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         WorkerRequest = 152,
@@ -2671,6 +2687,36 @@ namespace TimeLog.TransactionalApi.SDK.CrmService {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         WorkerItemLog = 154,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        OpportunityStatus = 155,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        DepartmentDimensionMapping = 156,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        ProductNumberDimensionMapping = 157,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        LegalEntity = 158,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        CalendarEvent = 159,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        CalendarEventAttendee = 160,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        HardBooking = 161,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        HardBookingDetail = 162,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Comment = 163,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        CommentActionLog = 164,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         NotSpecified = 0,

@@ -1070,49 +1070,49 @@
               </xsd:appinfo>
             </xsd:annotation>
           </xsd:enumeration>
-          <xsd:enumeration value="PlatformPaymentMethod">
+          <xsd:enumeration value="Platform">
             <xsd:annotation>
               <xsd:appinfo>
                 <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">145</EnumerationValue>
               </xsd:appinfo>
             </xsd:annotation>
           </xsd:enumeration>
-          <xsd:enumeration value="MilestoneType">
+          <xsd:enumeration value="PlatformLicenceOverview">
             <xsd:annotation>
               <xsd:appinfo>
                 <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">146</EnumerationValue>
               </xsd:appinfo>
             </xsd:annotation>
           </xsd:enumeration>
-          <xsd:enumeration value="EmployeeHeader">
+          <xsd:enumeration value="PlatformInvoiceInformation">
             <xsd:annotation>
               <xsd:appinfo>
                 <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">147</EnumerationValue>
               </xsd:appinfo>
             </xsd:annotation>
           </xsd:enumeration>
-          <xsd:enumeration value="Platform">
+          <xsd:enumeration value="EventHeader">
             <xsd:annotation>
               <xsd:appinfo>
                 <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">148</EnumerationValue>
               </xsd:appinfo>
             </xsd:annotation>
           </xsd:enumeration>
-          <xsd:enumeration value="PlatformLicenceOverview">
+          <xsd:enumeration value="PlatformPaymentMethod">
             <xsd:annotation>
               <xsd:appinfo>
                 <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">149</EnumerationValue>
               </xsd:appinfo>
             </xsd:annotation>
           </xsd:enumeration>
-          <xsd:enumeration value="PlatformInvoiceInformation">
+          <xsd:enumeration value="MilestoneType">
             <xsd:annotation>
               <xsd:appinfo>
                 <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">150</EnumerationValue>
               </xsd:appinfo>
             </xsd:annotation>
           </xsd:enumeration>
-          <xsd:enumeration value="OpportunityStatus">
+          <xsd:enumeration value="EmployeeHeader">
             <xsd:annotation>
               <xsd:appinfo>
                 <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">151</EnumerationValue>
@@ -1137,6 +1137,76 @@
             <xsd:annotation>
               <xsd:appinfo>
                 <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">154</EnumerationValue>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="OpportunityStatus">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">155</EnumerationValue>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="DepartmentDimensionMapping">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">156</EnumerationValue>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="ProductNumberDimensionMapping">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">157</EnumerationValue>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="LegalEntity">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">158</EnumerationValue>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="CalendarEvent">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">159</EnumerationValue>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="CalendarEventAttendee">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">160</EnumerationValue>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="HardBooking">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">161</EnumerationValue>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="HardBookingDetail">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">162</EnumerationValue>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="Comment">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">163</EnumerationValue>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="CommentActionLog">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">164</EnumerationValue>
               </xsd:appinfo>
             </xsd:annotation>
           </xsd:enumeration>
@@ -1208,6 +1278,7 @@
               <xsd:element minOccurs="0" name="UseInvoicingAddress" type="xsd:boolean" />
               <xsd:element minOccurs="0" name="CustomerSinceDate" nillable="true" type="xsd:dateTime" />
               <xsd:element minOccurs="0" name="NickName" nillable="true" type="xsd:string" />
+              <xsd:element minOccurs="0" name="OrganizationNumber" nillable="true" type="xsd:string" />
               <xsd:element minOccurs="0" name="Details" nillable="true" type="tns:CustomerDetails" />
             </xsd:sequence>
           </xsd:extension>

@@ -204,6 +204,9 @@
     <None Include="Service References\InvoicingService\TimeLog.TransactionalApi.SDK.InvoicingService.ResponseOfInvoice.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\InvoicingService\TimeLog.TransactionalApi.SDK.InvoicingService.ResponseOfInvoiceSpecification.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\InvoicingService\TimeLog.TransactionalApi.SDK.InvoicingService.ResponseOfInvoiceWithExternalKey.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>

@@ -32,14 +32,14 @@ namespace TimeLog.TransactionalApi.SDK.SalaryService {
     [System.Runtime.Serialization.DataContractAttribute(Name="APIBase", Namespace="http://www.timelog.com/api/tlp/v1_2")]
     [System.SerializableAttribute()]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.SalaryService.Salary))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.SalaryService.NormalWorkweek))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.SalaryService.HolidayCalendar))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.SalaryService.Allowance))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.SalaryService.ResponseOfSalary))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.SalaryService.Request))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.SalaryService.ResponseOfNormalWorkweek))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.SalaryService.NormalWorkweek))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.SalaryService.ResponseOfHolidayCalendar))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.SalaryService.HolidayCalendar))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.SalaryService.ResponseOfAllowance))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.SalaryService.Allowance))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.SalaryService.SecurityToken))]
     public partial class APIBase : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
@@ -244,6 +244,139 @@ namespace TimeLog.TransactionalApi.SDK.SalaryService {
                 if ((this.SalaryCodeGuidField.Equals(value) != true)) {
                     this.SalaryCodeGuidField = value;
                     this.RaisePropertyChanged("SalaryCodeGuid");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="NormalWorkweek", Namespace="http://schemas.datacontract.org/2004/07/TimeLog.TLP.API.Proxy.Salary.V1_0")]
+    [System.SerializableAttribute()]
+    public partial class NormalWorkweek : TimeLog.TransactionalApi.SDK.SalaryService.APIBase {
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string NameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Collections.Generic.Dictionary<int, double> NormHoursField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Id {
+            get {
+                return this.IdField;
+            }
+            set {
+                if ((this.IdField.Equals(value) != true)) {
+                    this.IdField = value;
+                    this.RaisePropertyChanged("Id");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Name {
+            get {
+                return this.NameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NameField, value) != true)) {
+                    this.NameField = value;
+                    this.RaisePropertyChanged("Name");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Collections.Generic.Dictionary<int, double> NormHours {
+            get {
+                return this.NormHoursField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NormHoursField, value) != true)) {
+                    this.NormHoursField = value;
+                    this.RaisePropertyChanged("NormHours");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="HolidayCalendar", Namespace="http://schemas.datacontract.org/2004/07/TimeLog.TLP.API.Proxy.Salary.V1_0")]
+    [System.SerializableAttribute()]
+    public partial class HolidayCalendar : TimeLog.TransactionalApi.SDK.SalaryService.APIBase {
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string NameField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Id {
+            get {
+                return this.IdField;
+            }
+            set {
+                if ((this.IdField.Equals(value) != true)) {
+                    this.IdField = value;
+                    this.RaisePropertyChanged("Id");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Name {
+            get {
+                return this.NameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NameField, value) != true)) {
+                    this.NameField = value;
+                    this.RaisePropertyChanged("Name");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Allowance", Namespace="http://schemas.datacontract.org/2004/07/TimeLog.TLP.API.Proxy.Salary.V1_0")]
+    [System.SerializableAttribute()]
+    public partial class Allowance : TimeLog.TransactionalApi.SDK.SalaryService.APIBase {
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string NameField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Id {
+            get {
+                return this.IdField;
+            }
+            set {
+                if ((this.IdField.Equals(value) != true)) {
+                    this.IdField = value;
+                    this.RaisePropertyChanged("Id");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Name {
+            get {
+                return this.NameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NameField, value) != true)) {
+                    this.NameField = value;
+                    this.RaisePropertyChanged("Name");
                 }
             }
         }
@@ -576,61 +709,6 @@ namespace TimeLog.TransactionalApi.SDK.SalaryService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="NormalWorkweek", Namespace="http://schemas.datacontract.org/2004/07/TimeLog.TLP.API.Proxy.Salary.V1_0")]
-    [System.SerializableAttribute()]
-    public partial class NormalWorkweek : TimeLog.TransactionalApi.SDK.SalaryService.APIBase {
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string NameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Collections.Generic.Dictionary<int, double> NormHoursField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((this.IdField.Equals(value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Name {
-            get {
-                return this.NameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.NameField, value) != true)) {
-                    this.NameField = value;
-                    this.RaisePropertyChanged("Name");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Collections.Generic.Dictionary<int, double> NormHours {
-            get {
-                return this.NormHoursField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.NormHoursField, value) != true)) {
-                    this.NormHoursField = value;
-                    this.RaisePropertyChanged("NormHours");
-                }
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ResponseOfHolidayCalendar", Namespace="http://api.timelog.com")]
     [System.SerializableAttribute()]
     public partial class ResponseOfHolidayCalendar : TimeLog.TransactionalApi.SDK.SalaryService.APIBase {
@@ -766,45 +844,6 @@ namespace TimeLog.TransactionalApi.SDK.SalaryService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="HolidayCalendar", Namespace="http://schemas.datacontract.org/2004/07/TimeLog.TLP.API.Proxy.Salary.V1_0")]
-    [System.SerializableAttribute()]
-    public partial class HolidayCalendar : TimeLog.TransactionalApi.SDK.SalaryService.APIBase {
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string NameField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((this.IdField.Equals(value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Name {
-            get {
-                return this.NameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.NameField, value) != true)) {
-                    this.NameField = value;
-                    this.RaisePropertyChanged("Name");
-                }
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ResponseOfAllowance", Namespace="http://api.timelog.com")]
     [System.SerializableAttribute()]
     public partial class ResponseOfAllowance : TimeLog.TransactionalApi.SDK.SalaryService.APIBase {
@@ -933,45 +972,6 @@ namespace TimeLog.TransactionalApi.SDK.SalaryService {
                 if ((this.TotalPageCountField.Equals(value) != true)) {
                     this.TotalPageCountField = value;
                     this.RaisePropertyChanged("TotalPageCount");
-                }
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Allowance", Namespace="http://schemas.datacontract.org/2004/07/TimeLog.TLP.API.Proxy.Salary.V1_0")]
-    [System.SerializableAttribute()]
-    public partial class Allowance : TimeLog.TransactionalApi.SDK.SalaryService.APIBase {
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string NameField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Id {
-            get {
-                return this.IdField;
-            }
-            set {
-                if ((this.IdField.Equals(value) != true)) {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Name {
-            get {
-                return this.NameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.NameField, value) != true)) {
-                    this.NameField = value;
-                    this.RaisePropertyChanged("Name");
                 }
             }
         }

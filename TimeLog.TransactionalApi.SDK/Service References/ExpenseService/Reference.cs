@@ -17,13 +17,13 @@ namespace TimeLog.TransactionalApi.SDK.ExpenseService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="APIBase", Namespace="http://www.timelog.com/api/tlp/v1_2")]
     [System.SerializableAttribute()]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.ExpenseService.ResponseOfExpense))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.ExpenseService.Expense))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.ExpenseService.PaymentMethod))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.ExpenseService.ExpenseType))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.ExpenseService.ResponseOfExpense))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.ExpenseService.Request))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.ExpenseService.ResponseOfPaymentMethod))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.ExpenseService.PaymentMethod))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.ExpenseService.ResponseOfExpenseType))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.ExpenseService.ExpenseType))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(TimeLog.TransactionalApi.SDK.ExpenseService.SecurityToken))]
     public partial class APIBase : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
@@ -46,141 +46,6 @@ namespace TimeLog.TransactionalApi.SDK.ExpenseService {
             System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
             if ((propertyChanged != null)) {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ResponseOfExpense", Namespace="http://api.timelog.com")]
-    [System.SerializableAttribute()]
-    public partial class ResponseOfExpense : TimeLog.TransactionalApi.SDK.ExpenseService.APIBase {
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TimeLog.TransactionalApi.SDK.ExpenseService.Expense[] ReturnField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ReturnTypeDescriptionField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TimeLog.TransactionalApi.SDK.ExpenseService.Request RequestField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TimeLog.TransactionalApi.SDK.ExpenseService.ExecutionStatus ResponseStateField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TimeLog.TransactionalApi.SDK.ExpenseService.APIMessage[] MessagesField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int ErrorCodeField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool IsReturnPagedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int TotalPageCountField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TimeLog.TransactionalApi.SDK.ExpenseService.Expense[] Return {
-            get {
-                return this.ReturnField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ReturnField, value) != true)) {
-                    this.ReturnField = value;
-                    this.RaisePropertyChanged("Return");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ReturnTypeDescription {
-            get {
-                return this.ReturnTypeDescriptionField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ReturnTypeDescriptionField, value) != true)) {
-                    this.ReturnTypeDescriptionField = value;
-                    this.RaisePropertyChanged("ReturnTypeDescription");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-        public TimeLog.TransactionalApi.SDK.ExpenseService.Request Request {
-            get {
-                return this.RequestField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.RequestField, value) != true)) {
-                    this.RequestField = value;
-                    this.RaisePropertyChanged("Request");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-        public TimeLog.TransactionalApi.SDK.ExpenseService.ExecutionStatus ResponseState {
-            get {
-                return this.ResponseStateField;
-            }
-            set {
-                if ((this.ResponseStateField.Equals(value) != true)) {
-                    this.ResponseStateField = value;
-                    this.RaisePropertyChanged("ResponseState");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-        public TimeLog.TransactionalApi.SDK.ExpenseService.APIMessage[] Messages {
-            get {
-                return this.MessagesField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.MessagesField, value) != true)) {
-                    this.MessagesField = value;
-                    this.RaisePropertyChanged("Messages");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-        public int ErrorCode {
-            get {
-                return this.ErrorCodeField;
-            }
-            set {
-                if ((this.ErrorCodeField.Equals(value) != true)) {
-                    this.ErrorCodeField = value;
-                    this.RaisePropertyChanged("ErrorCode");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-        public bool IsReturnPaged {
-            get {
-                return this.IsReturnPagedField;
-            }
-            set {
-                if ((this.IsReturnPagedField.Equals(value) != true)) {
-                    this.IsReturnPagedField = value;
-                    this.RaisePropertyChanged("IsReturnPaged");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-        public int TotalPageCount {
-            get {
-                return this.TotalPageCountField;
-            }
-            set {
-                if ((this.TotalPageCountField.Equals(value) != true)) {
-                    this.TotalPageCountField = value;
-                    this.RaisePropertyChanged("TotalPageCount");
-                }
             }
         }
     }
@@ -482,6 +347,267 @@ namespace TimeLog.TransactionalApi.SDK.ExpenseService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PaymentMethod", Namespace="http://api.timelog.com/services/expense/1_0")]
+    [System.SerializableAttribute()]
+    public partial class PaymentMethod : TimeLog.TransactionalApi.SDK.ExpenseService.APIBase {
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IDField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string NameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool IsDefaultField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int ID {
+            get {
+                return this.IDField;
+            }
+            set {
+                if ((this.IDField.Equals(value) != true)) {
+                    this.IDField = value;
+                    this.RaisePropertyChanged("ID");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Name {
+            get {
+                return this.NameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NameField, value) != true)) {
+                    this.NameField = value;
+                    this.RaisePropertyChanged("Name");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+        public bool IsDefault {
+            get {
+                return this.IsDefaultField;
+            }
+            set {
+                if ((this.IsDefaultField.Equals(value) != true)) {
+                    this.IsDefaultField = value;
+                    this.RaisePropertyChanged("IsDefault");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ExpenseType", Namespace="http://api.timelog.com/services/expense/1_0")]
+    [System.SerializableAttribute()]
+    public partial class ExpenseType : TimeLog.TransactionalApi.SDK.ExpenseService.APIBase {
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Guid IDField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string NameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private double VatPercentField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ProductNoField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Guid ID {
+            get {
+                return this.IDField;
+            }
+            set {
+                if ((this.IDField.Equals(value) != true)) {
+                    this.IDField = value;
+                    this.RaisePropertyChanged("ID");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Name {
+            get {
+                return this.NameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NameField, value) != true)) {
+                    this.NameField = value;
+                    this.RaisePropertyChanged("Name");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public double VatPercent {
+            get {
+                return this.VatPercentField;
+            }
+            set {
+                if ((this.VatPercentField.Equals(value) != true)) {
+                    this.VatPercentField = value;
+                    this.RaisePropertyChanged("VatPercent");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+        public string ProductNo {
+            get {
+                return this.ProductNoField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ProductNoField, value) != true)) {
+                    this.ProductNoField = value;
+                    this.RaisePropertyChanged("ProductNo");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ResponseOfExpense", Namespace="http://api.timelog.com")]
+    [System.SerializableAttribute()]
+    public partial class ResponseOfExpense : TimeLog.TransactionalApi.SDK.ExpenseService.APIBase {
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private TimeLog.TransactionalApi.SDK.ExpenseService.Expense[] ReturnField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ReturnTypeDescriptionField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private TimeLog.TransactionalApi.SDK.ExpenseService.Request RequestField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private TimeLog.TransactionalApi.SDK.ExpenseService.ExecutionStatus ResponseStateField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private TimeLog.TransactionalApi.SDK.ExpenseService.APIMessage[] MessagesField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int ErrorCodeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool IsReturnPagedField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int TotalPageCountField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public TimeLog.TransactionalApi.SDK.ExpenseService.Expense[] Return {
+            get {
+                return this.ReturnField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ReturnField, value) != true)) {
+                    this.ReturnField = value;
+                    this.RaisePropertyChanged("Return");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ReturnTypeDescription {
+            get {
+                return this.ReturnTypeDescriptionField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ReturnTypeDescriptionField, value) != true)) {
+                    this.ReturnTypeDescriptionField = value;
+                    this.RaisePropertyChanged("ReturnTypeDescription");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+        public TimeLog.TransactionalApi.SDK.ExpenseService.Request Request {
+            get {
+                return this.RequestField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.RequestField, value) != true)) {
+                    this.RequestField = value;
+                    this.RaisePropertyChanged("Request");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+        public TimeLog.TransactionalApi.SDK.ExpenseService.ExecutionStatus ResponseState {
+            get {
+                return this.ResponseStateField;
+            }
+            set {
+                if ((this.ResponseStateField.Equals(value) != true)) {
+                    this.ResponseStateField = value;
+                    this.RaisePropertyChanged("ResponseState");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+        public TimeLog.TransactionalApi.SDK.ExpenseService.APIMessage[] Messages {
+            get {
+                return this.MessagesField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.MessagesField, value) != true)) {
+                    this.MessagesField = value;
+                    this.RaisePropertyChanged("Messages");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+        public int ErrorCode {
+            get {
+                return this.ErrorCodeField;
+            }
+            set {
+                if ((this.ErrorCodeField.Equals(value) != true)) {
+                    this.ErrorCodeField = value;
+                    this.RaisePropertyChanged("ErrorCode");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+        public bool IsReturnPaged {
+            get {
+                return this.IsReturnPagedField;
+            }
+            set {
+                if ((this.IsReturnPagedField.Equals(value) != true)) {
+                    this.IsReturnPagedField = value;
+                    this.RaisePropertyChanged("IsReturnPaged");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+        public int TotalPageCount {
+            get {
+                return this.TotalPageCountField;
+            }
+            set {
+                if ((this.TotalPageCountField.Equals(value) != true)) {
+                    this.TotalPageCountField = value;
+                    this.RaisePropertyChanged("TotalPageCount");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Request", Namespace="http://api.timelog.com")]
     [System.SerializableAttribute()]
     public partial class Request : TimeLog.TransactionalApi.SDK.ExpenseService.APIBase {
@@ -672,61 +798,6 @@ namespace TimeLog.TransactionalApi.SDK.ExpenseService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PaymentMethod", Namespace="http://api.timelog.com/services/expense/1_0")]
-    [System.SerializableAttribute()]
-    public partial class PaymentMethod : TimeLog.TransactionalApi.SDK.ExpenseService.APIBase {
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IDField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string NameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool IsDefaultField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int ID {
-            get {
-                return this.IDField;
-            }
-            set {
-                if ((this.IDField.Equals(value) != true)) {
-                    this.IDField = value;
-                    this.RaisePropertyChanged("ID");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Name {
-            get {
-                return this.NameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.NameField, value) != true)) {
-                    this.NameField = value;
-                    this.RaisePropertyChanged("Name");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-        public bool IsDefault {
-            get {
-                return this.IsDefaultField;
-            }
-            set {
-                if ((this.IsDefaultField.Equals(value) != true)) {
-                    this.IsDefaultField = value;
-                    this.RaisePropertyChanged("IsDefault");
-                }
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ResponseOfExpenseType", Namespace="http://api.timelog.com")]
     [System.SerializableAttribute()]
     public partial class ResponseOfExpenseType : TimeLog.TransactionalApi.SDK.ExpenseService.APIBase {
@@ -855,77 +926,6 @@ namespace TimeLog.TransactionalApi.SDK.ExpenseService {
                 if ((this.TotalPageCountField.Equals(value) != true)) {
                     this.TotalPageCountField = value;
                     this.RaisePropertyChanged("TotalPageCount");
-                }
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ExpenseType", Namespace="http://api.timelog.com/services/expense/1_0")]
-    [System.SerializableAttribute()]
-    public partial class ExpenseType : TimeLog.TransactionalApi.SDK.ExpenseService.APIBase {
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Guid IDField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string NameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private double VatPercentField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ProductNoField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Guid ID {
-            get {
-                return this.IDField;
-            }
-            set {
-                if ((this.IDField.Equals(value) != true)) {
-                    this.IDField = value;
-                    this.RaisePropertyChanged("ID");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Name {
-            get {
-                return this.NameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.NameField, value) != true)) {
-                    this.NameField = value;
-                    this.RaisePropertyChanged("Name");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public double VatPercent {
-            get {
-                return this.VatPercentField;
-            }
-            set {
-                if ((this.VatPercentField.Equals(value) != true)) {
-                    this.VatPercentField = value;
-                    this.RaisePropertyChanged("VatPercent");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-        public string ProductNo {
-            get {
-                return this.ProductNoField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ProductNoField, value) != true)) {
-                    this.ProductNoField = value;
-                    this.RaisePropertyChanged("ProductNo");
                 }
             }
         }
