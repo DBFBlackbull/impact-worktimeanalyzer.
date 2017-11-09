@@ -1,7 +1,7 @@
 ﻿@model Impact.Website.Models.QuarterViewModel
 
 @{
-	ViewBag.Title = "User page";
+	ViewBag.Title = "Analyzer Page";
 }
 <div class="container">
 	<h2>Choose date</h2>
@@ -17,13 +17,11 @@
 				</form>
 			</div>
 		}
+	    <div class="col-md-3">
+	        
+	    </div>
 		<div class="col-md-3">
-			@Html.LabelFor(m => m.From):
-			@Html.DisplayFor(m => m.From)
-		</div>
-		<div class="col-md-3">
-			@Html.LabelFor(m => m.To):
-			@Html.DisplayFor(m => m.To)
+			
 		</div>
 		<div class="col-md-2"></div>
 	</div>
@@ -49,13 +47,14 @@
 			height: 800,
 			isStacked: true,
 			title: '@Model.GraphTitle',
+			colors: ['#289eff', '#3366cc', '#000000', 'orange', 'green'],
 			vAxis: {
 				title: 'Timer',
 				ticks: [2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 47.5, 50, 52.5, 55],
 				viewWindowMode: 'explicit',
 				viewWindow: {
 					max: 50,
-					min: 20
+					min: 0
 				}
 			},
 			hAxis: {

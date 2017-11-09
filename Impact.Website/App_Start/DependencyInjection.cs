@@ -1,4 +1,6 @@
 ﻿using System.Web.Mvc;
+using Impact.Business.Holiday;
+using Impact.Business.Scanner;
 using Impact.Business.Time;
 using Impact.DataAccess.Timelog;
 using SimpleInjector;
@@ -17,6 +19,7 @@ namespace Impact.Website
 
 			container.Register<ITimeService, TimeLogService>(Lifestyle.Scoped);
 			container.Register<ITimeRepository, TimeLogRepository>(Lifestyle.Scoped);
+			container.Register<IHolidayService, HolidayService>(Lifestyle.Scoped);
 
 			container.Verify();
 

@@ -2,43 +2,58 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Impact.Business.Holiday;
+using Impact.Business.Scanner;
 using Impact.Business.Time;
+using Impact.Core.Extension;
 using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
 using Impact.Website.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using WebGrease.Css.Extensions;
 
 namespace Impact.Website.Controllers
 {
     public class AnalyzerController : Controller
     {
         private readonly ITimeService _timeService;
+        private readonly IHolidayService _holidayService;
 
-        public AnalyzerController(ITimeService timeService)
+        public AnalyzerController(ITimeService timeService, IHolidayService holidayService)
         {
             _timeService = timeService;
+            _holidayService = holidayService;
         }
 
 	    // GET: Analyzer
         public ActionResult Index()
         {
-            var dateTime = new DateTime(2017, 3, 15);
+            var dateTime = new DateTime(2017, 2, 15);
             var quarter = _timeService.GetQuarter(dateTime);
 
             var weeks = _timeService.GetWeeksInQuarter(quarter);
             if (weeks == null)
                 return RedirectToAction("Index", "Home");
+
+            var weeksList = weeks.ToList();
+            _holidayService.AddHolidayHours(quarter, weeksList);
+            weeksList.ForEach(week => week.CategorizeHours());
             
+            var quarterViewModel = CreateViewModel(quarter, weeksList);
+            return View(quarterViewModel);
+        }
+
+        private QuarterViewModel CreateViewModel(Quarter quarter, List<Week> weeksList)
+        {
             var quarterViewModel = new QuarterViewModel();
             quarterViewModel.SelectedQuarter = quarter.MidDate.ToShortDateString();
             quarterViewModel.Quarters = GetSelectList(quarter);
             quarterViewModel.GraphTitle = GraphTitle(quarter);
             quarterViewModel.From = quarter.From;
             quarterViewModel.To = quarter.To;
-            quarterViewModel.Json = GetJson(weeks);
-
-            return View(quarterViewModel);
+            quarterViewModel.Json = GetJson(weeksList);
+            return quarterViewModel;
         }
 
         [HttpPost]
@@ -48,23 +63,21 @@ namespace Impact.Website.Controllers
                 return RedirectToAction("Index", "Home");
 
             var dateTime = DateTime.Parse(viewModel.SelectedQuarter);
-
             var quarter = _timeService.GetQuarter(dateTime);
 
             var weeks = _timeService.GetWeeksInQuarter(quarter);
             if (weeks == null)
                 return RedirectToAction("Index", "Home");
+            
+            var weeksList = weeks.ToList();
+            _holidayService.AddHolidayHours(quarter, weeksList);
+            weeksList.ForEach(week => week.CategorizeHours());
 
-            var quarterViewModel = new QuarterViewModel();
-            quarterViewModel.SelectedQuarter = quarter.MidDate.ToShortDateString();
-            quarterViewModel.Quarters = GetSelectList(quarter);
-            quarterViewModel.GraphTitle = GraphTitle(quarter);
-            quarterViewModel.From = quarter.From;
-            quarterViewModel.To = quarter.To;
-            quarterViewModel.Json = GetJson(weeks);
-
+            var quarterViewModel = CreateViewModel(quarter, weeksList);
             return View(quarterViewModel);
         }
+        
+        [HttpPost]
 
         private IEnumerable<SelectListItem> GetSelectList(Quarter quarter)
         {
@@ -136,10 +149,11 @@ namespace Impact.Website.Controllers
                 new object[]
                 {
                     new Column {Label = "Uge nummer", Type = "string"},
-                    new Column {Label = "Work", Type = "number"},
+                    new Column {Label = "HolidayHours", Type = "number"},
+                    new Column {Label = "Work,Ferie,Sygdom osv.", Type = "number"},
                     new Column {Label = "Interessetid", Type = "number"},
-                    new Column {Label = "39-44", Type = "number"},
-                    new Column {Label = "44+", Type = "number"}
+                    new Column {Label = "39-44 : 100% løn", Type = "number"},
+                    new Column {Label = "44+ : 150% løn", Type = "number"}
                 }
             };
             googleFormatedWeeks.AddRange(weeks.Select(week => week.ToArray()));

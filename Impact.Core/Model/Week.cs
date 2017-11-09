@@ -8,22 +8,26 @@ namespace Impact.Core.Model
 {
     public class Week
     {
-        public Week(string displayNumber)
+        public Week()
         {
-            DisplayNumber = displayNumber;
+            Dates = new SortedSet<DateTime>();
         }
 
-        public string DisplayNumber { get; set; }
-        public decimal? WorkHours { get; set; }
-        public decimal? InterestHours { get; set; }
-        public decimal? MoveableOvertimeHours { get; set; }
-        public decimal? LockedOvertimeHours { get; set; }
+        public int Number { get; set; }
+        public ISet<DateTime> Dates { get; set; }
+        public double TotalHours { get; set; }
+        public decimal HolidayHours { get; set; }
+        public decimal WorkHours { get; set; }
+        public decimal InterestHours { get; set; }
+        public decimal MoveableOvertimeHours { get; set; }
+        public decimal LockedOvertimeHours { get; set; }
 
         public object[] ToArray()
         {
             return new object[]
             {
-                DisplayNumber,
+                "Uge " + Number,
+                HolidayHours,
                 WorkHours,
                 InterestHours,
                 MoveableOvertimeHours,
