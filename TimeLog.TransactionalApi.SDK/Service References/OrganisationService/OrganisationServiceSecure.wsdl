@@ -1,0 +1,944 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://www.timelog.com/api/tlp/v1_5" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="OrganisationServiceSecure" targetNamespace="http://www.timelog.com/api/tlp/v1_5" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="BasicHttpBinding_OrganisationService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <sp:HttpsToken RequireClientCertificate="false" />
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256 />
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict />
+              </wsp:Policy>
+            </sp:Layout>
+          </wsp:Policy>
+        </sp:TransportBinding>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xs:schema xmlns:tns="http://www.timelog.com/api/tlp/v1_3" elementFormDefault="qualified" targetNamespace="http://www.timelog.com/api/tlp/v1_3" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:complexType name="SecurityToken">
+        <xs:complexContent mixed="false">
+          <xs:extension xmlns:q1="http://www.timelog.com/api/tlp/v1_2" base="q1:APIBase">
+            <xs:sequence>
+              <xs:element name="Initials" nillable="true" type="xs:string" />
+              <xs:element name="Expires" type="xs:dateTime" />
+              <xs:element name="Hash" nillable="true" type="xs:string" />
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="SecurityToken" nillable="true" type="tns:SecurityToken" />
+      <xs:element name="IsAlive">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="IsAliveResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="IsAliveResult" type="xs:boolean" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+    <xs:schema xmlns:tns="http://www.timelog.com/api/tlp/v1_2" elementFormDefault="qualified" targetNamespace="http://www.timelog.com/api/tlp/v1_2" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:complexType name="APIBase">
+        <xs:sequence />
+      </xs:complexType>
+      <xs:element name="APIBase" nillable="true" type="tns:APIBase" />
+    </xs:schema>
+    <xs:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="anyType" nillable="true" type="xs:anyType" />
+      <xs:element name="anyURI" nillable="true" type="xs:anyURI" />
+      <xs:element name="base64Binary" nillable="true" type="xs:base64Binary" />
+      <xs:element name="boolean" nillable="true" type="xs:boolean" />
+      <xs:element name="byte" nillable="true" type="xs:byte" />
+      <xs:element name="dateTime" nillable="true" type="xs:dateTime" />
+      <xs:element name="decimal" nillable="true" type="xs:decimal" />
+      <xs:element name="double" nillable="true" type="xs:double" />
+      <xs:element name="float" nillable="true" type="xs:float" />
+      <xs:element name="int" nillable="true" type="xs:int" />
+      <xs:element name="long" nillable="true" type="xs:long" />
+      <xs:element name="QName" nillable="true" type="xs:QName" />
+      <xs:element name="short" nillable="true" type="xs:short" />
+      <xs:element name="string" nillable="true" type="xs:string" />
+      <xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte" />
+      <xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt" />
+      <xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong" />
+      <xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort" />
+      <xs:element name="char" nillable="true" type="tns:char" />
+      <xs:simpleType name="char">
+        <xs:restriction base="xs:int" />
+      </xs:simpleType>
+      <xs:element name="duration" nillable="true" type="tns:duration" />
+      <xs:simpleType name="duration">
+        <xs:restriction base="xs:duration">
+          <xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?" />
+          <xs:minInclusive value="-P10675199DT2H48M5.4775808S" />
+          <xs:maxInclusive value="P10675199DT2H48M5.4775807S" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="guid" nillable="true" type="tns:guid" />
+      <xs:simpleType name="guid">
+        <xs:restriction base="xs:string">
+          <xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:attribute name="FactoryType" type="xs:QName" />
+      <xs:attribute name="Id" type="xs:ID" />
+      <xs:attribute name="Ref" type="xs:IDREF" />
+    </xs:schema>
+    <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/TimeLog.TLP.Common" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/TimeLog.TLP.Common" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:simpleType name="ExecutionStatus">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="NotSet" />
+          <xs:enumeration value="Success" />
+          <xs:enumeration value="Invalid" />
+          <xs:enumeration value="Error" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="ExecutionStatus" nillable="true" type="tns:ExecutionStatus" />
+    </xs:schema>
+    <xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" elementFormDefault="qualified" targetNamespace="http://www.timelog.com/api/tlp/v1_5" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="GetEmployeesPaged">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="page" type="xs:int" />
+            <xs:element minOccurs="0" name="pageSize" type="xs:int" />
+            <xs:element xmlns:q2="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q2:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetEmployeesPagedResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q3="http://api.timelog.com" minOccurs="0" name="GetEmployeesPagedResult" nillable="true" type="q3:ResponseOfEmployee" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ArrayOfEmployee">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Employee" nillable="true" type="tns:Employee" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfEmployee" nillable="true" type="tns:ArrayOfEmployee" />
+      <xs:complexType name="Employee">
+        <xs:complexContent mixed="false">
+          <xs:extension xmlns:q4="http://www.timelog.com/api/tlp/v1_2" base="q4:APIBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="ID" type="ser:guid" />
+              <xs:element minOccurs="0" name="EmployeeID" type="xs:int" />
+              <xs:element minOccurs="0" name="Initials" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="FirstName" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="LastName" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="Fullname" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="EmployeeNo" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="DepartmentGuid" type="ser:guid" />
+              <xs:element minOccurs="0" name="DepartmentName" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="DepartmentNo" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="SecurityLevel" type="xs:int" />
+              <xs:element minOccurs="0" name="InterfaceLanguage" type="xs:int" />
+              <xs:element minOccurs="0" name="Telephone" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="Mobile" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="PrivateAddress" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="PrivateZip" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="PrivateCity" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="PrivateTelephone" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="ExternalIdentifier" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="HiredDate" type="xs:dateTime" />
+              <xs:element minOccurs="0" name="TerminationDate" type="xs:dateTime" />
+              <xs:element minOccurs="0" name="IsHired" type="xs:boolean" />
+              <xs:element minOccurs="0" name="IsLocked" type="xs:boolean" />
+              <xs:element minOccurs="0" name="HasCoordinatorRole" type="xs:boolean" />
+              <xs:element minOccurs="0" name="CostPriceGuid" type="ser:guid" />
+              <xs:element minOccurs="0" name="CostPrice" type="xs:double" />
+              <xs:element minOccurs="0" name="HourlyRateGuid" type="ser:guid" />
+              <xs:element minOccurs="0" name="HourlyRate" type="xs:double" />
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="Employee" nillable="true" type="tns:Employee" />
+      <xs:element name="GetEmployeeByInitials">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="initials" nillable="true" type="xs:string" />
+            <xs:element xmlns:q5="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q5:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetEmployeeByInitialsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q6="http://api.timelog.com" minOccurs="0" name="GetEmployeeByInitialsResult" nillable="true" type="q6:ResponseOfEmployeeHeader" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ArrayOfEmployeeHeader">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="EmployeeHeader" nillable="true" type="tns:EmployeeHeader" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfEmployeeHeader" nillable="true" type="tns:ArrayOfEmployeeHeader" />
+      <xs:complexType name="EmployeeHeader">
+        <xs:complexContent mixed="false">
+          <xs:extension xmlns:q7="http://www.timelog.com/api/tlp/v1_2" base="q7:APIBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="ID" type="ser:guid" />
+              <xs:element minOccurs="0" name="EmployeeID" type="xs:int" />
+              <xs:element minOccurs="0" name="Initials" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="FirstName" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="LastName" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="EmployeeNo" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="Fullname" nillable="true" type="xs:string" />
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="EmployeeHeader" nillable="true" type="tns:EmployeeHeader" />
+      <xs:element name="CreateEmployee">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="employeeGuid" type="ser:guid" />
+            <xs:element minOccurs="0" name="initials" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="firstname" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="lastname" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="employeeNo" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="email" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="title" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="telephone" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="mobile" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="normalWorkingTimeName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="holidayCalendarName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="allowanceLegislationName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="employeeTypeName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="hourlyRateName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="costPriceName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="externalIdentifier" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="password" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="departmentGuid" type="ser:guid" />
+            <xs:element xmlns:q8="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q8:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateEmployeeResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q9="http://api.timelog.com" minOccurs="0" name="CreateEmployeeResult" nillable="true" type="q9:ResponseOfEmployeeHeader" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateEmployeeNotification">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="employeeGuid" type="ser:guid" />
+            <xs:element xmlns:q10="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q10:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateEmployeeNotificationResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q11="http://api.timelog.com" minOccurs="0" name="CreateEmployeeNotificationResult" nillable="true" type="q11:ResponseOfEmployeeHeader" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="UpdateEmployee">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="employeeGuid" type="ser:guid" />
+            <xs:element minOccurs="0" name="initials" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="firstname" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="lastname" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="employeeNo" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="email" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="title" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="telephone" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="mobile" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="normalWorkingTimeName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="holidayCalendarName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="allowanceLegislationName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="employeeTypeName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="hourlyRateName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="costPriceName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="externalIdentifier" nillable="true" type="xs:string" />
+            <xs:element xmlns:q12="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q12:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="UpdateEmployeeResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q13="http://api.timelog.com" minOccurs="0" name="UpdateEmployeeResult" nillable="true" type="q13:ResponseOfEmployeeHeader" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ActivateEmployee">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="employeeGuid" type="ser:guid" />
+            <xs:element minOccurs="0" name="securityLevel" type="xs:int" />
+            <xs:element minOccurs="0" name="hasCoordinatorRole" type="xs:boolean" />
+            <xs:element minOccurs="0" name="hiredDate" type="xs:dateTime" />
+            <xs:element xmlns:q14="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q14:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ActivateEmployeeResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q15="http://api.timelog.com" minOccurs="0" name="ActivateEmployeeResult" nillable="true" type="q15:ResponseOfEmployeeHeader" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ChangeEmployeeSecurityLevel">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="employeeGuid" type="ser:guid" />
+            <xs:element minOccurs="0" name="securityLevel" type="xs:int" />
+            <xs:element minOccurs="0" name="hasCoordinatorRole" type="xs:boolean" />
+            <xs:element xmlns:q16="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q16:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ChangeEmployeeSecurityLevelResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q17="http://api.timelog.com" minOccurs="0" name="ChangeEmployeeSecurityLevelResult" nillable="true" type="q17:ResponseOfEmployeeHeader" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ChangeEmployeeDepartment">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="employeeGuid" type="ser:guid" />
+            <xs:element minOccurs="0" name="departmentGuid" type="ser:guid" />
+            <xs:element xmlns:q18="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q18:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ChangeEmployeeDepartmentResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q19="http://api.timelog.com" minOccurs="0" name="ChangeEmployeeDepartmentResult" nillable="true" type="q19:ResponseOfEmployeeHeader" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DeactivateEmployee">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="employeeGuid" type="ser:guid" />
+            <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime" />
+            <xs:element xmlns:q20="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q20:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DeactivateEmployeeResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q21="http://api.timelog.com" minOccurs="0" name="DeactivateEmployeeResult" nillable="true" type="q21:ResponseOfEmployeeHeader" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetDepartments">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q22="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q22:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetDepartmentsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q23="http://api.timelog.com" minOccurs="0" name="GetDepartmentsResult" nillable="true" type="q23:ResponseOfDepartment" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ArrayOfDepartment">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Department" nillable="true" type="tns:Department" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfDepartment" nillable="true" type="tns:ArrayOfDepartment" />
+      <xs:complexType name="Department">
+        <xs:complexContent mixed="false">
+          <xs:extension xmlns:q24="http://www.timelog.com/api/tlp/v1_2" base="q24:APIBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="ID" type="ser:guid" />
+              <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="No" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="ParentDepartmentGuid" type="ser:guid" />
+              <xs:element minOccurs="0" name="DepartmentManagerGuid" type="ser:guid" />
+              <xs:element minOccurs="0" name="DepartmentID" type="xs:int" />
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="Department" nillable="true" type="tns:Department" />
+      <xs:element name="GetDepartmentByNo">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="departmentNo" nillable="true" type="xs:string" />
+            <xs:element xmlns:q25="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q25:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetDepartmentByNoResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q26="http://api.timelog.com" minOccurs="0" name="GetDepartmentByNoResult" nillable="true" type="q26:ResponseOfDepartment" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateDepartment">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="departmentGuid" type="ser:guid" />
+            <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="no" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="parentDepartmentGuid" type="ser:guid" />
+            <xs:element minOccurs="0" name="departmentManagerGuid" type="ser:guid" />
+            <xs:element xmlns:q27="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q27:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateDepartmentResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q28="http://api.timelog.com" minOccurs="0" name="CreateDepartmentResult" nillable="true" type="q28:ResponseOfDepartment" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="UpdateDepartment">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="departmentGuid" type="ser:guid" />
+            <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="no" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="parentDepartmentGuid" type="ser:guid" />
+            <xs:element minOccurs="0" name="departmentManagerGuid" type="ser:guid" />
+            <xs:element xmlns:q29="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q29:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="UpdateDepartmentResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q30="http://api.timelog.com" minOccurs="0" name="UpdateDepartmentResult" nillable="true" type="q30:ResponseOfDepartment" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DeactivateDepartment">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="departmentGuid" type="ser:guid" />
+            <xs:element xmlns:q31="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q31:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DeactivateDepartmentResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q32="http://api.timelog.com" minOccurs="0" name="DeactivateDepartmentResult" nillable="true" type="q32:ResponseOfDepartment" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetEmployeeTypes">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q33="http://www.timelog.com/api/tlp/v1_3" minOccurs="0" name="token" nillable="true" type="q33:SecurityToken" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetEmployeeTypesResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q34="http://api.timelog.com" minOccurs="0" name="GetEmployeeTypesResult" nillable="true" type="q34:ResponseOfstring" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+    <xs:schema xmlns:tns="http://api.timelog.com" elementFormDefault="qualified" targetNamespace="http://api.timelog.com" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:complexType name="ResponseOfEmployee">
+        <xs:annotation>
+          <xs:appinfo>
+            <GenericType Name="ResponseOf{0}" Namespace="http://api.timelog.com" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+              <GenericParameter Name="Employee" Namespace="http://www.timelog.com/api/tlp/v1_5" />
+            </GenericType>
+          </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent mixed="false">
+          <xs:extension xmlns:q35="http://www.timelog.com/api/tlp/v1_2" base="q35:APIBase">
+            <xs:sequence>
+              <xs:element xmlns:q36="http://www.timelog.com/api/tlp/v1_5" minOccurs="0" name="Return" nillable="true" type="q36:ArrayOfEmployee" />
+              <xs:element minOccurs="0" name="ReturnTypeDescription" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="Request" nillable="true" type="tns:Request" />
+              <xs:element xmlns:q37="http://schemas.datacontract.org/2004/07/TimeLog.TLP.Common" minOccurs="0" name="ResponseState" type="q37:ExecutionStatus" />
+              <xs:element minOccurs="0" name="Messages" nillable="true" type="tns:ArrayOfAPIMessage" />
+              <xs:element minOccurs="0" name="ErrorCode" type="xs:int" />
+              <xs:element minOccurs="0" name="IsReturnPaged" type="xs:boolean" />
+              <xs:element minOccurs="0" name="TotalPageCount" type="xs:int" />
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="ResponseOfEmployee" nillable="true" type="tns:ResponseOfEmployee" />
+      <xs:complexType name="Request">
+        <xs:complexContent mixed="false">
+          <xs:extension xmlns:q38="http://www.timelog.com/api/tlp/v1_2" base="q38:APIBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="Parameters" nillable="true" type="tns:ArrayOfRequestParameter" />
+              <xs:element minOccurs="0" name="ServiceClass" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="MethodName" nillable="true" type="xs:string" />
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="Request" nillable="true" type="tns:Request" />
+      <xs:complexType name="ArrayOfRequestParameter">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="RequestParameter" nillable="true" type="tns:RequestParameter" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfRequestParameter" nillable="true" type="tns:ArrayOfRequestParameter" />
+      <xs:complexType name="RequestParameter">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Value" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="RequestParameter" nillable="true" type="tns:RequestParameter" />
+      <xs:complexType name="ArrayOfAPIMessage">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="APIMessage" nillable="true" type="tns:APIMessage" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfAPIMessage" nillable="true" type="tns:ArrayOfAPIMessage" />
+      <xs:complexType name="APIMessage">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+          <xs:element xmlns:q39="http://schemas.datacontract.org/2004/07/TimeLog.TLP.API.Proxy.Communication.V1_0" minOccurs="0" name="Severity" type="q39:APIMessageSeverity" />
+          <xs:element minOccurs="0" name="ErrorCode" type="xs:int" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="APIMessage" nillable="true" type="tns:APIMessage" />
+      <xs:complexType name="ResponseOfEmployeeHeader">
+        <xs:annotation>
+          <xs:appinfo>
+            <GenericType Name="ResponseOf{0}" Namespace="http://api.timelog.com" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+              <GenericParameter Name="EmployeeHeader" Namespace="http://www.timelog.com/api/tlp/v1_5" />
+            </GenericType>
+          </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent mixed="false">
+          <xs:extension xmlns:q40="http://www.timelog.com/api/tlp/v1_2" base="q40:APIBase">
+            <xs:sequence>
+              <xs:element xmlns:q41="http://www.timelog.com/api/tlp/v1_5" minOccurs="0" name="Return" nillable="true" type="q41:ArrayOfEmployeeHeader" />
+              <xs:element minOccurs="0" name="ReturnTypeDescription" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="Request" nillable="true" type="tns:Request" />
+              <xs:element xmlns:q42="http://schemas.datacontract.org/2004/07/TimeLog.TLP.Common" minOccurs="0" name="ResponseState" type="q42:ExecutionStatus" />
+              <xs:element minOccurs="0" name="Messages" nillable="true" type="tns:ArrayOfAPIMessage" />
+              <xs:element minOccurs="0" name="ErrorCode" type="xs:int" />
+              <xs:element minOccurs="0" name="IsReturnPaged" type="xs:boolean" />
+              <xs:element minOccurs="0" name="TotalPageCount" type="xs:int" />
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="ResponseOfEmployeeHeader" nillable="true" type="tns:ResponseOfEmployeeHeader" />
+      <xs:complexType name="ResponseOfDepartment">
+        <xs:annotation>
+          <xs:appinfo>
+            <GenericType Name="ResponseOf{0}" Namespace="http://api.timelog.com" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+              <GenericParameter Name="Department" Namespace="http://www.timelog.com/api/tlp/v1_5" />
+            </GenericType>
+          </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent mixed="false">
+          <xs:extension xmlns:q43="http://www.timelog.com/api/tlp/v1_2" base="q43:APIBase">
+            <xs:sequence>
+              <xs:element xmlns:q44="http://www.timelog.com/api/tlp/v1_5" minOccurs="0" name="Return" nillable="true" type="q44:ArrayOfDepartment" />
+              <xs:element minOccurs="0" name="ReturnTypeDescription" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="Request" nillable="true" type="tns:Request" />
+              <xs:element xmlns:q45="http://schemas.datacontract.org/2004/07/TimeLog.TLP.Common" minOccurs="0" name="ResponseState" type="q45:ExecutionStatus" />
+              <xs:element minOccurs="0" name="Messages" nillable="true" type="tns:ArrayOfAPIMessage" />
+              <xs:element minOccurs="0" name="ErrorCode" type="xs:int" />
+              <xs:element minOccurs="0" name="IsReturnPaged" type="xs:boolean" />
+              <xs:element minOccurs="0" name="TotalPageCount" type="xs:int" />
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="ResponseOfDepartment" nillable="true" type="tns:ResponseOfDepartment" />
+      <xs:complexType name="ResponseOfstring">
+        <xs:annotation>
+          <xs:appinfo>
+            <GenericType Name="ResponseOf{0}" Namespace="http://api.timelog.com" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+              <GenericParameter Name="string" Namespace="http://www.w3.org/2001/XMLSchema" />
+            </GenericType>
+          </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent mixed="false">
+          <xs:extension xmlns:q46="http://www.timelog.com/api/tlp/v1_2" base="q46:APIBase">
+            <xs:sequence>
+              <xs:element xmlns:q47="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Return" nillable="true" type="q47:ArrayOfstring" />
+              <xs:element minOccurs="0" name="ReturnTypeDescription" nillable="true" type="xs:string" />
+              <xs:element minOccurs="0" name="Request" nillable="true" type="tns:Request" />
+              <xs:element xmlns:q48="http://schemas.datacontract.org/2004/07/TimeLog.TLP.Common" minOccurs="0" name="ResponseState" type="q48:ExecutionStatus" />
+              <xs:element minOccurs="0" name="Messages" nillable="true" type="tns:ArrayOfAPIMessage" />
+              <xs:element minOccurs="0" name="ErrorCode" type="xs:int" />
+              <xs:element minOccurs="0" name="IsReturnPaged" type="xs:boolean" />
+              <xs:element minOccurs="0" name="TotalPageCount" type="xs:int" />
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="ResponseOfstring" nillable="true" type="tns:ResponseOfstring" />
+    </xs:schema>
+    <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/TimeLog.TLP.API.Proxy.Communication.V1_0" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/TimeLog.TLP.API.Proxy.Communication.V1_0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:simpleType name="APIMessageSeverity">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Error" />
+          <xs:enumeration value="Invalid" />
+          <xs:enumeration value="Message" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="APIMessageSeverity" nillable="true" type="tns:APIMessageSeverity" />
+    </xs:schema>
+    <xs:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:complexType name="ArrayOfstring">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfstring" nillable="true" type="tns:ArrayOfstring" />
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="OrganisationService_IsAlive_InputMessage">
+    <wsdl:part xmlns:q49="http://www.timelog.com/api/tlp/v1_3" name="parameters" element="q49:IsAlive" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_IsAlive_OutputMessage">
+    <wsdl:part xmlns:q50="http://www.timelog.com/api/tlp/v1_3" name="parameters" element="q50:IsAliveResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_GetEmployeesPaged_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetEmployeesPaged" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_GetEmployeesPaged_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetEmployeesPagedResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_GetEmployeeByInitials_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetEmployeeByInitials" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_GetEmployeeByInitials_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetEmployeeByInitialsResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_CreateEmployee_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateEmployee" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_CreateEmployee_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateEmployeeResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_CreateEmployeeNotification_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateEmployeeNotification" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_CreateEmployeeNotification_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateEmployeeNotificationResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_UpdateEmployee_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateEmployee" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_UpdateEmployee_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateEmployeeResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_ActivateEmployee_InputMessage">
+    <wsdl:part name="parameters" element="tns:ActivateEmployee" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_ActivateEmployee_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ActivateEmployeeResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_ChangeEmployeeSecurityLevel_InputMessage">
+    <wsdl:part name="parameters" element="tns:ChangeEmployeeSecurityLevel" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_ChangeEmployeeSecurityLevel_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ChangeEmployeeSecurityLevelResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_ChangeEmployeeDepartment_InputMessage">
+    <wsdl:part name="parameters" element="tns:ChangeEmployeeDepartment" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_ChangeEmployeeDepartment_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ChangeEmployeeDepartmentResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_DeactivateEmployee_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeactivateEmployee" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_DeactivateEmployee_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeactivateEmployeeResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_GetDepartments_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDepartments" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_GetDepartments_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDepartmentsResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_GetDepartmentByNo_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDepartmentByNo" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_GetDepartmentByNo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDepartmentByNoResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_CreateDepartment_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateDepartment" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_CreateDepartment_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateDepartmentResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_UpdateDepartment_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateDepartment" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_UpdateDepartment_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateDepartmentResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_DeactivateDepartment_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeactivateDepartment" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_DeactivateDepartment_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeactivateDepartmentResponse" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_GetEmployeeTypes_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetEmployeeTypes" />
+  </wsdl:message>
+  <wsdl:message name="OrganisationService_GetEmployeeTypes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetEmployeeTypesResponse" />
+  </wsdl:message>
+  <wsdl:portType name="OrganisationService">
+    <wsdl:operation name="IsAlive">
+      <wsdl:input wsaw:Action="IsAliveRequest" message="tns:OrganisationService_IsAlive_InputMessage" />
+      <wsdl:output wsaw:Action="IsAliveReponse" message="tns:OrganisationService_IsAlive_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeesPaged">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetEmployeesPaged" message="tns:OrganisationService_GetEmployeesPaged_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetEmployeesPagedResponse" message="tns:OrganisationService_GetEmployeesPaged_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeeByInitials">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetEmployeeByInitials" message="tns:OrganisationService_GetEmployeeByInitials_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetEmployeeByInitialsResponse" message="tns:OrganisationService_GetEmployeeByInitials_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateEmployee">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/CreateEmployee" message="tns:OrganisationService_CreateEmployee_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/CreateEmployeeResponse" message="tns:OrganisationService_CreateEmployee_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateEmployeeNotification">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/CreateEmployeeNotification" message="tns:OrganisationService_CreateEmployeeNotification_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/CreateEmployeeNotificationResponse" message="tns:OrganisationService_CreateEmployeeNotification_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateEmployee">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/UpdateEmployee" message="tns:OrganisationService_UpdateEmployee_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/UpdateEmployeeResponse" message="tns:OrganisationService_UpdateEmployee_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ActivateEmployee">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/ActivateEmployee" message="tns:OrganisationService_ActivateEmployee_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/ActivateEmployeeResponse" message="tns:OrganisationService_ActivateEmployee_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangeEmployeeSecurityLevel">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/ChangeEmployeeSecurityLevel" message="tns:OrganisationService_ChangeEmployeeSecurityLevel_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/ChangeEmployeeSecurityLevelResponse" message="tns:OrganisationService_ChangeEmployeeSecurityLevel_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangeEmployeeDepartment">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/ChangeEmployeeDepartment" message="tns:OrganisationService_ChangeEmployeeDepartment_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/ChangeEmployeeDepartmentResponse" message="tns:OrganisationService_ChangeEmployeeDepartment_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeactivateEmployee">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/DeactivateEmployee" message="tns:OrganisationService_DeactivateEmployee_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/DeactivateEmployeeResponse" message="tns:OrganisationService_DeactivateEmployee_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartments">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetDepartments" message="tns:OrganisationService_GetDepartments_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetDepartmentsResponse" message="tns:OrganisationService_GetDepartments_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentByNo">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetDepartmentByNo" message="tns:OrganisationService_GetDepartmentByNo_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetDepartmentByNoResponse" message="tns:OrganisationService_GetDepartmentByNo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateDepartment">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/CreateDepartment" message="tns:OrganisationService_CreateDepartment_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/CreateDepartmentResponse" message="tns:OrganisationService_CreateDepartment_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateDepartment">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/UpdateDepartment" message="tns:OrganisationService_UpdateDepartment_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/UpdateDepartmentResponse" message="tns:OrganisationService_UpdateDepartment_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeactivateDepartment">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/DeactivateDepartment" message="tns:OrganisationService_DeactivateDepartment_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/DeactivateDepartmentResponse" message="tns:OrganisationService_DeactivateDepartment_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeeTypes">
+      <wsdl:input wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetEmployeeTypes" message="tns:OrganisationService_GetEmployeeTypes_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetEmployeeTypesResponse" message="tns:OrganisationService_GetEmployeeTypes_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_OrganisationService" type="tns:OrganisationService">
+    <wsp:PolicyReference URI="#BasicHttpBinding_OrganisationService_policy" />
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="IsAlive">
+      <soap:operation soapAction="IsAliveRequest" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeesPaged">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetEmployeesPaged" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeeByInitials">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetEmployeeByInitials" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateEmployee">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/CreateEmployee" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateEmployeeNotification">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/CreateEmployeeNotification" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateEmployee">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/UpdateEmployee" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ActivateEmployee">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/ActivateEmployee" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangeEmployeeSecurityLevel">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/ChangeEmployeeSecurityLevel" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangeEmployeeDepartment">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/ChangeEmployeeDepartment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeactivateEmployee">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/DeactivateEmployee" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartments">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetDepartments" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentByNo">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetDepartmentByNo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateDepartment">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/CreateDepartment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateDepartment">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/UpdateDepartment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeactivateDepartment">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/DeactivateDepartment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeeTypes">
+      <soap:operation soapAction="http://www.timelog.com/api/tlp/v1_5/OrganisationService/GetEmployeeTypes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="OrganisationServiceSecure">
+    <wsdl:port name="BasicHttpBinding_OrganisationService" binding="tns:BasicHttpBinding_OrganisationService">
+      <soap:address location="https://app4.timelog.com/coldemo/WebServices/Organisation/V1_5/OrganisationServiceSecure.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

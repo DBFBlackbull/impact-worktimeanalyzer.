@@ -210,7 +210,7 @@
     <None Include="Service References\InvoicingService\TimeLog.TransactionalApi.SDK.InvoicingService.ResponseOfInvoiceWithExternalKey.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\OrganisationService\OrganisationServiceSecure1.wsdl" />
+    <None Include="Service References\OrganisationService\OrganisationServiceSecure.wsdl" />
     <None Include="Service References\OrganisationService\TimeLog.TransactionalApi.SDK.OrganisationService.IsAliveResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -223,10 +223,7 @@
     <None Include="Service References\OrganisationService\TimeLog.TransactionalApi.SDK.OrganisationService.ResponseOfEmployeeHeader.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\OrganisationService\TimeLog.TransactionalApi.SDK.OrganisationService.ResponseOfModuleType.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\OrganisationService\TimeLog.TransactionalApi.SDK.OrganisationService.ResponseOfRole.datasource">
+    <None Include="Service References\OrganisationService\TimeLog.TransactionalApi.SDK.OrganisationService.ResponseOfstring.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\ProjectManagementService\ProjectManagementServiceSecure2.wsdl" />
@@ -460,10 +457,10 @@
     <None Include="Service References\CrmService\CRMServiceSecure.disco" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\OrganisationService\OrganisationServiceSecure1.disco" />
+    <None Include="Service References\ProjectManagementService\ProjectManagementServiceSecure11.disco" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\ProjectManagementService\ProjectManagementServiceSecure11.disco" />
+    <None Include="Service References\OrganisationService\OrganisationServiceSecure.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
