@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Impact.Core.Model;
 using TimeLog.TransactionalApi.SDK;
 using ExecutionStatus = TimeLog.TransactionalApi.SDK.ProjectManagementService.ExecutionStatus;
@@ -27,18 +28,18 @@ namespace Impact.DataAccess.Timelog
                 var weekNumber = calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
 
                 if (!weeksToHoursDictionary.TryGetValue(weekNumber, out var week))
-                    weeksToHoursDictionary[weekNumber] = week = CreateWeek(weekNumber, dateTime);
+                    weeksToHoursDictionary[weekNumber] = week = CreateWeek(weekNumber, dateTime, quarter);
 
                 week.TotalHours += workUnitFlat.Hours;
             }
 
-            return weeksToHoursDictionary.Values;
+            return weeksToHoursDictionary.Values.OrderBy(w => w.Number);;
         }
 
-        private static Week CreateWeek(int weekNumber, DateTime dateTime)
+        private static Week CreateWeek(int weekNumber, DateTime dateTime, Quarter quarter)
         {
             var day = dateTime;
-            while (day.DayOfWeek != DayOfWeek.Monday)
+            while (day.DayOfWeek != DayOfWeek.Monday && day > quarter.From)
             {
                 day = day.AddDays(-1);
             }
