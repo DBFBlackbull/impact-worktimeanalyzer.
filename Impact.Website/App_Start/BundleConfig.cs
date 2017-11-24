@@ -35,7 +35,7 @@ namespace Impact.Website
 					  "~/Content/bootstrap.css",
 					  "~/Content/BootstrapToggle/bootstrap.toggle.min.css"));
 
-            bundles.Add(new StyleBundle("~/Content/Impact").Include(
+            bundles.Add(new StyleBundle("~/Content/impact2").Include(
                     "~/Content/Impact/impact.css"));
 		}
 	}
