@@ -1,7 +1,7 @@
 ﻿using System.Web.Mvc;
 using Impact.Business.Time;
+using Impact.Core.Contants;
 using Impact.Website.Models;
-using SimpleInjector;
 
 namespace Impact.Website.Controllers
 {
@@ -14,7 +14,6 @@ namespace Impact.Website.Controllers
 			_timeService = timeService;
 		}
 
-
 		public ActionResult Index()
 		{
 			return View(new LoginViewModel());
@@ -26,11 +25,18 @@ namespace Impact.Website.Controllers
 		    if (!ModelState.IsValid)
 		        return View(loginViewModel);
 
-            if (_timeService.IsAuthorized(loginViewModel.Username, loginViewModel.Password))
-				return RedirectToAction("Index", "Analyzer");
-
-            return View();
+		    if (!_timeService.IsAuthorized(loginViewModel.Username, loginViewModel.Password, out var token))
+		        return View(loginViewModel);
+		    
+		    HttpContext.Session.Add(ApplicationConstants.Token, token);
+		    return RedirectToAction("Index", "Analyzer");
 		}
+
+	    public ActionResult Logout()
+	    {
+	        HttpContext.Session.Remove(ApplicationConstants.Token);
+	        return RedirectToAction("Index");
+	    }
 
 		public ActionResult About()
 		{

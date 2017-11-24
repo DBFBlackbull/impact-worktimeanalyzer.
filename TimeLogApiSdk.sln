@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -44,6 +44,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impact.DataAccess", "Impact.DataAccess\Impact.DataAccess.csproj", "{70C6E5A5-4B58-45D6-92C1-65373B94AC01}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impact.Business", "Impact.Business\Impact.Business.csproj", "{9BE88266-993F-4245-BAC1-C26D2B9D9774}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impact.Test", "Impact.Test\Impact.Test.csproj", "{74A1D09E-E365-4D05-82D1-ED2FFAF91075}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,6 +101,10 @@ Global
 		{9BE88266-993F-4245-BAC1-C26D2B9D9774}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BE88266-993F-4245-BAC1-C26D2B9D9774}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BE88266-993F-4245-BAC1-C26D2B9D9774}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74A1D09E-E365-4D05-82D1-ED2FFAF91075}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74A1D09E-E365-4D05-82D1-ED2FFAF91075}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74A1D09E-E365-4D05-82D1-ED2FFAF91075}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74A1D09E-E365-4D05-82D1-ED2FFAF91075}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

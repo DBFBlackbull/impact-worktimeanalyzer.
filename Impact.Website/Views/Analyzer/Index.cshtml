@@ -1,5 +1,4 @@
 ﻿@model Impact.Website.Models.QuarterViewModel
-
 @{
 	ViewBag.Title = "Analyzer Page";
 }
@@ -8,22 +7,16 @@
 	<div class="row">
 		@using (Html.BeginForm())
 		{
-			<div class="col-md-4">
-				<form>
-					<div class="form-group form-inline">
-						@Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new { @class = "form-control" })
-						<button type="submit" class="btn btn-primary">Submit</button>
-					</div>
-				</form>
+			<div class="col-md-12">
+			    <form>
+			        <div class="form-group form-inline">
+			            @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control"})
+                        @Html.CheckBoxFor(m => m.Normalized, new {id = "toggle-normalized", data_toggle = "toggle", data_off = "Base", data_on = "Normalized"})
+                        <button type="submit" class="btn btn-primary">Submit</button>
+			        </div>
+			    </form>
 			</div>
 		}
-	    <div class="col-md-3">
-	        
-	    </div>
-		<div class="col-md-3">
-			
-		</div>
-		<div class="col-md-2"></div>
 	</div>
 </div>
 <div class="container-fluid">
@@ -36,33 +29,53 @@
 
 <script>
 	google.charts.load('current', { packages: ['corechart'] });
-	google.charts.setOnLoadCallback(drawData);
+	google.charts.setOnLoadCallback(function() { drawData(@Html.Raw(Model.Json)) });
+	var chart;
+	
+	var options = {
+	    width: 1600,
+	    height: 800,
+	    isStacked: true,
+	    title: '@Model.GraphTitle',
+	    colors: ['#289eff', '#3366cc', '#000000', 'orange', 'green'],
+	    animation:{
+	        duration: 1000,
+	        easing: 'out'
+	    },
+	    vAxis: {
+	        title: 'Timer',
+	        ticks: [2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 47.5, 50, 52.5, 55],
+	        viewWindowMode: 'explicit',
+	        viewWindow: {
+	            max: 50,
+	            min: 0
+	        }
+	    },
+	    hAxis: {
+	        title: 'Uge'
+	    }
+	}
+	
+	function drawData(json) {
+		var data = new google.visualization.arrayToDataTable(json);
 
-	function drawData(json, graphTitle) {
-		
-		var data = new google.visualization.arrayToDataTable(@Html.Raw(Model.Json));
-
-		var options = {
-			width: 1600,
-			height: 800,
-			isStacked: true,
-			title: '@Model.GraphTitle',
-			colors: ['#289eff', '#3366cc', '#000000', 'orange', 'green'],
-			vAxis: {
-				title: 'Timer',
-				ticks: [2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 47.5, 50, 52.5, 55],
-				viewWindowMode: 'explicit',
-				viewWindow: {
-					max: 50,
-					min: 0
-				}
-			},
-			hAxis: {
-				title: 'Uge'
-			}
-		}
-		
-		var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+	    chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
 		chart.draw(data, options);
 	};
+
+	document.addEventListener("DOMContentLoaded", function(event) {
+	    $('#toggle-normalized').change(function() {
+	        var checked = $(this).prop('checked');
+	        console.log(checked);
+	        var json;
+	        if (checked) {
+	            json = @Html.Raw(Model.NormalizedJson);
+	        } else {
+	            json = @Html.Raw(Model.Json);
+	        } 
+	        
+	        var data = new google.visualization.arrayToDataTable(json);
+	        chart.draw(data, options);
+	    });
+	});
 </script>

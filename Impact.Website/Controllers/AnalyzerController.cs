@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Impact.Business.Holiday;
-using Impact.Business.Scanner;
 using Impact.Business.Time;
+using Impact.Core.Contants;
 using Impact.Core.Extension;
 using Impact.Core.Model;
-using Impact.DataAccess.Timelog;
 using Impact.Website.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using WebGrease.Css.Extensions;
+using TimeLog.TransactionalApi.SDK.ProjectManagementService;
 
 namespace Impact.Website.Controllers
 {
@@ -29,22 +28,52 @@ namespace Impact.Website.Controllers
 	    // GET: Analyzer
         public ActionResult Index()
         {
+            if (!(HttpContext.Session[ApplicationConstants.Token] is SecurityToken token))
+                return RedirectToAction("Index", "Home");
+            
             var dateTime = new DateTime(2017, 2, 15);
             var quarter = _timeService.GetQuarter(dateTime);
-
-            var weeks = _timeService.GetWeeksInQuarter(quarter);
-            if (weeks == null)
-                return RedirectToAction("Index", "Home");
+            var weeks = _timeService.GetWeeksInQuarter(quarter, token);
 
             var weeksList = weeks.ToList();
             _holidayService.AddHolidayHours(quarter, weeksList);
             weeksList.ForEach(week => week.CategorizeHours());
-            
-            var quarterViewModel = CreateViewModel(quarter, weeksList);
+
+            var normalizedWeeks = CreateNormalizedWeeks(weeksList);
+            var normalizedJson = GetJson(normalizedWeeks);
+
+            QuarterViewModel quarterViewModel = CreateViewModel(quarter, weeksList);
+            quarterViewModel.NormalizedJson = normalizedJson;
             return View(quarterViewModel);
         }
 
-        private QuarterViewModel CreateViewModel(Quarter quarter, List<Week> weeksList)
+        [HttpPost]
+        public ActionResult Index(QuarterViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+                return View(viewModel);
+
+            if (!(HttpContext.Session[ApplicationConstants.Token] is SecurityToken token))
+                return RedirectToAction("Index", "Home");
+            
+            var dateTime = DateTime.Parse(viewModel.SelectedQuarter);
+            var quarter = _timeService.GetQuarter(dateTime);
+            var weeks = _timeService.GetWeeksInQuarter(quarter, token);
+
+            var weeksList = weeks.ToList();
+            _holidayService.AddHolidayHours(quarter, weeksList);
+            weeksList.ForEach(week => week.CategorizeHours());
+
+            var normalizedWeeks = CreateNormalizedWeeks(weeksList);
+            var normalizedJson = GetJson(normalizedWeeks);
+            
+            var quarterViewModel = CreateViewModel(quarter, weeksList);
+            quarterViewModel.Normalized = viewModel.Normalized;
+            quarterViewModel.NormalizedJson = normalizedJson;
+            return View(quarterViewModel);
+        }
+        
+        private QuarterViewModel CreateViewModel(Quarter quarter, IEnumerable<Week> weeksList)
         {
             var quarterViewModel = new QuarterViewModel();
             quarterViewModel.SelectedQuarter = quarter.MidDate.ToShortDateString();
@@ -55,30 +84,7 @@ namespace Impact.Website.Controllers
             quarterViewModel.Json = GetJson(weeksList);
             return quarterViewModel;
         }
-
-        [HttpPost]
-        public ActionResult Index(QuarterViewModel viewModel)
-        {
-            if (!ModelState.IsValid)
-                return RedirectToAction("Index", "Home");
-
-            var dateTime = DateTime.Parse(viewModel.SelectedQuarter);
-            var quarter = _timeService.GetQuarter(dateTime);
-
-            var weeks = _timeService.GetWeeksInQuarter(quarter);
-            if (weeks == null)
-                return RedirectToAction("Index", "Home");
-            
-            var weeksList = weeks.ToList();
-            _holidayService.AddHolidayHours(quarter, weeksList);
-            weeksList.ForEach(week => week.CategorizeHours());
-
-            var quarterViewModel = CreateViewModel(quarter, weeksList);
-            return View(quarterViewModel);
-        }
         
-        [HttpPost]
-
         private IEnumerable<SelectListItem> GetSelectList(Quarter quarter)
         {
             var startDate = DateTime.Now;
@@ -167,6 +173,37 @@ namespace Impact.Website.Controllers
 
             var replace = serializeObject.Replace('"', '\'');
             return replace;
+        }
+        
+        private static IEnumerable<Week> CreateNormalizedWeeks(List<Week> weeksList)
+        {
+            var weeks = weeksList.ConvertAll(w => w.Clone());
+
+            var lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours < ApplicationConstants.NormalWorkWeek);
+            var moveableWeeks = weeks.Where(w => w.MoveableOvertimeHours > 0).ToList();
+            MoveHours(lowWeeks, moveableWeeks, "MoveableOvertimeHours");
+            
+            lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours < ApplicationConstants.NormalWorkWeek);
+            var interestWeeks = weeks.Where(w => w.InterestHours > 0).ToList();
+            MoveHours(lowWeeks, interestWeeks, "InterestHours");
+            
+            return weeks;
+        }
+
+        private static void MoveHours(IEnumerable<Week> lowWeeks, List<Week> moveableWeeks, string propertyName)
+        {
+            foreach (var lowWeek in lowWeeks)
+            {
+                var weeksAbsorbed = 0;
+                foreach (var moveableWeek in moveableWeeks)
+                {
+                    var doneAbsorbing = lowWeek.AbsorbHours(moveableWeek, propertyName);
+                    if (doneAbsorbing)
+                        break;
+                    weeksAbsorbed++;
+                }
+                moveableWeeks.RemoveRange(0, weeksAbsorbed);
+            }
         }
     }
 

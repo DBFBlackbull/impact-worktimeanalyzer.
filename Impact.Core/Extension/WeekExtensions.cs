@@ -11,7 +11,7 @@ namespace Impact.Core.Extension
         {
             var hours = Math.Round(Convert.ToDecimal(week.TotalHours), 2);
 
-            var workHoursMinusHolidayHours = ApplicationConstants.WorkConst - week.HolidayHours;
+            var workHoursMinusHolidayHours = ApplicationConstants.NormalWorkWeek - week.HolidayHours;
             if (hours >= workHoursMinusHolidayHours)
             {
                 week.WorkHours = workHoursMinusHolidayHours;

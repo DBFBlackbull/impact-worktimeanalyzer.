@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using Impact.Core.Contants;
 
 namespace Impact.Core.Model
 {
-    public class Week
+    public class Week : IClonable<Week>
     {
         public Week()
         {
@@ -22,6 +25,27 @@ namespace Impact.Core.Model
         public decimal MoveableOvertimeHours { get; set; }
         public decimal LockedOvertimeHours { get; set; }
 
+        public bool AbsorbHours(Week otherWeek, string propertyName)
+        {
+            var propertyInfo = otherWeek.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
+            if (propertyInfo == null) 
+                return false;
+            
+            var moveableHours = (decimal)propertyInfo.GetValue(otherWeek);
+
+            var missingHours = ApplicationConstants.NormalWorkWeek - (WorkHours + HolidayHours);
+            if (missingHours > moveableHours)
+            {
+                WorkHours += moveableHours;
+                propertyInfo.SetValue(otherWeek, 0m);
+                return false;
+            }
+
+            WorkHours += missingHours;
+            propertyInfo.SetValue(otherWeek, moveableHours - missingHours);
+            return true;
+        }
+
         public object[] ToArray()
         {
             return new object[]
@@ -34,5 +58,22 @@ namespace Impact.Core.Model
                 LockedOvertimeHours
             };
         }
+
+        public Week Clone()
+        {
+            var week = new Week();
+            foreach (var property in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                var value = property.GetValue(this);
+                property.SetValue(week, value);
+            }
+
+            return week;
+        }
+    }
+
+    public interface IClonable<T>
+    {
+        T Clone();
     }
 }

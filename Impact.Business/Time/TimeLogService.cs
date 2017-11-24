@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Impact.Core.Contants;
 using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
 using TimeLog.TransactionalApi.SDK;
@@ -17,10 +16,11 @@ namespace Impact.Business.Time
             _timeRepository = timeRepository;
         }
 
-        public bool IsAuthorized(string username, string password)
+        public bool IsAuthorized(string username, string password, out SecurityToken securityToken)
         {
-            IEnumerable<string> messages;
-            return SecurityHandler.Instance.TryAuthenticate(username, password, out messages);
+            var authorized = SecurityHandler.Instance.TryAuthenticate(username, password, out var messages);
+            securityToken = ProjectManagementHandler.Instance.Token;
+            return authorized;
         }
 
         public Quarter GetQuarter(DateTime dateTime = new DateTime())
@@ -70,19 +70,9 @@ namespace Impact.Business.Time
             return quarter;
         }
 
-        public IEnumerable<Week> GetWeeksInQuarter(Quarter quarter)
+        public IEnumerable<Week> GetWeeksInQuarter(Quarter quarter, SecurityToken securityToken)
         {
-            SecurityToken token;
-            try
-            {
-                token = ProjectManagementHandler.Instance.Token;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            return _timeRepository.GetWeeksInQuarter(quarter, token);
+            return _timeRepository.GetWeeksInQuarter(quarter, securityToken);
         }
     }
 }
