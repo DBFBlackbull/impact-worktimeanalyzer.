@@ -11,7 +11,7 @@ namespace Impact.Website.Models
         public IEnumerable<SelectListItem> Quarters { get; set; }
         public string SelectedQuarter { get; set; }
         public string GraphTitle { get; set; }
-        public bool Normalized { get; set; }
+        public bool IsNormalized { get; set; }
 
         [DisplayName("Fra")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]

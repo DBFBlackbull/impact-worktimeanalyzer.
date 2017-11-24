@@ -19,7 +19,7 @@ namespace Impact.Business.Time
         public bool IsAuthorized(string username, string password, out SecurityToken securityToken)
         {
             var authorized = SecurityHandler.Instance.TryAuthenticate(username, password, out var messages);
-            securityToken = ProjectManagementHandler.Instance.Token;
+            securityToken = authorized ? ProjectManagementHandler.Instance.Token : null;
             return authorized;
         }
 

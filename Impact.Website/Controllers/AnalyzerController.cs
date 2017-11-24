@@ -68,7 +68,7 @@ namespace Impact.Website.Controllers
             var normalizedJson = GetJson(normalizedWeeks);
             
             var quarterViewModel = CreateViewModel(quarter, weeksList);
-            quarterViewModel.Normalized = viewModel.Normalized;
+            quarterViewModel.IsNormalized = viewModel.IsNormalized;
             quarterViewModel.NormalizedJson = normalizedJson;
             return View(quarterViewModel);
         }

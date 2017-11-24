@@ -11,7 +11,7 @@
 			    <form>
 			        <div class="form-group form-inline">
 			            @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control"})
-                        @Html.CheckBoxFor(m => m.Normalized, new {id = "toggle-normalized", data_toggle = "toggle", data_off = "Base", data_on = "Normalized"})
+                        @Html.CheckBoxFor(m => m.IsNormalized, new {id = "toggle-normalized", data_toggle = "toggle", data_off = "Base", data_on = "Normalized"})
                         <button type="submit" class="btn btn-primary">Submit</button>
 			        </div>
 			    </form>
@@ -29,7 +29,8 @@
 
 <script>
 	google.charts.load('current', { packages: ['corechart'] });
-	google.charts.setOnLoadCallback(function() { drawData(@Html.Raw(Model.Json)) });
+	var json = @Json.Encode(Model.IsNormalized) ? @Html.Raw(Model.NormalizedJson) : @Html.Raw(Model.Json);
+	google.charts.setOnLoadCallback(function() { drawData(json) });
 	var chart;
 	
 	var options = {
@@ -66,16 +67,10 @@
 	document.addEventListener("DOMContentLoaded", function(event) {
 	    $('#toggle-normalized').change(function() {
 	        var checked = $(this).prop('checked');
-	        console.log(checked);
-	        var json;
-	        if (checked) {
-	            json = @Html.Raw(Model.NormalizedJson);
-	        } else {
-	            json = @Html.Raw(Model.Json);
-	        } 
 	        
-	        var data = new google.visualization.arrayToDataTable(json);
-	        chart.draw(data, options);
+	        var newJson = checked ? @Html.Raw(Model.NormalizedJson) : @Html.Raw(Model.Json);
+	        var data = new google.visualization.arrayToDataTable(newJson);
+	        chart.draw(data, options); 
 	    });
 	});
 </script>
