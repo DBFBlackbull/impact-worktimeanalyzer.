@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Impact.Business.Holiday;
+using Impact.Core.Contants;
 using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
 using TimeLog.TransactionalApi.SDK;
@@ -10,10 +13,12 @@ namespace Impact.Business.Time
     public class TimeLogService : ITimeService
     {
         private readonly ITimeRepository _timeRepository;
+        private readonly IHolidayService _holidayService;
 
-        public TimeLogService(ITimeRepository timeRepository)
+        public TimeLogService(ITimeRepository timeRepository, IHolidayService holidayService)
         {
             _timeRepository = timeRepository;
+            _holidayService = holidayService;
         }
 
         public bool IsAuthorized(string username, string password, out SecurityToken securityToken)
@@ -23,7 +28,7 @@ namespace Impact.Business.Time
             return authorized;
         }
 
-        public Quarter GetQuarter(DateTime dateTime = new DateTime())
+        public Quarter GetQuarter(DateTime dateTime)
         {
             var quarter = new Quarter();
 
@@ -72,7 +77,41 @@ namespace Impact.Business.Time
 
         public IEnumerable<Week> GetWeeksInQuarter(Quarter quarter, SecurityToken securityToken)
         {
-            return _timeRepository.GetWeeksInQuarter(quarter, securityToken);
+            var rawWeeks = _timeRepository.GetWeeksInQuarter(quarter, securityToken).ToList();
+            _holidayService.AddHolidayHours(quarter, rawWeeks);
+            rawWeeks.ForEach(week => week.CategorizeHours());
+            return rawWeeks;
+        }
+
+        public IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList)
+        {
+            var weeks = weeksList.ConvertAll(w => w.Clone());
+
+            var lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours < ApplicationConstants.NormalWorkWeek);
+            var moveableWeeks = weeks.Where(w => w.MoveableOvertimeHours > 0).ToList();
+            MoveHours(lowWeeks, moveableWeeks, "MoveableOvertimeHours");
+            
+            lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours < ApplicationConstants.NormalWorkWeek);
+            var interestWeeks = weeks.Where(w => w.InterestHours > 0).ToList();
+            MoveHours(lowWeeks, interestWeeks, "InterestHours");
+            
+            return weeks;
+        }
+        
+        private static void MoveHours(IEnumerable<Week> lowWeeks, List<Week> moveableWeeks, string propertyName)
+        {
+            foreach (var lowWeek in lowWeeks)
+            {
+                var weeksAbsorbed = 0;
+                foreach (var moveableWeek in moveableWeeks)
+                {
+                    var doneAbsorbing = lowWeek.AbsorbHours(moveableWeek, propertyName);
+                    if (doneAbsorbing)
+                        break;
+                    weeksAbsorbed++;
+                }
+                moveableWeeks.RemoveRange(0, weeksAbsorbed);
+            }
         }
     }
 }

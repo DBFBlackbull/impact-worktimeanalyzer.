@@ -1,7 +1,7 @@
 ﻿google.charts.load('current', { packages: ['corechart', 'bar'] });
-google.charts.setOnLoadCallback(drawData);
+google.charts.setOnLoadCallback(drawWeeksChart);
 
-function drawStacked() {
+function drawWeeksChart() {
     var data = new google.visualization.arrayToDataTable([
         ['Uge', 'Work', 'Interessetid', '39-44', '44+'],
         ['Uge 1', 37.5, 1.5, 5, 3],

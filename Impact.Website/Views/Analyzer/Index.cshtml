@@ -1,76 +1,48 @@
-﻿@model Impact.Website.Models.QuarterViewModel
+﻿@using Impact.Website.Helper
+@using Newtonsoft.Json
+@model Impact.Website.Models.QuarterViewModel
 @{
 	ViewBag.Title = "Analyzer Page";
 }
 <div class="container">
 	<h2>Choose date</h2>
-	<div class="row">
-		@using (Html.BeginForm())
-		{
-			<div class="col-md-12">
-			    <form>
-			        <div class="form-group form-inline">
-			            @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control"})
-                        @Html.CheckBoxFor(m => m.IsNormalized, new {id = "toggle-normalized", data_toggle = "toggle", data_off = "Base", data_on = "Normalized"})
+    <div class="row">
+        @using (Html.BeginForm())
+        {
+            <div class="col-md-12">
+                <form>
+                    <div class="form-group form-inline">
+                        @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control"})
+                        @Html.CheckBoxFor(m => m.WeeksViewModel.IsNormalized, new {id = "toggle-normalized", data_toggle = "toggle", data_off = "Base", data_on = "Normalized"})
                         <button type="submit" class="btn btn-primary">Submit</button>
-			        </div>
-			    </form>
-			</div>
-		}
-	</div>
+                    </div>
+                </form>
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="balance_chart"></div>
+        </div>
+    </div>
 </div>
 <div class="container-fluid">
-	<div class="row">
-		<div class="col-md-12">
-			<div id="chart_div"></div>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-md-12">
+            
+            <div id="weeks_chart"></div>
+        </div>
+    </div>
 </div>
-
+@Scripts.Render("~/Scripts/Charts/js")
 <script>
-	google.charts.load('current', { packages: ['corechart'] });
-	var json = @Json.Encode(Model.IsNormalized) ? @Html.Raw(Model.NormalizedJson) : @Html.Raw(Model.Json);
-	google.charts.setOnLoadCallback(function() { drawData(json) });
-	var chart;
-	
-	var options = {
-	    width: 1600,
-	    height: 800,
-	    isStacked: true,
-	    title: '@Model.GraphTitle',
-	    colors: ['#289eff', '#3366cc', '#000000', 'orange', 'green'],
-	    animation:{
-	        duration: 1000,
-	        easing: 'out'
-	    },
-	    vAxis: {
-	        title: 'Timer',
-	        ticks: [2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 47.5, 50, 52.5, 55],
-	        viewWindowMode: 'explicit',
-	        viewWindow: {
-	            max: 50,
-	            min: 0
-	        }
-	    },
-	    hAxis: {
-	        title: 'Uge'
-	    }
-	}
-	
-	function drawData(json) {
-		var data = new google.visualization.arrayToDataTable(json);
+    document.addEventListener("DOMContentLoaded", function() {
+        var balance = @JavaScriptConvert.SerializeObject(Model.BalanceViewModel);
+        var weeks = @JavaScriptConvert.SerializeObject(Model.WeeksViewModel);
 
-	    chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-		chart.draw(data, options);
-	};
-
-	document.addEventListener("DOMContentLoaded", function(event) {
-	    $('#toggle-normalized').change(function() {
-	        var checked = $(this).prop('checked');
-	        
-	        var newJson = checked ? @Html.Raw(Model.NormalizedJson) : @Html.Raw(Model.Json);
-	        var data = new google.visualization.arrayToDataTable(newJson);
-	        chart.draw(data, options); 
-	    });
-	});
+        console.log(balance);
+        console.log(weeks.json);
+        
+        drawGraphs(balance, weeks);
+    })
 </script>

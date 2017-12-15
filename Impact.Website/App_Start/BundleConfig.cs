@@ -15,8 +15,8 @@ namespace Impact.Website
 						"~/Scripts/jquery.validate*"));
 
             bundles.Add(new ScriptBundle("~/Scripts/Charts/js").Include(
-                        "~/Scripts/Charts/loader.js"/*,
-                        "~/Scripts/Charts/impact.js"*/));
+                        "~/Scripts/Charts/loader.js",
+                        "~/Scripts/Charts/impact.js"));
 
 			// Use the development version of Modernizr to develop with and learn from. Then, when you're
 			// ready for production, use the build tool at http://modernizr.com to pick only the tests you need.

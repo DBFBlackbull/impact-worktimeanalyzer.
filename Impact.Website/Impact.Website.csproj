@@ -179,10 +179,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\JavaScriptConvert.cs" />
+    <Compile Include="Models\BalanceViewModel.cs" />
+    <Compile Include="Models\Column.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\WeeksViewModel.cs" />
     <Compile Include="Models\QuarterViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\WeeksViewModelProvider.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>

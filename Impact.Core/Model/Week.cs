@@ -25,6 +25,50 @@ namespace Impact.Core.Model
         public decimal MoveableOvertimeHours { get; set; }
         public decimal LockedOvertimeHours { get; set; }
 
+        // So ugly please find a better solution. Really really
+        public void CategorizeHours()
+        {
+            var hours = Math.Round(Convert.ToDecimal(TotalHours), 2);
+
+            var workHoursMinusHolidayHours = ApplicationConstants.NormalWorkWeek - HolidayHours;
+            if (hours >= workHoursMinusHolidayHours)
+            {
+                WorkHours = workHoursMinusHolidayHours;
+                hours -= workHoursMinusHolidayHours;
+            }
+            else
+            {
+                WorkHours = hours;
+                return;
+            }
+
+            if (hours >= ApplicationConstants.InterestConst)
+            {
+                InterestHours = ApplicationConstants.InterestConst;
+                hours -= ApplicationConstants.InterestConst;
+            }
+            else
+            {
+                InterestHours = hours;
+                return;
+            }
+
+            if (hours >= ApplicationConstants.MoveableConst)
+            {
+                MoveableOvertimeHours = ApplicationConstants.MoveableConst;
+                hours -= ApplicationConstants.MoveableConst;
+            }
+            else
+            {
+                MoveableOvertimeHours = hours;
+                return;
+            }
+
+            LockedOvertimeHours = hours;
+
+            return;
+        }
+        
         public bool AbsorbHours(Week otherWeek, string propertyName)
         {
             var propertyInfo = otherWeek.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);

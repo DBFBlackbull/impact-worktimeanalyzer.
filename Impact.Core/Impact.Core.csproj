@@ -41,7 +41,6 @@
   <ItemGroup>
     <Compile Include="Contants\ApplicationConstants.cs" />
     <Compile Include="Extension\DateTimeExtensions.cs" />
-    <Compile Include="Extension\WeekExtensions.cs" />
     <Compile Include="Model\Quarter.cs" />
     <Compile Include="Model\Week.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

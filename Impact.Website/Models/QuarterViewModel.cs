@@ -10,17 +10,8 @@ namespace Impact.Website.Models
     {
         public IEnumerable<SelectListItem> Quarters { get; set; }
         public string SelectedQuarter { get; set; }
-        public string GraphTitle { get; set; }
-        public bool IsNormalized { get; set; }
-
-        [DisplayName("Fra")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
-        public DateTime From { get; set; }
-
-        [DisplayName("Til")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
-        public DateTime To { get; set; }
-        public string Json { get; set; }
-        public string NormalizedJson { get; set; }
+        
+        public BalanceViewModel BalanceViewModel { get; set; }
+        public WeeksViewModel WeeksViewModel { get; set; }
     }
 }
