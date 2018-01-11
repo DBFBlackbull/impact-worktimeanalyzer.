@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace Impact.Test
 {
     [TestFixture]
-    public class Tests
+    public class ListTests
     {
         [Test]
         public void TestListCopy()

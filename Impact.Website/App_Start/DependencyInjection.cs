@@ -1,6 +1,5 @@
 ﻿using System.Web.Mvc;
 using Impact.Business.Holiday;
-using Impact.Business.Scanner;
 using Impact.Business.Time;
 using Impact.DataAccess.Timelog;
 using SimpleInjector;

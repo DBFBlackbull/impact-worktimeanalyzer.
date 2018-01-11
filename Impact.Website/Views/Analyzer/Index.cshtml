@@ -13,7 +13,7 @@
                 <form>
                     <div class="form-group form-inline">
                         @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control"})
-                        @Html.CheckBoxFor(m => m.WeeksViewModel.IsNormalized, new {id = "toggle-normalized", data_toggle = "toggle", data_off = "Base", data_on = "Normalized"})
+                        @Html.CheckBoxFor(m => m.WeeksChartViewModel.IsNormalized, new {id = "toggle-normalized", data_toggle = "toggle", data_off = "Base", data_on = "Normalized"})
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
@@ -22,27 +22,36 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div id="balance_chart"></div>
+            <div id="@Model.BalanceChartViewModel.DivId"></div>
         </div>
     </div>
 </div>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            
-            <div id="weeks_chart"></div>
+            <div id="@Model.WeeksChartViewModel.DivId"></div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div id="@Model.PieChartViewModel.DivId"></div>
+        </div>
+        <div class="col-md-4">
+            <div id="@Model.PotentialChartViewModel.DivId"></div>
         </div>
     </div>
 </div>
 @Scripts.Render("~/Scripts/Charts/js")
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        var balance = @JavaScriptConvert.SerializeObject(Model.BalanceViewModel);
-        var weeks = @JavaScriptConvert.SerializeObject(Model.WeeksViewModel);
+        var balance = @JavaScriptConvert.SerializeObject(Model.BalanceChartViewModel);
+        var weeks = @JavaScriptConvert.SerializeObject(Model.WeeksChartViewModel);
+        console.log(weeks);
+        var pie = @JavaScriptConvert.SerializeObject(Model.PieChartViewModel);
+        var potential = @JavaScriptConvert.SerializeObject(Model.PotentialChartViewModel);
 
-        console.log(balance);
-        console.log(weeks.json);
-        
-        drawGraphs(balance, weeks);
+        drawGraphs(balance, weeks, pie, potential);
     })
 </script>

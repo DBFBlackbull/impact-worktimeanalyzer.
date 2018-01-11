@@ -19,6 +19,7 @@ namespace Impact.Core.Model
         public int Number { get; set; }
         public ISet<DateTime> Dates { get; set; }
         public double TotalHours { get; set; }
+        public decimal QuarterEdgeHours { get; set; }
         public decimal HolidayHours { get; set; }
         public decimal WorkHours { get; set; }
         public decimal InterestHours { get; set; }
@@ -30,11 +31,11 @@ namespace Impact.Core.Model
         {
             var hours = Math.Round(Convert.ToDecimal(TotalHours), 2);
 
-            var workHoursMinusHolidayHours = ApplicationConstants.NormalWorkWeek - HolidayHours;
-            if (hours >= workHoursMinusHolidayHours)
+            var workWeek = ApplicationConstants.NormalWorkWeek - HolidayHours - QuarterEdgeHours;
+            if (hours >= workWeek)
             {
-                WorkHours = workHoursMinusHolidayHours;
-                hours -= workHoursMinusHolidayHours;
+                WorkHours = workWeek;
+                hours -= workWeek;
             }
             else
             {
@@ -68,6 +69,15 @@ namespace Impact.Core.Model
 
             return;
         }
+
+        public void AddQuarterEdgeHours(Quarter quarter)
+        {
+            foreach (var date in Dates)
+            {
+                if (date < quarter.From || date > quarter.To)
+                    QuarterEdgeHours += ApplicationConstants.NormalWorkDay;
+            }
+        }
         
         public bool AbsorbHours(Week otherWeek, string propertyName)
         {
@@ -77,7 +87,7 @@ namespace Impact.Core.Model
             
             var moveableHours = (decimal)propertyInfo.GetValue(otherWeek);
 
-            var missingHours = ApplicationConstants.NormalWorkWeek - (WorkHours + HolidayHours);
+            var missingHours = ApplicationConstants.NormalWorkWeek - (WorkHours + HolidayHours + QuarterEdgeHours);
             if (missingHours > moveableHours)
             {
                 WorkHours += moveableHours;
@@ -95,11 +105,12 @@ namespace Impact.Core.Model
             return new object[]
             {
                 "Uge " + Number,
-                HolidayHours,
-                WorkHours,
-                InterestHours,
-                MoveableOvertimeHours,
-                LockedOvertimeHours
+                QuarterEdgeHours == 0 ? (decimal?)null : QuarterEdgeHours, "fill-color: #EFEFEF; opacity: 0.5",
+                HolidayHours == 0 ? (decimal?)null : HolidayHours,
+                WorkHours == 0 ? (decimal?)null : WorkHours,
+                InterestHours == 0 ? (decimal?)null : InterestHours,
+                MoveableOvertimeHours == 0 ? (decimal?)null : MoveableOvertimeHours,
+                LockedOvertimeHours == 0 ? (decimal?)null : LockedOvertimeHours
             };
         }
 

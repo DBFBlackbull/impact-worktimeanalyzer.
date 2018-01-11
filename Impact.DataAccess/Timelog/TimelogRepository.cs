@@ -14,7 +14,7 @@ namespace Impact.DataAccess.Timelog
         public IEnumerable<Week> GetWeeksInQuarter(Quarter quarter, SecurityToken token)
         {
             var instanceProjectManagementClient = ProjectManagementHandler.Instance.ProjectManagementClient;
-            var result = instanceProjectManagementClient.GetWorkPaged(token.Initials, quarter.From, quarter.To, 1, 500, token);
+            var result = instanceProjectManagementClient.GetWorkPaged("deb", quarter.From, quarter.To, 1, 500, token);
 
             var calendar = CultureInfo.InvariantCulture.Calendar;
             var weeksToHoursDictionary = new Dictionary<int, Week>();
@@ -29,7 +29,7 @@ namespace Impact.DataAccess.Timelog
                 var weekNumber = calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
 
                 if (!weeksToHoursDictionary.TryGetValue(weekNumber, out var week))
-                    weeksToHoursDictionary[weekNumber] = week = CreateWeek(weekNumber, dateTime, quarter);
+                    weeksToHoursDictionary[weekNumber] = week = CreateWeek(weekNumber, dateTime);
 
                 week.TotalHours += workUnitFlat.Hours;
             }
@@ -37,10 +37,10 @@ namespace Impact.DataAccess.Timelog
             return weeksToHoursDictionary.Values.OrderBy(w => w.Number);;
         }
 
-        private static Week CreateWeek(int weekNumber, DateTime dateTime, Quarter quarter)
+        private static Week CreateWeek(int weekNumber, DateTime dateTime)
         {
             var day = dateTime;
-            while (day.DayOfWeek != DayOfWeek.Monday && day > quarter.From)
+            while (day.DayOfWeek != DayOfWeek.Monday)
             {
                 day = day.AddDays(-1);
             }

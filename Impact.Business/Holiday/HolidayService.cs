@@ -14,9 +14,9 @@ namespace Impact.Business.Holiday
             switch (quarter.Number)
             {
                 case 1 :
-                    return new List<DateTime> { new DateTime(year, 1, 1)};
+                    return new List<DateTime>(EasterBasedHolidays(quarter)) { new DateTime(year, 1, 1), };
                 case 2 :
-                    return EasterBasedHolidays(year);
+                    return EasterBasedHolidays(quarter);
                 case 3 :
                     return new List<DateTime>();
                 case 4 :
@@ -45,11 +45,12 @@ namespace Impact.Business.Holiday
             }
         }
 
-        private List<DateTime> EasterBasedHolidays(int year)
+        private List<DateTime> EasterBasedHolidays(Quarter quarter)
         {
+            var year = quarter.MidDate.Year;
             var easter = CalculateEaster(year);
 
-            return new List<DateTime>
+            var easterBasedHolidays = new List<DateTime>
             {
                 easter.AddDays(-3), //Skærtorsdag
                 easter.AddDays(-2), //Langfredag
@@ -58,8 +59,16 @@ namespace Impact.Business.Holiday
                 easter.AddDays(39), //Kristi Himmelfart
                 easter.AddDays(50), //2. Pinsedag
             };
+            easterBasedHolidays.RemoveAll(d => d < quarter.From || d > quarter.To);
+            return easterBasedHolidays;
         }
 
+        /// <summary>
+        /// Black magic from the depth of the internet and stack overflow.
+        /// Pray to the gods that this algorithm is correct.
+        /// </summary>
+        /// <param name="year">The year for which easter is to be calculated</param>
+        /// <returns>The date that easter falls on</returns>
         private DateTime CalculateEaster(int year)
         {
             int g = year % 19;
