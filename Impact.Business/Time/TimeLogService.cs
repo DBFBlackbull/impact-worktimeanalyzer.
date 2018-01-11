@@ -80,7 +80,10 @@ namespace Impact.Business.Time
             var rawWeeks = _timeRepository.GetWeeksInQuarter(quarter, securityToken).ToList();
             _holidayService.AddHolidayHours(quarter, rawWeeks);
             rawWeeks.FirstOrDefault()?.AddQuarterEdgeHours(quarter);
-            rawWeeks.LastOrDefault()?.AddQuarterEdgeHours(quarter);
+
+            if (rawWeeks.Count > 1)
+                rawWeeks.LastOrDefault()?.AddQuarterEdgeHours(quarter);
+
             rawWeeks.ForEach(week => week.CategorizeHours());
             return rawWeeks;
         }
