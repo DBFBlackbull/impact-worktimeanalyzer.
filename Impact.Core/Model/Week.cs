@@ -107,9 +107,9 @@ namespace Impact.Core.Model
                 "Uge " + Number,
                 QuarterEdgeHours == 0 ? (decimal?)null : QuarterEdgeHours, "fill-color: #EFEFEF; opacity: 0.5",
                 HolidayHours == 0 ? (decimal?)null : HolidayHours,
-                WorkHours == 0 ? (decimal?)null : WorkHours,
-                InterestHours == 0 ? (decimal?)null : InterestHours,
-                MoveableOvertimeHours == 0 ? (decimal?)null : MoveableOvertimeHours,
+                WorkHours, // This needs to be animated, therefore must not be null
+                InterestHours, // This needs to be animated, therefore must not be null
+                MoveableOvertimeHours, // This needs to be animated, therefore must not be null
                 LockedOvertimeHours == 0 ? (decimal?)null : LockedOvertimeHours
             };
         }

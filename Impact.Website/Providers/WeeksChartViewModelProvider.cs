@@ -22,7 +22,8 @@ namespace Impact.Website.Providers
 
         private static int YAxisMax(List<Week> weeksList)
         {
-            return Math.Max(50, (int)Math.Ceiling(weeksList.Max(w => w.TotalHours) / 5) * 5);
+            var max = weeksList.Count == 0 ? 0 : weeksList.Max(w => w.TotalHours);
+            return Math.Max(50, (int)Math.Ceiling(max / 5) * 5);
         }
 
         private static List<object[]> GetJson(IEnumerable<Week> weeks)
