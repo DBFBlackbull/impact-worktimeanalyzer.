@@ -1,6 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNet.Identity;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Impact.Website.Models
 {

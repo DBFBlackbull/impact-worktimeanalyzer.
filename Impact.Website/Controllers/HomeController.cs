@@ -14,14 +14,14 @@ namespace Impact.Website.Controllers
 			_timeService = timeService;
 		}
 
-	    //[RequireHttps]
+	    [RequireHttps]
 		public ActionResult Index()
 		{
 			return View(new LoginViewModel());
 		}
 
 		[HttpPost]
-		//[RequireHttps]
+		[RequireHttps]
 		public ActionResult Index(LoginViewModel loginViewModel)
 		{
 		    if (!ModelState.IsValid)
