@@ -15,8 +15,8 @@ namespace Impact.Website.Providers
             weeksViewModel.GraphTitle = GraphTitle(quarter);
             weeksViewModel.IsNormalized = isNormalized;
             weeksViewModel.YMax = YAxisMax(weeksList);
-            weeksViewModel.Json = GetJson(weeksList);
-            weeksViewModel.NormalizedJson = GetJson(normalizedWeeks);
+            weeksViewModel.Json = GetJson(weeksList, null);
+            weeksViewModel.NormalizedJson = GetJson(normalizedWeeks, 0);
             return weeksViewModel;
         }
 
@@ -26,7 +26,7 @@ namespace Impact.Website.Providers
             return Math.Max(50, (int)Math.Ceiling(max / 5) * 5);
         }
 
-        private static List<object[]> GetJson(IEnumerable<Week> weeks)
+        private static List<object[]> GetJson(IEnumerable<Week> weeks, decimal? defaultValue)
         {
             List<object[]> googleFormatedWeeks = new List<object[]>
             {
@@ -42,7 +42,7 @@ namespace Impact.Website.Providers
                     new Column {Label = "44+ : 150% løn", Type = "number"}
                 }
             };
-            googleFormatedWeeks.AddRange(weeks.Select(week => week.ToArray()));
+            googleFormatedWeeks.AddRange(weeks.Select(week => week.ToArray(defaultValue)));
             return googleFormatedWeeks;
         }
         

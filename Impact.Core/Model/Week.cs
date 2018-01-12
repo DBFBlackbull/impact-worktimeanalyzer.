@@ -100,16 +100,16 @@ namespace Impact.Core.Model
             return true;
         }
 
-        public object[] ToArray()
+        public object[] ToArray(decimal? defaultValue = 0)
         {
             return new object[]
             {
                 "Uge " + Number,
                 QuarterEdgeHours == 0 ? (decimal?)null : QuarterEdgeHours, "fill-color: #EFEFEF; opacity: 0.5",
                 HolidayHours == 0 ? (decimal?)null : HolidayHours,
-                WorkHours, // This needs to be animated, therefore must not be null
-                InterestHours, // This needs to be animated, therefore must not be null
-                MoveableOvertimeHours, // This needs to be animated, therefore must not be null
+                WorkHours == 0 ? defaultValue : WorkHours, // This needs to be animated, therefore must not be null
+                InterestHours == 0 ? defaultValue : InterestHours, // This needs to be animated, therefore must not be null
+                MoveableOvertimeHours == 0 ? defaultValue : MoveableOvertimeHours, // This needs to be animated, therefore must not be null
                 LockedOvertimeHours == 0 ? (decimal?)null : LockedOvertimeHours
             };
         }
