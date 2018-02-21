@@ -21,13 +21,6 @@ namespace Impact.Business.Time
             _holidayService = holidayService;
         }
 
-        public bool IsAuthorized(string username, string password, out SecurityToken securityToken)
-        {
-            var authorized = SecurityHandler.Instance.TryAuthenticate(username, password, out var messages);
-            securityToken = authorized ? ProjectManagementHandler.Instance.Token : null;
-            return authorized;
-        }
-
         public Quarter GetQuarter(DateTime dateTime)
         {
             var quarter = new Quarter();
@@ -92,11 +85,11 @@ namespace Impact.Business.Time
         {
             var weeks = weeksList.ConvertAll(w => w.Clone());
 
-            var lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours < ApplicationConstants.NormalWorkWeek);
+            var lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < ApplicationConstants.NormalWorkWeek);
             var moveableWeeks = weeks.Where(w => w.MoveableOvertimeHours > 0).ToList();
             MoveHours(lowWeeks, moveableWeeks, "MoveableOvertimeHours");
             
-            lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours < ApplicationConstants.NormalWorkWeek);
+            lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < ApplicationConstants.NormalWorkWeek);
             var interestWeeks = weeks.Where(w => w.InterestHours > 0).ToList();
             MoveHours(lowWeeks, interestWeeks, "InterestHours");
             

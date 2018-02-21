@@ -17,7 +17,7 @@ function drawBalanceChart (balance) {
             title: balance.title,
             subtitle: balance.subTitle
         },
-        height: 150,
+        height: 170,
         colors: [balance.color],
         hAxis: {
             viewWindowMode: 'explicit',

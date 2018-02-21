@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using Impact.Business.Holiday;
+using Impact.Business.Login;
 using Impact.Business.Time;
 using Impact.DataAccess.Timelog;
 using SimpleInjector;
@@ -16,6 +17,7 @@ namespace Impact.Website
 			container.Options.DefaultLifestyle = Lifestyle.Transient;
 			container.Options.DefaultScopedLifestyle = new WebRequestLifestyle();
 
+			container.Register<ILoginService, TimelogLoginService>(Lifestyle.Scoped);
 			container.Register<ITimeService, TimeLogService>(Lifestyle.Scoped);
 			container.Register<ITimeRepository, TimeLogRepository>(Lifestyle.Scoped);
 			container.Register<IHolidayService, HolidayService>(Lifestyle.Scoped);

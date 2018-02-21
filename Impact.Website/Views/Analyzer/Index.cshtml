@@ -5,16 +5,15 @@
 	ViewBag.Title = "Analyzer Page";
 }
 <div class="container">
-	<h2>Choose date</h2>
+	<h2>Vælg kvartal</h2>
     <div class="row">
-        @using (Html.BeginForm())
+        @using (Html.BeginForm("Index", "Analyzer", FormMethod.Post, new { id = "quarterForm", name = "quarterForm"}))
         {
             <div class="col-md-12">
                 <form>
                     <div class="form-group form-inline">
-                        @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control"})
-                        @Html.CheckBoxFor(m => m.WeeksChartViewModel.IsNormalized, new {id = "toggle-normalized", data_toggle = "toggle", data_off = "Base", data_on = "Normalized"})
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control", onchange = "Submit()"})
+                        @Html.CheckBoxFor(m => m.WeeksChartViewModel.IsNormalized, new {id = "toggle-normalized", data_toggle = "toggle", data_off = "Registrerede Timer", data_on = "Udbetale Timer"})
                     </div>
                 </form>
             </div>
@@ -45,6 +44,9 @@
 </div>
 @Scripts.Render("~/Scripts/Charts/js")
 <script>
+    function Submit() {
+        document.quarterForm.submit();
+    }
     document.addEventListener("DOMContentLoaded", function() {
         var balance = @JavaScriptConvert.SerializeObject(Model.BalanceChartViewModel);
         var weeks = @JavaScriptConvert.SerializeObject(Model.WeeksChartViewModel);

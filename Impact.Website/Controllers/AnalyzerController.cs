@@ -29,7 +29,7 @@ namespace Impact.Website.Controllers
         public ActionResult Index()
         {
             if (!(HttpContext.Session[ApplicationConstants.Token] is SecurityToken token))
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Login");
             
             var quarterViewModel = CreateViewModels(DateTime.Now, token);
             return View(quarterViewModel);
@@ -42,7 +42,7 @@ namespace Impact.Website.Controllers
                 return View(viewModel);
 
             if (!(HttpContext.Session[ApplicationConstants.Token] is SecurityToken token))
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Login");
 
             var model = viewModel;
 
@@ -66,41 +66,46 @@ namespace Impact.Website.Controllers
             quarterViewModel.SelectedQuarter = quarter.MidDate.ToShortDateString();
             quarterViewModel.Quarters = GetSelectList(quarter);
 
-            quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedWeeks);
+            quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(weeks);
             quarterViewModel.WeeksChartViewModel = WeeksChartViewModelProvider.CreateWeeksViewModel(quarter, weeks, normalizedWeeks, isNormalized);
             quarterViewModel.PieChartViewModel = CreatePieChartViewModel(normalizedWeeks);
-            var round = interestHoursSum == 0 ? 0 : Math.Round(moveableOvertimeHours / interestHoursSum / percentile * 100);
+            var round = interestHoursSum == 0 ? 100 : Math.Round(moveableOvertimeHours / interestHoursSum / percentile * 100);
             var potentialOptions = new GaugeChartViewModel.OptionsViewModel(0, 33, 66, 100);
             quarterViewModel.PotentialChartViewModel = new GaugeChartViewModel("potential_chart", potentialOptions, CreateGaugeJson("Potentiale", round));
             
             return quarterViewModel;
         }
 
-        private BalanceChartViewModel CreateBalanceViewModel(List<Week> normalizedWeeks)
+        private BalanceChartViewModel CreateBalanceViewModel(List<Week> weeks)
         {
-            var sum = normalizedWeeks.Sum(w => w.InterestHours + w.MoveableOvertimeHours) -
-                      normalizedWeeks.Sum(w => w.WorkHours + w.HolidayHours - ApplicationConstants.NormalWorkWeek) - 1;
+            var previousWeeks = weeks.Where(w => !w.Dates.Contains(DateTime.Today)).ToList();
+            var normalizedWeeks = _timeService.GetNormalizedWeeks(previousWeeks).ToList();
+            var sum1 = normalizedWeeks.Sum(w => w.InterestHours + w.MoveableOvertimeHours);
+            var sum2 = normalizedWeeks.Sum(w => ApplicationConstants.NormalWorkWeek - (w.WorkHours + w.HolidayHours + w.QuarterEdgeHours));
+            var sum = sum1 - sum2;
 
-            var max = (int)Math.Ceiling(sum / 5) * 5;
+            int ceiling = (int)Math.Ceiling(sum >= 0 ? sum : sum / 10);
+            int dynamicXMax = ceiling * 10;
+            int xMax = Math.Max(10, dynamicXMax < 0 ? dynamicXMax * -1 : dynamicXMax);
 
             List<object[]> googleFormatedBalance = new List<object[]>
             {
                 new object[]
                 {
                     new Column{Label = "", Type = "string"},
-                    new Column{Label = "Sum", Type = "number"},
+                    new Column{Label = "Timer", Type = "number"},
                      
                 }
             };
-            googleFormatedBalance.Add(new object[] {"Sum", sum});
+            googleFormatedBalance.Add(new object[] {"Saldo", sum});
             
             var balanceViewModel = new BalanceChartViewModel();
             balanceViewModel.DivId = "balance_chart";
-            balanceViewModel.Title = "Over/Under";
-            balanceViewModel.SubTitle = "Interessetid + MoveableHours - MissingHours";
+            balanceViewModel.Title = "Time saldo";
+            balanceViewModel.SubTitle = "Viser din \"time-saldo\" for dette kvartal. Dette er summen af dine flytbare timer (interessetid + 39-44 overarbejde) minus dine manglende timer (hvis du er gået tidligt hjem en uge)\nKort sagt: Er grafen i minus skal du arbejde længere en uge. Er grafen i plus kan du gå tidligt hjem en uge";
             balanceViewModel.Color = sum >= 0 ? ApplicationConstants.Color.Blue : ApplicationConstants.Color.Black;
-            balanceViewModel.XMax = max;
-            balanceViewModel.XMin = -1 * max;
+            balanceViewModel.XMax = xMax;
+            balanceViewModel.XMin = -1 * xMax;
             balanceViewModel.Json = googleFormatedBalance;
             return balanceViewModel;
         }
@@ -173,108 +178,5 @@ namespace Impact.Website.Controllers
 
             return selectListItems;
         }
-
-//        public ActionResult Demo(string id)
-//        {
-//            List<Week> weeks;
-//            QuarterViewModel quarterViewModel;
-//            switch (id)
-//            {
-//                case "1":
-//                    weeks = new List<Week>
-//                    {
-//                        new Week
-//                        {
-//                            Number = 1,
-//                            TotalHours = 39
-//                        },
-//                        new Week
-//                        {
-//                            Number = 2,
-//                            TotalHours = 36
-//                        },
-//                        new Week
-//                        {
-//                            Number = 3,
-//                            TotalHours = 39
-//                        },
-//                        new Week
-//                        {
-//                            Number = 4,
-//                            TotalHours = 36
-//                        },
-//                        new Week
-//                        {
-//                            Number = 5,
-//                            TotalHours = 39
-//                        },
-//                        new Week
-//                        {
-//                            Number = 6,
-//                            TotalHours = 36
-//                        },
-//                    };
-//
-//                    quarterViewModel = CreateDemoViewModel(weeks);
-//                    return View("Index", quarterViewModel);
-//                case "2":
-//                    weeks = new List<Week>
-//                    {
-//                        new Week
-//                        {
-//                            Number = 1,
-//                            TotalHours = 39
-//                        },
-//                        new Week
-//                        {
-//                            Number = 2,
-//                            TotalHours = 36
-//                        },
-//                        new Week
-//                        {
-//                            Number = 3,
-//                            TotalHours = 39
-//                        },
-//                        new Week
-//                        {
-//                            Number = 4,
-//                            TotalHours = 36
-//                        },
-//                        new Week
-//                        {
-//                            Number = 5,
-//                            TotalHours = 39
-//                        },
-//                        new Week
-//                        {
-//                            Number = 6,
-//                            TotalHours = 36
-//                        },
-//                        new Week
-//                        {
-//                            Number = 7,
-//                            TotalHours = 45
-//                        },
-//                    };
-//
-////                    quarterViewModel = CreateDemoViewModel(weeks);
-//                    return View("Index", quarterViewModel);
-//            }
-//
-//            return Content("test");
-//        }
-        
-//        public QuarterViewModel CreateDemoViewModel(List<Week> weeks)
-//        {
-//            var quarter = _timeService.GetQuarter();
-//            _holidayService.AddHolidayHours(quarter, weeks);
-//            weeks.ForEach(week => week.CategorizeHours());
-//
-//            var normalizedWeeks = CreateNormalizedWeeks(weeks).ToList();
-//
-//            var quarterViewModel = CreateWeeksViewModel(quarter, weeks);
-//            quarterViewModel.NormalizedJson = GetJson(normalizedWeeks);
-//            return quarterViewModel;
-//        }
     }
 }
