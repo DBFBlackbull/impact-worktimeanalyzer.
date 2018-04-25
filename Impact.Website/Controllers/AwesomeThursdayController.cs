@@ -29,7 +29,7 @@ namespace Impact.Website.Controllers
             if (!(HttpContext.Session[ApplicationConstants.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
             
-            var awesomeThursdays = _timeRepository.GetAwesomeThursdays().ToList();
+            var awesomeThursdays = _timeRepository.GetAwesomeThursdays(token).ToList();
             var balanceChartViewModel = CreateBalanceViewModel(awesomeThursdays);
             var monthViewModel = CreateMonthsOverviewViewModel(awesomeThursdays);
             var disclaimer = 

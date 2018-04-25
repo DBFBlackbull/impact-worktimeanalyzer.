@@ -55,13 +55,11 @@ namespace Impact.DataAccess.Timelog
             return week;
         }
 
-        public IEnumerable<Month> GetAwesomeThursdays()
+        public IEnumerable<Month> GetAwesomeThursdays(SecurityToken token)
         {
             var dateToMonth = new Dictionary<DateTime, Month>();
 
             var instanceProjectManagementClient = ProjectManagementHandler.Instance.ProjectManagementClient;
-            var token = ProjectManagementHandler.Instance.Token;
-
             var result = instanceProjectManagementClient.GetWorkPaged(token.Initials, new DateTime(2012, 1, 1), DateTime.Now, 1, 1, token);
             DateTime firstRecord = result.Return.Min(w => w.Date);
 
