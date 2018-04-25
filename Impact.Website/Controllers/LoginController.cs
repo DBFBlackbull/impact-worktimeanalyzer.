@@ -41,7 +41,7 @@ namespace Impact.Website.Controllers
 			}
 		    
 		    HttpContext.Session.Add(ApplicationConstants.Token, token);
-		    return RedirectToAction("Index", "Analyzer");
+		    return RedirectToAction("Index", "Site");
 		}
 
 	    public ActionResult Logout()

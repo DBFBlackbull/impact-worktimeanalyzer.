@@ -174,19 +174,22 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="Controllers\AnalyzerController.cs" />
+    <Compile Include="Controllers\AwesomeThursdayController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\OvertimeController.cs" />
+    <Compile Include="Controllers\SiteController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\JavaScriptConvert.cs" />
-    <Compile Include="Models\BalanceChartViewModel.cs" />
+    <Compile Include="Models\AwesomeThursdayViewModel.cs" />
+    <Compile Include="Models\Charts\BalanceChartViewModel.cs" />
+    <Compile Include="Models\Charts\GaugeChartViewModel.cs" />
+    <Compile Include="Models\Charts\IChart.cs" />
+    <Compile Include="Models\Charts\OverviewChartViewModel.cs" />
+    <Compile Include="Models\Charts\PieChartViewModel.cs" />
     <Compile Include="Models\Column.cs" />
-    <Compile Include="Models\GaugeChartViewModel.cs" />
-    <Compile Include="Models\IChart.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\PieChartViewModel.cs" />
-    <Compile Include="Models\WeeksChartViewModel.cs" />
     <Compile Include="Models\QuarterViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -207,9 +210,8 @@
     <None Include="Properties\PublishProfiles\TimelogAnalyzer - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\BootstrapToggle\bootstrap.toggle.min.js" />
-    <Content Include="Scripts\Charts\betaCharts.js" />
+    <Content Include="Scripts\Charts\charts.js" />
     <Content Include="Scripts\Charts\loader.js" />
-    <Content Include="Scripts\Charts\impact.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -221,6 +223,9 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Views\AwesomeThursday\Index.cshtml" />
+    <Content Include="Views\Overtime\Index.cshtml" />
+    <Content Include="Views\Site\Index.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -235,7 +240,6 @@
     <Content Include="Views\Login\About.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <Content Include="Views\Analyzer\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

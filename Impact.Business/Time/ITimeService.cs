@@ -10,5 +10,6 @@ namespace Impact.Business.Time
 	    Quarter GetQuarter(DateTime dateTime);
 	    IEnumerable<Week> GetWeeksInQuarter(Quarter quarter, SecurityToken securityToken);
 	    IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList);
+	    IEnumerable<Month> GetNormalizedMonths(List<Month> monthsList);
 	}
 }

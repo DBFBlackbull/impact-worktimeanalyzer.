@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Impact.Core.Contants;
 using Impact.Core.Model;
 using TimeLog.TransactionalApi.SDK;
+using TimeLog.TransactionalApi.SDK.ProjectManagementService;
 using ExecutionStatus = TimeLog.TransactionalApi.SDK.ProjectManagementService.ExecutionStatus;
 using SecurityToken = TimeLog.TransactionalApi.SDK.ProjectManagementService.SecurityToken;
 
@@ -51,6 +53,50 @@ namespace Impact.DataAccess.Timelog
             week.Dates.Add(day.AddDays(3));
             week.Dates.Add(day.AddDays(4));
             return week;
+        }
+
+        public IEnumerable<Month> GetAwesomeThursdays()
+        {
+            var dateToMonth = new Dictionary<DateTime, Month>();
+
+            var instanceProjectManagementClient = ProjectManagementHandler.Instance.ProjectManagementClient;
+            var token = ProjectManagementHandler.Instance.Token;
+
+            var result = instanceProjectManagementClient.GetWorkPaged(token.Initials, new DateTime(2012, 1, 1), DateTime.Now, 1, 1, token);
+            DateTime firstRecord = result.Return.Min(w => w.Date);
+
+            while (firstRecord < DateTime.Now)
+            {
+                var dateTime = new DateTime(firstRecord.Year, firstRecord.Month, 1);
+                dateToMonth[dateTime] = new Month(dateTime);
+                firstRecord = firstRecord.AddMonths(1);
+            }
+            
+            WorkUnitFlat[] workUnitFlats;
+            var pageIndex = 1;
+            do
+            {
+                result = instanceProjectManagementClient.GetWorkPaged(token.Initials, new DateTime(2012, 1, 1), DateTime.Now, pageIndex, ApplicationConstants.PageSize, token);
+                if (result.ResponseState != ExecutionStatus.Success)
+                    break;
+                
+                workUnitFlats = result.Return;
+                
+                var awesomeThursdays = workUnitFlats.Where(w => w.TaskName == "Fed torsdag" || w.TaskName == "PL Fed Torsdag").ToList();
+                foreach (var awesomeThursday in awesomeThursdays)
+                {
+                    var dateTime = new DateTime(awesomeThursday.Date.Year, awesomeThursday.Date.Month, 1);
+                    if (!dateToMonth.TryGetValue(dateTime, out var month))
+                        dateToMonth[dateTime] = month = new Month(dateTime);
+
+                    month.RegisteredHours += awesomeThursday.Hours;
+                }
+
+                pageIndex++;
+            } while (workUnitFlats.Length == ApplicationConstants.PageSize);
+            
+            dateToMonth.Values.ToList().ForEach(m => m.ConvertToDecimal());
+            return dateToMonth.Values.OrderBy(m => m.Date);
         }
     }
 }

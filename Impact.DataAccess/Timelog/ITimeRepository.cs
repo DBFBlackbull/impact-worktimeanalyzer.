@@ -8,5 +8,6 @@ namespace Impact.DataAccess.Timelog
     public interface ITimeRepository
     {
         IEnumerable<Week> GetWeeksInQuarter(Quarter quarter, SecurityToken token);
+        IEnumerable<Month> GetAwesomeThursdays();
     }
 }

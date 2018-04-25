@@ -1,4 +1,4 @@
-﻿namespace Impact.Website.Models
+﻿namespace Impact.Website.Models.Charts
 {
     public interface IChart
     {

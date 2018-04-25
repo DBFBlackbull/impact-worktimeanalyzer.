@@ -1,0 +1,100 @@
+﻿@using Impact.Website.Helper
+@model Impact.Website.Models.QuarterViewModel
+@{
+    ViewBag.Title = "Overarbejde";
+}
+<div class="container">
+    <h2>Vælg kvartal</h2>
+    <div class="row">
+        @using (Html.BeginForm("Index", "Overtime", FormMethod.Post, new {id = "quarterForm", name = "quarterForm"}))
+        { 
+            <div class="col-md-12">
+                <form>
+                    <div class="form-group form-inline">
+                        @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control", onchange = "Submit()"})
+                        @Html.CheckBoxFor(m => m.OverviewChartViewModel.IsNormalized, new { id = "toggle-normalized", data_toggle = "toggle", data_off = "Registrerede Timer", data_on = "Udbetale Timer",})
+                        @if (Model.ShowIncludeAllWeeksButton)
+                        {
+                            @Html.CheckBoxFor(m => m.IncludeAllWeeks, new { id = "toggle-allWeeks", data_toggle = "toggle", data_off = "Tidligere uger", data_on = "Alle uger",})                            
+                        }
+                    </div>
+                </form>
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="@Model.BalanceChartViewModel.DivId"></div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="@Model.OverviewChartViewModel.DivId"></div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div id="@Model.PieChartViewModel.DivId"></div>
+        </div>
+        <div class="col-md-4">
+            <div id="@Model.PotentialChartViewModel.DivId"></div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/bundles/charts")
+<script>
+    function Submit() {
+        document.quarterForm.submit();
+    }
+
+    window.onload = function() {
+        var balance = @JavaScriptConvert.SerializeObject(Model.BalanceChartViewModel);
+        var weeks = @JavaScriptConvert.SerializeObject(Model.OverviewChartViewModel);
+        var pie = @JavaScriptConvert.SerializeObject(Model.PieChartViewModel);
+        var potential = @JavaScriptConvert.SerializeObject(Model.PotentialChartViewModel);
+
+        google.charts.load('current', { packages: ['corechart', 'bar', 'gauge'] });
+        google.charts.setOnLoadCallback(function() {
+            drawBalanceChart(balance); 
+            drawOverviewChart(weeks); 
+            drawPieChart(pie); 
+            drawGaugeChart(potential);
+        });
+    };
+
+//        window.setTimeout(function() {
+//                
+//                //find absolute left
+//                var container = document.getElementsByClassName("container")[0];
+//                var conStyle = window.getComputedStyle(container);
+//                
+//                var offset = (parseInt(conStyle.marginLeft) + parseInt(conStyle.paddingLeft));
+//                console.log(offset);
+//
+//                var root = document.getElementById("weeks_chart").getElementsByTagName("svg")[0];
+//                var rootRect = root.getBoundingClientRect();
+//                console.log(rootRect.top, rootRect.bottom, rootRect.left, rootRect.right);
+//                
+//                var element = document.getElementById("weeks_chart").getElementsByTagName("g")[0].firstChild;
+//                var eleRect = element.getBoundingClientRect();
+//
+//                //find absolute top
+//                var h2 = document.getElementsByTagName("h2")[0].getBoundingClientRect();
+//                console.log(h2.bottom);
+//
+//
+//                var toggle = document.querySelector("[data-toggle='toggle']");
+//                var boundingClientRect = toggle.getBoundingClientRect();
+//                console.log(boundingClientRect.top, boundingClientRect.bottom);
+//
+//                toggle.style.position = "absolute";
+//                toggle.style.left = eleRect.right + rootRect.left - offset + "px";
+//                toggle.style.top = boundingClientRect.top + "px";
+//                toggle.style.zIndex = "1";
+//            },
+//            500);
+</script>

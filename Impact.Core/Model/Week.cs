@@ -6,10 +6,11 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using Impact.Core.Contants;
+using Impact.Core.Interfaces;
 
 namespace Impact.Core.Model
 {
-    public class Week : IClonable<Week>
+    public class Week : IClonable<Week>, IAbsorbable<Week>
     {
         public Week()
         {
@@ -66,8 +67,6 @@ namespace Impact.Core.Model
             }
 
             LockedOvertimeHours = hours;
-
-            return;
         }
 
         public void AddQuarterEdgeHours(Quarter quarter)
@@ -125,10 +124,5 @@ namespace Impact.Core.Model
 
             return week;
         }
-    }
-
-    public interface IClonable<T>
-    {
-        T Clone();
     }
 }

@@ -1,0 +1,148 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using Impact.Business.Time;
+using Impact.Core.Contants;
+using Impact.Core.Model;
+using Impact.DataAccess.Timelog;
+using Impact.Website.Models;
+using Impact.Website.Models.Charts;
+using TimeLog.TransactionalApi.SDK.ProjectManagementService;
+
+namespace Impact.Website.Controllers
+{
+    public class AwesomeThursdayController : Controller
+    {
+        private readonly ITimeRepository _timeRepository;
+        private readonly ITimeService _timeService;
+
+        public AwesomeThursdayController(ITimeRepository timeRepository, ITimeService timeService)
+        {
+            _timeRepository = timeRepository;
+            _timeService = timeService;
+        }
+
+        // GET: AwesomeThursday
+        public ActionResult Index()
+        {
+            if (!(HttpContext.Session[ApplicationConstants.Token] is SecurityToken token))
+                return RedirectToAction("Index", "Login");
+            
+            var awesomeThursdays = _timeRepository.GetAwesomeThursdays().ToList();
+            var balanceChartViewModel = CreateBalanceViewModel(awesomeThursdays);
+            var monthViewModel = CreateMonthsOverviewViewModel(awesomeThursdays);
+            var disclaimer = 
+                "<p>Fed torsdag er i personalehåndbogen punkt 1.6.4 defineret til at være <i>'fra kl 12.30 og resten af arbejdsdagen'</i>. " +
+                "Denne tidsmængde er afhænging af hvornår man møder om morgenen. " +
+                "Antages det at der mødes kl 8.00 vil man altså have 3,5 timers Fed torsdag, men møder man først kl 9.00 har man 4,5 timers Fed torsdag.</p>" +
+                "<p>Managers ønsker ikke at Fed torsdag bliver defineret super firkantet, da man dermed har mulighed for at skippe og skubbe den. " +
+                "Der er nogle medarbejdere der aldrig afholder den, hvilket giver mulighed for at andre kan holde mere</p>" +
+                "<p>Dermed er der ikke en præcis tidsenhed for hvor meget Fed torsdag der er tilgængelig hver måned. " +
+                "<p>Derfor har denne analyse defineret Fed torsdag til at være 'en halv dag' hvilket er beregnet til 7,5 timer / 2 = <b>3,75 timer (eller 3 timer og 45 minutter) pr. måned</b></p>";
+            
+            var awesomeThursdayViewModel = new AwesomeThursdayViewModel
+            {
+                BalanceChartViewModel = balanceChartViewModel,
+                OverviewChartViewModel = monthViewModel,
+                Disclaimer = disclaimer
+            };
+
+            return View(awesomeThursdayViewModel);
+        }
+        
+        private BalanceChartViewModel CreateBalanceViewModel(List<Month> months)
+        {
+            var sum = months.Sum(m => m.RegisteredHours);
+            var awesomeThursdayRegistered = Math.Round(Convert.ToDecimal(sum), 2);
+            var totalAwesomeThursdayApproximation = months.Count * ApplicationConstants.AwesomeThursdayApproximation;
+
+            var balance = totalAwesomeThursdayApproximation - awesomeThursdayRegistered;
+
+            int dynamicXMax = (int) Math.Ceiling(Math.Abs(balance / 5)) * 5;
+            int xMax = Math.Max(10, dynamicXMax);
+            
+            List<object[]> googleFormatedBalance = new List<object[]>
+            {
+                new object[]
+                {
+                    new Column{Label = "", Type = "string"},
+                    new Column{Label = "Timer", Type = "number"},
+                     
+                }
+            };
+            googleFormatedBalance.Add(new object[] {"Saldo", balance});
+
+            var color = balance >= 0 ? ApplicationConstants.Color.Blue : ApplicationConstants.Color.Black;
+
+            var options = new BalanceChartViewModel.OptionsViewModel(color, xMax);
+            options.Chart = new BalanceChartViewModel.OptionsViewModel.ChartViewModel
+            {
+                Title = "Fed torsdags saldo",
+                Subtitle = "Viser din Fed tordags \"time-saldo\" siden 2012. Dette er summen af alle dine Fed torsdags timer divideret med 3,75 time pr. måned"
+            };
+
+            var balanceViewModel = new BalanceChartViewModel("balance_chart", googleFormatedBalance);
+            balanceViewModel.Options = options; 
+            return balanceViewModel;
+        }
+
+        private OverviewChartViewModel CreateMonthsOverviewViewModel(List<Month> months)
+        {
+            var firstDate = months.FirstOrDefault()?.Date;
+            var lastDate = months.LastOrDefault()?.Date;
+
+            var normalizedMonths = _timeService.GetNormalizedMonths(months);
+
+            var max = Convert.ToInt32(months.Max(m => m.Hours));
+            var viewWindowViewModel = new OverviewChartViewModel.OptionsViewModel.VAxisViewModel.ViewWindowViewModel
+            {
+                Max = max,
+                Min = 0
+            };
+
+            var vAxisViewModel = new OverviewChartViewModel.OptionsViewModel.VAxisViewModel
+            {
+                ViewWindowMode = "explicit",
+                ViewWindow = viewWindowViewModel
+            };
+
+            var chartViewModel = new OverviewChartViewModel.OptionsViewModel.ChartViewModel
+            {
+                Title = $"Fed torsdage fra {firstDate:Y} til {lastDate:Y}",
+                Subtitle = "De registrerede timer på Fed torsdag inden for perioden"
+            };
+
+            var optionsViewModel = new OverviewChartViewModel.OptionsViewModel
+            {
+                Height = 500,
+                Chart = chartViewModel,
+                VAxis = vAxisViewModel
+            };
+
+            var overviewChartViewModel = new OverviewChartViewModel
+            {
+                DivId = "overview_chart",
+                Json = GetDataArray(months),
+                NormalizedJson = GetDataArray(normalizedMonths),
+                Options = optionsViewModel
+            };
+
+            return overviewChartViewModel;
+        }
+
+        private static List<object[]> GetDataArray(IEnumerable<Month> months)
+        {
+            List<object[]> googleFormatedWeeks = new List<object[]>
+            {
+                new object[]
+                {
+                    new Column {Label = "Måned", Type = "string"},
+                    new Column {Label = "Timer", Type = "number"}
+                }
+            };
+            googleFormatedWeeks.AddRange(months.Select(month => month.ToArray()));
+            return googleFormatedWeeks;
+        }
+    }
+}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Impact.Business.Holiday;
 using Impact.Core.Contants;
+using Impact.Core.Interfaces;
 using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
 using TimeLog.TransactionalApi.SDK;
@@ -95,20 +96,48 @@ namespace Impact.Business.Time
             
             return weeks;
         }
-        
-        private static void MoveHours(IEnumerable<Week> lowWeeks, List<Week> moveableWeeks, string propertyName)
+
+        public IEnumerable<Month> GetNormalizedMonths(List<Month> monthsList)
         {
-            foreach (var lowWeek in lowWeeks)
+            var months = monthsList.ConvertAll(m => m.Clone());
+
+            List<Month> lowMonths = months.Where(m => m.Hours < ApplicationConstants.AwesomeThursdayApproximation).ToList();
+            List<Month> highMonths = months.Where(m => m.Hours > ApplicationConstants.AwesomeThursdayApproximation).ToList();
+            
+            MoveHours2(lowMonths, highMonths, null);
+            
+            return months;
+        }
+
+        private static void MoveHours<T>(IEnumerable<IAbsorbable<T>> lowHoursElements, List<T> moveableHoursElements, string propertyName)
+        {
+            foreach (var lowHoursElement in lowHoursElements)
             {
-                var weeksAbsorbed = 0;
-                foreach (var moveableWeek in moveableWeeks)
+                var elementsAbsorbed = 0;
+                foreach (var moveableHoursElement in moveableHoursElements)
                 {
-                    var doneAbsorbing = lowWeek.AbsorbHours(moveableWeek, propertyName);
+                    var doneAbsorbing = lowHoursElement.AbsorbHours(moveableHoursElement, propertyName);
                     if (doneAbsorbing)
                         break;
-                    weeksAbsorbed++;
+                    elementsAbsorbed++;
                 }
-                moveableWeeks.RemoveRange(0, weeksAbsorbed);
+                moveableHoursElements.RemoveRange(0, elementsAbsorbed);
+            }
+        }
+        
+        private static void MoveHours2(List<Month> lowHoursElements, List<Month> moveableHoursElements, string propertyName)
+        {
+            foreach (var lowHoursElement in lowHoursElements)
+            {
+                var elementsAbsorbed = 0;
+                foreach (var moveableHoursElement in moveableHoursElements)
+                {
+                    var doneAbsorbing = lowHoursElement.AbsorbHours(moveableHoursElement, propertyName);
+                    if (doneAbsorbing)
+                        break;
+                    elementsAbsorbed++;
+                }
+                moveableHoursElements.RemoveRange(0, elementsAbsorbed);
             }
         }
     }

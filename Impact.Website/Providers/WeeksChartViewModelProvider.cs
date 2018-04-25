@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Impact.Business.Time;
 using Impact.Core.Model;
 using Impact.Website.Models;
+using Impact.Website.Models.Charts;
 
 namespace Impact.Website.Providers
 {
     public class WeeksChartViewModelProvider
     {
-        public static WeeksChartViewModel CreateWeeksViewModel(Quarter quarter, List<Week> weeksList, List<Week> normalizedWeeks, bool isNormalized)
+        public static OverviewChartViewModel CreateWeeksViewModel(Quarter quarter, List<Week> weeksList, List<Week> normalizedWeeks, bool isNormalized)
         {
-            var weeksViewModel = new WeeksChartViewModel();
+            var weeksViewModel = new OverviewChartViewModel();
             weeksViewModel.DivId = "weeks_chart";
             weeksViewModel.GraphTitle = GraphTitle(quarter);
             weeksViewModel.IsNormalized = isNormalized;

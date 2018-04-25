@@ -1,5 +1,4 @@
-﻿@using System
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -19,11 +18,12 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Timelog Analyzer", "Index", "Login", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("Timelog Analyzer", "Index", "Site", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Login")</li>
+                    <li>@Html.ActionLink("Overarbejde", "Index", "Overtime")</li>
+                    <li>@Html.ActionLink("Fed torsdag", "Index", "AwesomeThursday")</li>
                     <li>@Html.ActionLink("About", "About", "Login")</li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
@@ -37,7 +37,7 @@
 	    <hr />
 	    <div class="container">
 		    <footer>
-			    <p>&copy; @DateTime.Now.Year</p>
+			    <p>Made by Peter Bjerg Mogensen &copy; @DateTime.Now.Year</p>
 		    </footer>
 	    </div>
     </div>

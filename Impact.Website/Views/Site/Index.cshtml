@@ -1,0 +1,38 @@
+﻿@{
+	ViewBag.Title = "Vælg side";
+}
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-4">
+			<div class="jumbotron">
+				<h2>Overarbejde Analyse</h2>
+				<p>Denne sider giver dig en analyse af dine arbejdstimer med et fokus på overarbejde.</p>
+				<p>Her kigges på alle arbejdstimer i det nuværende kvartal.</p>
+				<p>Du kan bl.a. se hvor mange timer du har arbejdet for lidt eller formeget. Du kan se forskellen på de timer der er registreret og de der bliver udbetalt som overarbejde.</p>
+				@Html.ActionLink("Analyser!", "Index", "Overtime", null, new { @class = "btn btn-primary"})
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="jumbotron">
+				<h2>Fed torsdags Analyse</h2>
+				<p>Denne side giver dig et overblik over alle dine registrerede fed torsdags timer med et fokus på din "saldo"</p>
+				<p>Du kan her finde ud af om du har fed torsdags timer til gode, eller har brugt flere end tiltænkt</p>
+				@Html.ActionLink("Analyser!", "Index", "AwesomeThursday", null, new { @class = "btn btn-primary"})
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="jumbotron">
+				<h2>Coming soon&trade;</h2>
+				<p>Har du nogle gode ideer til en ny feature baseret på Timelog? Kom forbi og prik PBM på skulderen. Så kan det være at den kommer i den næste version</p>
+				<button class="btn btn-primary" onclick="execute(this)">Analyser!</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	function execute(element) {
+		element.innerHTML = "Not yet!";
+		element.classList.add("disabled");
+	}
+</script>

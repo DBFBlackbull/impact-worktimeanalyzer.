@@ -1,18 +1,13 @@
 ﻿using System.Collections.Generic;
 
-namespace Impact.Website.Models
+namespace Impact.Website.Models.Charts
 {
     public class GaugeChartViewModel : IChart
     {
-        public GaugeChartViewModel(string divId, OptionsViewModel options, List<object[]> json)
-        {
-            DivId = divId;
-            Json = json;
-            Options = options;
-        }
-
         public string DivId { get; set; }
-        public List<object[]> Json { get; set; }
+        public List<object[]> PreviousWeeks { get; set; }
+        public List<object[]> AllWeeks { get; set; }
+        
         public OptionsViewModel Options { get; set; }
         
         public class OptionsViewModel
