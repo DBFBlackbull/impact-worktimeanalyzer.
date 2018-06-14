@@ -17,6 +17,7 @@ namespace Impact.Core.Contants
         
         public static class Color
         {
+            public const string White = "#EFEFEF";
             public const string LightBlue = "#289eff";
             public const string Blue = "#3366cc";
             public const string Red = "#FF4635";

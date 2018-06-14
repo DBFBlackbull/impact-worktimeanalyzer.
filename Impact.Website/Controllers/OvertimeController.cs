@@ -8,6 +8,7 @@ using Impact.Core.Contants;
 using Impact.Core.Model;
 using Impact.Website.Models;
 using Impact.Website.Models.Charts;
+using Impact.Website.Models.Options;
 using Impact.Website.Providers;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
 
@@ -43,7 +44,7 @@ namespace Impact.Website.Controllers
                 return RedirectToAction("Index", "Login");
 
             var dateTime = DateTime.Parse(viewModel.SelectedQuarter);
-            var quarterViewModel = CreateViewModels(dateTime, token, viewModel.OverviewChartViewModel.IsNormalized);
+            var quarterViewModel = CreateViewModels(dateTime, token, viewModel.BarColumnChartViewModel.IsNormalized);
             quarterViewModel.ShowIncludeAllWeeksButton = quarterViewModel.Quarters.Last().Selected;
             return View(quarterViewModel);
         }
@@ -65,14 +66,17 @@ namespace Impact.Website.Controllers
 
             quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PieChartViewModel = CreatePieChartViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
-            quarterViewModel.PotentialChartViewModel = CreateGaugeChartViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
+            quarterViewModel.PotentialChartViewModel = CreateGaugeChartViewModel(normalizedPreviousWeek, normalizedAllWeeks);
+
+            if (weeks.Count > normalizedPreviousWeek.Count)
+                normalizedPreviousWeek.Add(weeks.LastOrDefault());
             
-            quarterViewModel.OverviewChartViewModel = WeeksChartViewModelProvider.CreateWeeksViewModel(quarter, weeks, normalizedAllWeeks, isNormalized); //raw, normalizedPrevious and normalizedAll
+            quarterViewModel.BarColumnChartViewModel = WeeksChartViewModelProvider.CreateWeeksViewModel(quarter, weeks, normalizedPreviousWeek, normalizedAllWeeks, isNormalized); //raw, normalizedPrevious and normalizedAll
             
             return quarterViewModel;
         }
         
-        private BalanceChartViewModel CreateBalanceViewModel(List<Week> previousWeeks, List<Week> allWeeks)
+        private BarColumnChartViewModel CreateBalanceViewModel(List<Week> previousWeeks, List<Week> allWeeks)
         {
             var overHoursPrevious = previousWeeks.Sum(w => w.InterestHours + w.MoveableOvertimeHours);
             var missingHoursPrevious = previousWeeks.Sum(w => ApplicationConstants.NormalWorkWeek - (w.WorkHours + w.HolidayHours + w.QuarterEdgeHours));
@@ -110,16 +114,26 @@ namespace Impact.Website.Controllers
             
             var color = balanceHoursPrevious >= 0 ? ApplicationConstants.Color.Blue : ApplicationConstants.Color.Black;
 
-            var options = new BalanceChartViewModel.OptionsViewModel(color, xMax);
-            options.Chart = new BalanceChartViewModel.OptionsViewModel.ChartViewModel
+            var options = new BarColumnOptions.MaterialOptionsViewModel()
+            {
+                Height = 170,
+                Colors = new List<string> {color},
+                HAxis = new BarColumnOptions.AxisViewModel {ViewWindow = new BarColumnOptions.AxisViewModel.ViewWindowViewModel {Max = xMax}}
+            };
+            options.Chart = new BarColumnOptions.MaterialOptionsViewModel.ChartViewModel
             {
                 Title = "Time saldo",
                 Subtitle = "Viser din \"time-saldo\" for dette kvartal. Dette er summen af dine flytbare timer (interessetid + 39-44 overarbejde) minus dine manglende timer (hvis du er gået tidligt hjem en uge)" +
                            "\nKort sagt: Er grafen i minus skal du arbejde længere en uge. Er grafen i plus kan du gå tidligt hjem en uge"
             };
 
-            var balanceViewModel = new BalanceChartViewModel("balance_chart", previousData, allData);
-            balanceViewModel.Options = options; 
+            var balanceViewModel = new BarColumnChartViewModel
+            {
+                DivId = "balance_chart",
+                NormalizedPreviousWeeks = previousData,
+                NormalizedAllWeeks = allData,
+                Options = options
+            };
             return balanceViewModel;
         }
 

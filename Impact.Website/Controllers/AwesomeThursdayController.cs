@@ -8,6 +8,7 @@ using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
 using Impact.Website.Models;
 using Impact.Website.Models.Charts;
+using Impact.Website.Models.Options;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
 
 namespace Impact.Website.Controllers
@@ -44,14 +45,14 @@ namespace Impact.Website.Controllers
             var awesomeThursdayViewModel = new AwesomeThursdayViewModel
             {
                 BalanceChartViewModel = balanceChartViewModel,
-                OverviewChartViewModel = monthViewModel,
+                BarColumnChartViewModel = monthViewModel,
                 Disclaimer = disclaimer
             };
 
             return View(awesomeThursdayViewModel);
         }
         
-        private BalanceChartViewModel CreateBalanceViewModel(List<Month> months)
+        private BarColumnChartViewModel CreateBalanceViewModel(List<Month> months)
         {
             var sum = months.Sum(m => m.RegisteredHours);
             var awesomeThursdayRegistered = Math.Round(Convert.ToDecimal(sum), 2);
@@ -75,19 +76,29 @@ namespace Impact.Website.Controllers
 
             var color = balance >= 0 ? ApplicationConstants.Color.Blue : ApplicationConstants.Color.Black;
 
-            var options = new BalanceChartViewModel.OptionsViewModel(color, xMax);
-            options.Chart = new BalanceChartViewModel.OptionsViewModel.ChartViewModel
+            var options = new BarColumnOptions.MaterialOptionsViewModel()
+            {
+                Height = 170,
+                Colors = new List<string> {color},
+                Bars = BarOrientation.Horizontal,
+                HAxis = new BarColumnOptions.AxisViewModel {ViewWindow = new BarColumnOptions.AxisViewModel.ViewWindowViewModel {Max = xMax}}
+            };
+            options.Chart = new BarColumnOptions.MaterialOptionsViewModel.ChartViewModel
             {
                 Title = "Fed torsdags saldo",
                 Subtitle = "Viser din Fed tordags \"time-saldo\" siden 2012. Dette er summen af alle dine Fed torsdags timer divideret med 3,75 time pr. måned"
             };
 
-            var balanceViewModel = new BalanceChartViewModel("balance_chart", googleFormatedBalance);
+            var balanceViewModel = new BarColumnChartViewModel
+            {
+                DivId = "balance_chart",
+                RawWeeks = googleFormatedBalance
+            };
             balanceViewModel.Options = options; 
             return balanceViewModel;
         }
 
-        private OverviewChartViewModel CreateMonthsOverviewViewModel(List<Month> months)
+        private BarColumnChartViewModel CreateMonthsOverviewViewModel(List<Month> months)
         {
             var firstDate = months.FirstOrDefault()?.Date;
             var lastDate = months.LastOrDefault()?.Date;
@@ -95,36 +106,35 @@ namespace Impact.Website.Controllers
             var normalizedMonths = _timeService.GetNormalizedMonths(months);
 
             var max = Convert.ToInt32(months.Max(m => m.Hours));
-            var viewWindowViewModel = new OverviewChartViewModel.OptionsViewModel.VAxisViewModel.ViewWindowViewModel
+            var viewWindowViewModel = new BarColumnOptions.AxisViewModel.ViewWindowViewModel
             {
                 Max = max,
                 Min = 0
             };
 
-            var vAxisViewModel = new OverviewChartViewModel.OptionsViewModel.VAxisViewModel
+            var vAxisViewModel = new BarColumnOptions.AxisViewModel
             {
-                ViewWindowMode = "explicit",
                 ViewWindow = viewWindowViewModel
             };
 
-            var chartViewModel = new OverviewChartViewModel.OptionsViewModel.ChartViewModel
+            var chartViewModel = new BarColumnOptions.MaterialOptionsViewModel.ChartViewModel
             {
                 Title = $"Fed torsdage fra {firstDate:Y} til {lastDate:Y}",
                 Subtitle = "De registrerede timer på Fed torsdag inden for perioden"
             };
 
-            var optionsViewModel = new OverviewChartViewModel.OptionsViewModel
+            var optionsViewModel = new BarColumnOptions.MaterialOptionsViewModel
             {
                 Height = 500,
                 Chart = chartViewModel,
                 VAxis = vAxisViewModel
             };
 
-            var overviewChartViewModel = new OverviewChartViewModel
+            var overviewChartViewModel = new BarColumnChartViewModel
             {
                 DivId = "overview_chart",
-                Json = GetDataArray(months),
-                NormalizedJson = GetDataArray(normalizedMonths),
+                RawWeeks = GetDataArray(months),
+                NormalizedAllWeeks = GetDataArray(normalizedMonths),
                 Options = optionsViewModel
             };
 

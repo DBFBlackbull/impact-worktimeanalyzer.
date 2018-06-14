@@ -10,19 +10,20 @@ namespace Impact.Website.Helper
         public static IHtmlString SerializeObject(object value)
         {
             using (var stringWriter = new StringWriter())
+            using (var jsonWriter = new JsonTextWriter(stringWriter))
             {
-                using (var jsonWriter = new JsonTextWriter(stringWriter))
+                var serializer = new JsonSerializer
                 {
-                    var serializer = new JsonSerializer
-                    {
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
-                    };
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    NullValueHandling = NullValueHandling.Ignore,
+                    DefaultValueHandling = DefaultValueHandling.Ignore
+                };
 
-                    jsonWriter.QuoteName = false;
-                    serializer.Serialize(jsonWriter, value);
-                    
-                    return new HtmlString(stringWriter.ToString());
-                }
+                jsonWriter.QuoteName = false;
+                serializer.Serialize(jsonWriter, value);
+                jsonWriter.Flush();
+                
+                return new HtmlString(stringWriter.ToString());
             }
         }
     }

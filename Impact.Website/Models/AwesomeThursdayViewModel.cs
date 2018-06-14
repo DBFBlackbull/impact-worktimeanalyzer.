@@ -4,8 +4,8 @@ namespace Impact.Website.Models
 {
     public class AwesomeThursdayViewModel
     {
-        public BalanceChartViewModel BalanceChartViewModel { get; set; }
-        public OverviewChartViewModel OverviewChartViewModel { get; set; }
+        public BarColumnChartViewModel BalanceChartViewModel { get; set; }
+        public BarColumnChartViewModel BarColumnChartViewModel { get; set; }
         public string Disclaimer { get; set; }
     }
 }
