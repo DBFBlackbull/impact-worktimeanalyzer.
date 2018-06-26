@@ -31,8 +31,6 @@ namespace Impact.Website.Controllers
                 return RedirectToAction("Index", "Login");
             
             var awesomeThursdays = _timeRepository.GetAwesomeThursdays(token).ToList();
-            var balanceChartViewModel = CreateBalanceViewModel(awesomeThursdays);
-            var monthViewModel = CreateMonthsOverviewViewModel(awesomeThursdays);
             var disclaimer = 
                 "<p>Fed torsdag er i personalehåndbogen punkt 1.6.4 defineret til at være <i>'fra kl 12.30 og resten af arbejdsdagen'</i>. " +
                 "Denne tidsmængde er afhænging af hvornår man møder om morgenen. " +
@@ -44,8 +42,8 @@ namespace Impact.Website.Controllers
             
             var awesomeThursdayViewModel = new AwesomeThursdayViewModel
             {
-                BalanceChartViewModel = balanceChartViewModel,
-                BarColumnChartViewModel = monthViewModel,
+                BalanceChartViewModel = CreateBalanceViewModel(awesomeThursdays),
+                BarColumnChartViewModel = CreateMonthsOverviewViewModel(awesomeThursdays),
                 Disclaimer = disclaimer
             };
 
@@ -81,7 +79,14 @@ namespace Impact.Website.Controllers
                 Height = 170,
                 Colors = new List<string> {color},
                 Bars = BarOrientation.Horizontal,
-                HAxis = new BarColumnOptions.AxisViewModel {ViewWindow = new BarColumnOptions.AxisViewModel.ViewWindowViewModel {Max = xMax}}
+                HAxis = new BarColumnOptions.AxisViewModel
+                {
+                    ViewWindow = new BarColumnOptions.AxisViewModel.ViewWindowViewModel
+                    {
+                        Max = xMax,
+                        Min = xMax * -1
+                    }
+                }
             };
             options.Chart = new BarColumnOptions.MaterialOptionsViewModel.ChartViewModel
             {
@@ -92,7 +97,7 @@ namespace Impact.Website.Controllers
             var balanceViewModel = new BarColumnChartViewModel
             {
                 DivId = "balance_chart",
-                RawWeeks = googleFormatedBalance
+                RawWeeks = googleFormatedBalance,
             };
             balanceViewModel.Options = options; 
             return balanceViewModel;
@@ -106,15 +111,14 @@ namespace Impact.Website.Controllers
             var normalizedMonths = _timeService.GetNormalizedMonths(months);
 
             var max = Convert.ToInt32(months.Max(m => m.Hours));
-            var viewWindowViewModel = new BarColumnOptions.AxisViewModel.ViewWindowViewModel
-            {
-                Max = max,
-                Min = 0
-            };
 
             var vAxisViewModel = new BarColumnOptions.AxisViewModel
             {
-                ViewWindow = viewWindowViewModel
+                ViewWindow = new BarColumnOptions.AxisViewModel.ViewWindowViewModel
+                {
+                    Max = max,
+                    Min = 0
+                }
             };
 
             var chartViewModel = new BarColumnOptions.MaterialOptionsViewModel.ChartViewModel

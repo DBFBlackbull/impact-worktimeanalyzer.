@@ -15,7 +15,7 @@
                         @Html.CheckBoxFor(m => m.BarColumnChartViewModel.IsNormalized, new { id = "toggle-normalized", data_toggle = "toggle", data_off = "Registrerede Timer", data_on = "Udbetale Timer",})
                         @if (Model.ShowIncludeAllWeeksButton)
                         {
-                            @Html.CheckBoxFor(m => m.IncludeAllWeeks, new { id = "toggle-allWeeks", data_toggle = "toggle", data_off = "Tidligere uger", data_on = "Alle uger",})                            
+                            @Html.CheckBoxFor(m => m.IncludeAllWeeks, new { id = "toggle-allWeeks", data_toggle = "toggle", data_off = "Tidligere uger", data_on = "Alle uger",})
                         }
                     </div>
                 </form>
@@ -59,7 +59,7 @@
 
         google.charts.load('current', { packages: ['corechart', 'bar', 'gauge'] });
         google.charts.setOnLoadCallback(function() {
-//            drawMaterialBarOrColumnChart(balance); 
+            drawMaterialBarOrColumnChart(balance); 
             drawColumnChart(weeks); 
             drawPieChart(pie); 
             drawGaugeChart(potential);

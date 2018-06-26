@@ -5,8 +5,11 @@ namespace Impact.Website.Models.Charts
     public class GaugeChartViewModel : IChart
     {
         public string DivId { get; set; }
-        public List<object[]> PreviousWeeks { get; set; }
-        public List<object[]> AllWeeks { get; set; }
+        public bool IsNormalized { get; set; }
+        
+        public List<object[]> RawWeeks { get; set; }
+        public List<object[]> NormalizedPreviousWeeks { get; set; }
+        public List<object[]> NormalizedAllWeeks { get; set; }
         
         public OptionsViewModel Options { get; set; }
         
