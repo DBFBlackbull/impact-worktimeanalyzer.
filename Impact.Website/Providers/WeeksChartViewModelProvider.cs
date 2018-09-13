@@ -17,9 +17,9 @@ namespace Impact.Website.Providers
             var weeksViewModel = new BarColumnChartViewModel();
             weeksViewModel.DivId = "weeks_chart";
             weeksViewModel.IsNormalized = isNormalized;
-            weeksViewModel.RawWeeks = GetJson(weeksList, null);
-            weeksViewModel.NormalizedPreviousWeeks = GetJson(normalizedPreviousWeek, 0);
-            weeksViewModel.NormalizedAllWeeks = GetJson(normalizedWeeks, 0);
+            weeksViewModel.RawWeeks = GetDataArray(weeksList, null);
+            weeksViewModel.NormalizedPreviousWeeks = GetDataArray(normalizedPreviousWeek, 0);
+            weeksViewModel.NormalizedAllWeeks = GetDataArray(normalizedWeeks, 0);
             weeksViewModel.Options = GetOptions(quarter, weeksList);
             
             return weeksViewModel;
@@ -81,7 +81,7 @@ namespace Impact.Website.Providers
             return Math.Max(50, (int)Math.Ceiling(max / 5) * 5);
         }
 
-        private static List<object[]> GetJson(IEnumerable<Week> weeks, decimal? defaultValue)
+        private static List<object[]> GetDataArray(IEnumerable<Week> weeks, decimal? defaultValue)
         {
             List<object[]> googleFormatedWeeks = new List<object[]>
             {

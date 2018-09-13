@@ -98,8 +98,8 @@ namespace Impact.Website.Controllers
             {
                 DivId = "balance_chart",
                 RawWeeks = googleFormatedBalance,
+                Options = options
             };
-            balanceViewModel.Options = options; 
             return balanceViewModel;
         }
 

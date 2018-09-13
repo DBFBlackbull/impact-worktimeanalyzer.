@@ -52,13 +52,13 @@ namespace Impact.Website.Controllers
         private QuarterViewModel CreateViewModels(DateTime dateTime, SecurityToken token, bool isNormalized = false)
         {
             var quarter = _timeService.GetQuarter(dateTime);
-            List<Week> weeks = _timeService.GetWeeksInQuarter(quarter, token).ToList();
+            List<Week> rawWeeks = _timeService.GetWeeksInQuarter(quarter, token).ToList();
 
             var now = DateTime.Now;
 
-            var previousWeeks = weeks.Where(w => w.Dates.All(date => date < now)).ToList();
+            var previousWeeks = rawWeeks.Where(w => w.Dates.All(date => date < now)).ToList();
             var normalizedPreviousWeek = _timeService.GetNormalizedWeeks(previousWeeks).ToList();
-            var normalizedAllWeeks = _timeService.GetNormalizedWeeks(weeks).ToList();
+            var normalizedAllWeeks = _timeService.GetNormalizedWeeks(rawWeeks).ToList();
 
             var quarterViewModel = new QuarterViewModel();
             quarterViewModel.SelectedQuarter = quarter.MidDate.ToShortDateString();
@@ -68,10 +68,10 @@ namespace Impact.Website.Controllers
             quarterViewModel.PieChartViewModel = CreatePieChartViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PotentialChartViewModel = CreateGaugeChartViewModel(normalizedPreviousWeek, normalizedAllWeeks);
 
-            if (weeks.Count > normalizedPreviousWeek.Count)
-                normalizedPreviousWeek.Add(weeks.LastOrDefault());
+            if (normalizedPreviousWeek.Count < rawWeeks.Count)
+                normalizedPreviousWeek.Add(rawWeeks.LastOrDefault());
             
-            quarterViewModel.BarColumnChartViewModel = WeeksChartViewModelProvider.CreateWeeksViewModel(quarter, weeks, normalizedPreviousWeek, normalizedAllWeeks, isNormalized); //raw, normalizedPrevious and normalizedAll
+            quarterViewModel.BarColumnChartViewModel = WeeksChartViewModelProvider.CreateWeeksViewModel(quarter, rawWeeks, normalizedPreviousWeek, normalizedAllWeeks, isNormalized);
             
             return quarterViewModel;
         }

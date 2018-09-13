@@ -17,7 +17,7 @@ namespace Impact.DataAccess.Timelog
         {
             var instanceProjectManagementClient = ProjectManagementHandler.Instance.ProjectManagementClient;
             var result = instanceProjectManagementClient.GetWorkPaged(token.Initials, quarter.From, quarter.To, 1, 500, token);
-
+            
             var calendar = CultureInfo.InvariantCulture.Calendar;
             var weeksToHoursDictionary = new Dictionary<int, Week>();
             

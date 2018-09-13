@@ -12,10 +12,10 @@
                 <form>
                     <div class="form-group form-inline">
                         @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control", onchange = "Submit()"})
-                        @Html.CheckBoxFor(m => m.BarColumnChartViewModel.IsNormalized, new { id = "toggle-normalized", data_toggle = "toggle", data_off = "Registrerede Timer", data_on = "Udbetale Timer",})
+                        @Html.CheckBoxFor(m => m.BarColumnChartViewModel.IsNormalized, new { id = "toggle-normalized", data_toggle = "toggle", data_off = "Registrerede Timer", data_on = "Udbetale Timer" })
                         @if (Model.ShowIncludeAllWeeksButton)
                         {
-                            @Html.CheckBoxFor(m => m.IncludeAllWeeks, new { id = "toggle-allWeeks", data_toggle = "toggle", data_off = "Tidligere uger", data_on = "Alle uger",})
+                            @Html.CheckBoxFor(m => m.IncludeAllWeeks, new { id = "toggle-allWeeks", data_toggle = "toggle", data_off = "Tidligere uger", data_on = "Alle uger" })
                         }
                     </div>
                 </form>
@@ -50,7 +50,7 @@
     function Submit() {
         document.quarterForm.submit();
     }
-
+    
     window.onload = function() {
         var balance = @JavaScriptConvert.SerializeObject(Model.BalanceChartViewModel);
         var weeks = @JavaScriptConvert.SerializeObject(Model.BarColumnChartViewModel);
