@@ -90,11 +90,11 @@ namespace Impact.Website.Providers
                     new Column {Label = "Uge nummer", Type = "string"},
                     new Column {Label = "Timer uden for kvartalet", Type = "number"},
                     new Column {Role = "style"},
-                    new Column {Label = "HolidayHours", Type = "number"},
-                    new Column {Label = "Work,Ferie,Sygdom osv.", Type = "number"},
-                    new Column {Label = "Interessetid : 0% løn", Type = "number"},
-                    new Column {Label = "39-44 : 100% løn", Type = "number"},
-                    new Column {Label = "44+ : 150% løn", Type = "number"}
+                    new Column {Label = "Timer fra helligdage", Type = "number"},
+                    new Column {Label = "Arbejde, Ferie, Sygdom osv.", Type = "number"},
+                    new Column {Label = "Interessetid: 0% løn", Type = "number"},
+                    new Column {Label = "Flytbart overarbejde (39-44): 100% løn", Type = "number"},
+                    new Column {Label = "Låst overarbejde (44+): 150% løn", Type = "number"}
                 }
             };
             googleFormatedWeeks.AddRange(weeks.Select(week => week.ToArray(defaultValue)));
