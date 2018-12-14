@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using Impact.Business.Time;
@@ -69,7 +68,10 @@ namespace Impact.Website.Controllers
             quarterViewModel.PotentialChartViewModel = CreateGaugeChartViewModel(normalizedPreviousWeek, normalizedAllWeeks);
 
             if (normalizedPreviousWeek.Count < rawWeeks.Count)
-                normalizedPreviousWeek.Add(rawWeeks.LastOrDefault());
+            {
+                var count = rawWeeks.Count - normalizedPreviousWeek.Count;
+                normalizedPreviousWeek.AddRange(rawWeeks.GetRange(normalizedPreviousWeek.Count, count));
+            }
             
             quarterViewModel.BarColumnChartViewModel = WeeksChartViewModelProvider.CreateWeeksViewModel(quarter, rawWeeks, normalizedPreviousWeek, normalizedAllWeeks, isNormalized);
             
