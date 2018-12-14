@@ -15,6 +15,7 @@ x64/
 x86/
 Deploy/
 TimeLog.ReportingApi.Exporter/Deploy/
+PrecompiledWeb/
 build/
 bld/
 [Bb]in/
