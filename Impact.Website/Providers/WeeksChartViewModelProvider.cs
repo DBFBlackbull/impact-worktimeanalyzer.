@@ -90,10 +90,10 @@ namespace Impact.Website.Providers
                     new Column {Label = "Uge nummer", Type = "string"},
                     new Column {Label = "Timer uden for kvartalet", Type = "number"}, new Column {Role = "style"},
                     new Column {Label = "Timer fra helligdage", Type = "number"},
-                    new Column {Label = "Arbejde, Ferie osv.", Type = "number"},
-                    new Column {Label = "FlexInteressetid: 0% løn", Type = "number"},
+                    new Column {Label = "Arbejde, ferie, sygdom", Type = "number"},
+                    new Column {Label = "Flex (37,5-39): 0% løn", Type = "number"},
                     new Column {Label = "Flex (39-44): 100% løn", Type = "number"},
-                    new Column {Label = "Låst (44+): 150% løn", Type = "number"}
+                    new Column {Label = "Udbetalt (44+): 150% løn", Type = "number"}
                 }
             };
             googleFormatedWeeks.AddRange(weeks.Select(week => week.ToArray(defaultValue)));
