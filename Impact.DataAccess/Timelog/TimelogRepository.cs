@@ -13,12 +13,16 @@ namespace Impact.DataAccess.Timelog
 {
     public class TimeLogRepository : ITimeRepository
     {
+        private static readonly CultureInfo DanishCultureInfo = new CultureInfo("da-DK");
+        private static readonly Calendar DanishCalendar = DanishCultureInfo.Calendar;
+        private static readonly DayOfWeek DanishFirstDayOfWeek = DanishCultureInfo.DateTimeFormat.FirstDayOfWeek;
+        private static readonly CalendarWeekRule DanishCalendarWeekRule = DanishCultureInfo.DateTimeFormat.CalendarWeekRule;
+        
         public IEnumerable<Week> GetWeeksInQuarter(Quarter quarter, SecurityToken token)
         {
             var instanceProjectManagementClient = ProjectManagementHandler.Instance.ProjectManagementClient;
             var result = instanceProjectManagementClient.GetWorkPaged(token.Initials, quarter.From, quarter.To, 1, 500, token);
-            
-            var calendar = CultureInfo.InvariantCulture.Calendar;
+
             var weeksToHoursDictionary = new Dictionary<int, Week>();
             
             if (result.ResponseState != ExecutionStatus.Success) 
@@ -28,7 +32,7 @@ namespace Impact.DataAccess.Timelog
             foreach (var workUnitFlat in workUnitFlats)
             {
                 var dateTime = workUnitFlat.Date;
-                var weekNumber = calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+                var weekNumber = DanishCalendar.GetWeekOfYear(dateTime, DanishCalendarWeekRule, DanishFirstDayOfWeek);
 
                 if (!weeksToHoursDictionary.TryGetValue(weekNumber, out var week))
                     weeksToHoursDictionary[weekNumber] = week = CreateWeek(weekNumber, dateTime);
