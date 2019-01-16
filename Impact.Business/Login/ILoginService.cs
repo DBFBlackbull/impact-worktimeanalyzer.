@@ -4,7 +4,7 @@ namespace Impact.Business.Login
 {
     public interface ILoginService
     {
-        bool IsAuthorized(string username, string password, out SecurityToken securityToken);
+        bool IsAuthorized(string username, string password, out SecurityToken securityToken, out string fullName);
         string FailedLoginMessageHtml();
     }
 }

@@ -34,19 +34,21 @@ namespace Impact.Website.Controllers
 		    if (!ModelState.IsValid)
 		        return View(loginViewModel);
 
-			if (!_loginService.IsAuthorized(loginViewModel.Username, loginViewModel.Password, out var token))
+			if (!_loginService.IsAuthorized(loginViewModel.Username, loginViewModel.Password, out var token, out var fullName))
 			{
 				loginViewModel.Message = _loginService.FailedLoginMessageHtml();
 				return View(loginViewModel);
 			}
 		    
 		    HttpContext.Session.Add(ApplicationConstants.Token, token);
+		    HttpContext.Session.Add(ApplicationConstants.FullName, fullName);
 		    return RedirectToAction("Index", "Site");
 		}
 
 	    public ActionResult Logout()
 	    {
 	        HttpContext.Session.Remove(ApplicationConstants.Token);
+	        HttpContext.Session.Remove(ApplicationConstants.FullName);
 	        return RedirectToAction("Index");
 	    }
 

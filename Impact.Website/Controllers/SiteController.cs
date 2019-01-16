@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using Impact.Core.Contants;
+using Impact.Website.Models;
 
 namespace Impact.Website.Controllers
 {
@@ -11,7 +9,10 @@ namespace Impact.Website.Controllers
         // GET: Site
         public ActionResult Index()
         {
-            return View();
+            if (!(HttpContext.Session[ApplicationConstants.FullName] is string fullName))
+                return RedirectToAction("Index", "Login");
+            
+            return View(new SiteViewModel(fullName));
         }
     }
 }

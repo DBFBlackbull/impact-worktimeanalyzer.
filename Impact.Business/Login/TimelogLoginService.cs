@@ -1,15 +1,27 @@
 ﻿using TimeLog.TransactionalApi.SDK;
-using TimeLog.TransactionalApi.SDK.ProjectManagementService;
+using ExecutionStatus = TimeLog.TransactionalApi.SDK.OrganisationService.ExecutionStatus;
+using SecurityToken = TimeLog.TransactionalApi.SDK.ProjectManagementService.SecurityToken;
 
 namespace Impact.Business.Login
 {
     public class TimelogLoginService : ILoginService
     {
-        public bool IsAuthorized(string username, string password, out SecurityToken securityToken)
+        public bool IsAuthorized(string username, string password, out SecurityToken securityToken, out string fullName)
         {
             var authorized = SecurityHandler.Instance.TryAuthenticate(username, password, out var messages);
             securityToken = authorized ? ProjectManagementHandler.Instance.Token : null;
+            fullName = authorized ? GetFullName() : string.Empty;
+
             return authorized;
+        }
+
+        private static string GetFullName()
+        {
+            var token = OrganisationHandler.Instance.Token;
+            var response = OrganisationHandler.Instance.OrganisationClient.GetEmployeeByInitials(token.Initials, token);
+            return response.ResponseState == ExecutionStatus.Success
+                ? response.Return[0].Fullname
+                : string.Empty;
         }
 
         public string FailedLoginMessageHtml()

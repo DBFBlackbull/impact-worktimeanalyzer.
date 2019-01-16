@@ -13,6 +13,7 @@ namespace Impact.Core.Contants
         public const decimal AwesomeThursdayApproximation = NormalWorkDay / 2;
 
         public const string Token = "token";
+        public const string FullName = "fullName";
         public const int PageSize = 500;
         
         public static class Color
