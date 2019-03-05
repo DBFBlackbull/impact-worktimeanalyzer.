@@ -18,7 +18,7 @@ namespace Impact.Business.Login
         private static string GetFullName()
         {
             var token = OrganisationHandler.Instance.Token;
-            var response = OrganisationHandler.Instance.OrganisationClient.GetEmployeeByInitials(token.Initials, token);
+            var response = OrganisationHandler.Instance.OrganisationClient.GetEmployeeByUsername(token.Initials, token);
             return response.ResponseState == ExecutionStatus.Success
                 ? response.Return[0].Fullname
                 : string.Empty;
