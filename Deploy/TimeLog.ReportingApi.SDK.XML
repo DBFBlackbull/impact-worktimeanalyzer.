@@ -196,6 +196,11 @@
             Gets or sets a value indicating whether the allocation is active
             </summary>
         </member>
+        <member name="T:TimeLog.ReportingApi.SDK.ProjectContract">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:TimeLog.ReportingApi.SDK.Customer">
             <summary>
             Placeholder for customer related constants and properties
@@ -357,6 +362,18 @@
             <summary>
             Placeholder for project related constants and properties
             </summary>
+        </member>
+        <member name="M:TimeLog.ReportingApi.SDK.Project.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TimeLog.ReportingApi.SDK.Customer"/> class.
+            </summary>
+        </member>
+        <member name="M:TimeLog.ReportingApi.SDK.Project.#ctor(System.Xml.XmlNode,System.Xml.XmlNamespaceManager)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TimeLog.ReportingApi.SDK.Customer"/> class.
+            </summary>
+            <param name="node">The XML node to initialize from</param>
+            <param name="namespaceManager">The namespace manager</param>
         </member>
         <member name="P:TimeLog.ReportingApi.SDK.Project.All">
             <summary>
@@ -869,7 +886,7 @@
             <summary>
             Overwrites the service URL from the app.config
             </summary>
-            <param name="url">TimeLog Project URL (e.g. https://app4.timelog.com/soxdemo4 )</param>
+            <param name="url">TimeLog URL (e.g. https://app4.timelog.com/soxdemo4 )</param>
         </member>
         <member name="M:TimeLog.ReportingApi.SDK.ServiceHandler.TryAuthenticate">
             <summary>
@@ -895,6 +912,11 @@
             Disposes the handler.
             </summary>
         </member>
+        <member name="T:TimeLog.ReportingApi.SDK.SettingsHandler">
+            <summary>
+            Allows access to application settings including default values.
+            </summary>
+        </member>
         <member name="M:TimeLog.ReportingApi.SDK.SettingsHandler.#ctor">
             <summary>
             Prevents a default instance of the <see cref="T:TimeLog.ReportingApi.SDK.SettingsHandler"/> class from being created.
@@ -907,19 +929,30 @@
         </member>
         <member name="P:TimeLog.ReportingApi.SDK.SettingsHandler.Url">
             <summary>
-            Gets the base uri for the TimeLog Project site read from the
+            Gets the base uri for the TimeLog site read from the
             application setting TimeLogProjectUri.
             </summary>
         </member>
         <member name="P:TimeLog.ReportingApi.SDK.SettingsHandler.MaxReceivedMessageSize">
             <summary>
-            Gets the default max received message size for all calls to the TimeLog Project API.
+            Gets the default max received message size for all calls to the TimeLog API.
             Default is 1024000, but can be overwritten from application setting TimeLogProjectMaxReceivedMessageSize.
+            </summary>
+        </member>
+        <member name="P:TimeLog.ReportingApi.SDK.SettingsHandler.Timeout">
+            <summary>
+            Gets the default timeout value for all calls to the TimeLog API.
+            Default is 60 seconds, but can be overwritten from applicatino setting TimeLogProjectTimeoutInSeconds.
             </summary>
         </member>
         <member name="P:TimeLog.ReportingApi.SDK.SettingsHandler.DataCulture">
             <summary>
             Gets the correct culture for converting data from the reporting API
+            </summary>
+        </member>
+        <member name="M:TimeLog.ReportingApi.SDK.SettingsHandler.Dispose">
+            <summary>
+            Disposes the class and releases memory
             </summary>
         </member>
         <member name="T:TimeLog.ReportingApi.SDK.XmlNodeExtensions">

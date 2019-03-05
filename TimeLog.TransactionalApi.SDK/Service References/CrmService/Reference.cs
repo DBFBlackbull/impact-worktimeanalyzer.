@@ -794,6 +794,12 @@ namespace TimeLog.TransactionalApi.SDK.CrmService {
         private bool IsActiveField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ProfessionalTitle1Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ProfessionalTitle2Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private TimeLog.TransactionalApi.SDK.CrmService.ContactDetails DetailsField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
@@ -979,6 +985,32 @@ namespace TimeLog.TransactionalApi.SDK.CrmService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+        public string ProfessionalTitle1 {
+            get {
+                return this.ProfessionalTitle1Field;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ProfessionalTitle1Field, value) != true)) {
+                    this.ProfessionalTitle1Field = value;
+                    this.RaisePropertyChanged("ProfessionalTitle1");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+        public string ProfessionalTitle2 {
+            get {
+                return this.ProfessionalTitle2Field;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ProfessionalTitle2Field, value) != true)) {
+                    this.ProfessionalTitle2Field = value;
+                    this.RaisePropertyChanged("ProfessionalTitle2");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=16)]
         public TimeLog.TransactionalApi.SDK.CrmService.ContactDetails Details {
             get {
                 return this.DetailsField;
@@ -2007,6 +2039,9 @@ namespace TimeLog.TransactionalApi.SDK.CrmService {
         Deleted = 3,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
+        Copied = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
         Undefined = 99,
     }
     
@@ -2659,25 +2694,25 @@ namespace TimeLog.TransactionalApi.SDK.CrmService {
         ProjectSubContractStatus = 144,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Platform = 145,
+        PlatformPaymentMethod = 145,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        PlatformLicenceOverview = 146,
+        MilestoneType = 146,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        PlatformInvoiceInformation = 147,
+        TimeRegistration = 147,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        EventHeader = 148,
+        OpportunityStatus = 148,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        PlatformPaymentMethod = 149,
+        AbsenceCode = 149,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        MilestoneType = 150,
+        SalaryAccount = 150,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        EmployeeHeader = 151,
+        SalaryGroup = 151,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         WorkerRequest = 152,
@@ -2686,10 +2721,10 @@ namespace TimeLog.TransactionalApi.SDK.CrmService {
         WorkerItem = 153,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        WorkerItemLog = 154,
+        EmployeeProjection = 154,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        OpportunityStatus = 155,
+        NormalWorkingTime = 155,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         DepartmentDimensionMapping = 156,
@@ -2704,19 +2739,139 @@ namespace TimeLog.TransactionalApi.SDK.CrmService {
         CalendarEvent = 159,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        CalendarEventAttendee = 160,
+        Comment = 160,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         HardBooking = 161,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        HardBookingDetail = 162,
+        AggregationMaster = 162,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Comment = 163,
+        AggregationUnit = 163,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        CommentActionLog = 164,
+        WorkflowTemplate = 164,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        WorkflowTemplateStep = 165,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        WorkflowTransitionTemplate = 166,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        WorkflowTemplateRelation = 167,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Workflow = 168,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        WorkflowToken = 169,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        WorkflowTransitionItem = 170,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        ApprovalContextItem = 171,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        AbsenceApprovalContextItem = 172,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        EmployeeHeader = 173,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Platform = 174,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlatformLicenceOverview = 175,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlatformInvoiceInformation = 176,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Holiday = 177,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        SalaryAccountType = 178,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        TimeTrackingDetailGroup = 179,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        WorkerItemLog = 180,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        EventHeader = 181,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        TimeRegistrationFinancialData = 186,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        AbsenceCodeType = 187,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        NormalWorkingTimeDay = 188,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        SalaryAccountEmployeePosting = 189,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        ApprovalFlowItem = 190,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        UserChangeHistory = 191,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Favourite = 192,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Dialogue = 192,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        ApprovalContextItemRemoveApprovedAbsence = 193,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        CalendarEventAttendee = 194,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        HardBookingDetail = 195,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        CommentActionLog = 196,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        ApprovalTimeTrackingItem = 197,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        ReportAdjustProjectPayment = 198,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        HardBookingItem = 199,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        SystemAdminHourlyRate = 200,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        SalaryTime = 201,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        ProjectFinancialsContext = 202,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        GenericBudget = 201,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        GenericBudgetValue = 204,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        ProjectPlanFinancialsContext = 203,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        UserAreaPrivilege = 205,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        ProjectSubContractDropdown = 206,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         NotSpecified = 0,
@@ -3233,6 +3388,16 @@ namespace TimeLog.TransactionalApi.SDK.CrmService {
             "onse")]
         System.Threading.Tasks.Task<TimeLog.TransactionalApi.SDK.CrmService.ResponseOfCustomer> GetCustomersByFieldsPagedAsync(string cvr, string name, string phone, bool loadCustomFields, bool loadExternalKeys, int page, int pageSize, TimeLog.TransactionalApi.SDK.CrmService.SecurityToken token);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.timelog.com/services/crm/1_4/ICRMService/GetCustomersByFieldsForLinkin" +
+            "g", ReplyAction="http://api.timelog.com/services/crm/1_4/ICRMService/GetCustomersByFieldsForLinkin" +
+            "gResponse")]
+        TimeLog.TransactionalApi.SDK.CrmService.ResponseOfCustomer GetCustomersByFieldsForLinking(string customerNumber, string VATNumber, string organisationNumber, string customerName, bool loadCustomFields, bool loadExternalKeys, int page, int pageSize, TimeLog.TransactionalApi.SDK.CrmService.SecurityToken token);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.timelog.com/services/crm/1_4/ICRMService/GetCustomersByFieldsForLinkin" +
+            "g", ReplyAction="http://api.timelog.com/services/crm/1_4/ICRMService/GetCustomersByFieldsForLinkin" +
+            "gResponse")]
+        System.Threading.Tasks.Task<TimeLog.TransactionalApi.SDK.CrmService.ResponseOfCustomer> GetCustomersByFieldsForLinkingAsync(string customerNumber, string VATNumber, string organisationNumber, string customerName, bool loadCustomFields, bool loadExternalKeys, int page, int pageSize, TimeLog.TransactionalApi.SDK.CrmService.SecurityToken token);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://api.timelog.com/services/crm/1_4/ICRMService/GetCustomersModifiedSincePage" +
             "d", ReplyAction="http://api.timelog.com/services/crm/1_4/ICRMService/GetCustomersModifiedSincePage" +
             "dResponse")]
@@ -3411,6 +3576,14 @@ namespace TimeLog.TransactionalApi.SDK.CrmService {
         
         public System.Threading.Tasks.Task<TimeLog.TransactionalApi.SDK.CrmService.ResponseOfCustomer> GetCustomersByFieldsPagedAsync(string cvr, string name, string phone, bool loadCustomFields, bool loadExternalKeys, int page, int pageSize, TimeLog.TransactionalApi.SDK.CrmService.SecurityToken token) {
             return base.Channel.GetCustomersByFieldsPagedAsync(cvr, name, phone, loadCustomFields, loadExternalKeys, page, pageSize, token);
+        }
+        
+        public TimeLog.TransactionalApi.SDK.CrmService.ResponseOfCustomer GetCustomersByFieldsForLinking(string customerNumber, string VATNumber, string organisationNumber, string customerName, bool loadCustomFields, bool loadExternalKeys, int page, int pageSize, TimeLog.TransactionalApi.SDK.CrmService.SecurityToken token) {
+            return base.Channel.GetCustomersByFieldsForLinking(customerNumber, VATNumber, organisationNumber, customerName, loadCustomFields, loadExternalKeys, page, pageSize, token);
+        }
+        
+        public System.Threading.Tasks.Task<TimeLog.TransactionalApi.SDK.CrmService.ResponseOfCustomer> GetCustomersByFieldsForLinkingAsync(string customerNumber, string VATNumber, string organisationNumber, string customerName, bool loadCustomFields, bool loadExternalKeys, int page, int pageSize, TimeLog.TransactionalApi.SDK.CrmService.SecurityToken token) {
+            return base.Channel.GetCustomersByFieldsForLinkingAsync(customerNumber, VATNumber, organisationNumber, customerName, loadCustomFields, loadExternalKeys, page, pageSize, token);
         }
         
         public TimeLog.TransactionalApi.SDK.CrmService.ResponseOfCustomer GetCustomersModifiedSincePaged(System.DateTime date, bool includeCustomers, bool includeSuppliers, bool includeLeads, bool loadCustomFields, bool loadExternalKeys, int page, int pageSize, TimeLog.TransactionalApi.SDK.CrmService.SecurityToken token) {

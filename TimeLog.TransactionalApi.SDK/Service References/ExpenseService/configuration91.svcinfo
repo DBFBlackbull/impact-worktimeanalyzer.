@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="3liTESi0qz+nnFuiaNFJTediSfM=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="EfUfKwySAn6aCVRjmKGl5ORrcVE=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="basicHttpBinding" name="BasicHttpBinding_ExpenseService2">
       <properties>
@@ -112,10 +112,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="BasicHttpBinding_ExpenseService2" contract="ExpenseService.ExpenseService" bindingType="basicHttpBinding" address="https://app4.timelog.com/soxdemo4/WebServices/Expenses/V1_0/ExpensesServiceSecure.svc" bindingConfiguration="BasicHttpBinding_ExpenseService2">
+    <endpoint name="BasicHttpBinding_ExpenseService2" contract="ExpenseService.ExpenseService" bindingType="basicHttpBinding" address="https://app4.timelog.com/610patchreference/WebServices/Expenses/V1_0/ExpensesServiceSecure.svc" bindingConfiguration="BasicHttpBinding_ExpenseService2">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>https://app4.timelog.com/soxdemo4/WebServices/Expenses/V1_0/ExpensesServiceSecure.svc</serializedValue>
+          <serializedValue>https://app4.timelog.com/610patchreference/WebServices/Expenses/V1_0/ExpensesServiceSecure.svc</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

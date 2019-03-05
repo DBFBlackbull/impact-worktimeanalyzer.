@@ -31,10 +31,18 @@
                 // ConsumeCsvFile.Consume();
                 // GetEmployeesTransactionalApi.Consume();
                 // CreateProjectTransactionalApi.Consume();
-                // CreateProjectTransactionalApi2.Consume();
+                // FetchProjectAndTasks.Consume();
                 // InsertCustomerTest.Consume();
+                // InsertEmployeeTest.Consume();
                 // CreateProjectsForAllCustomers.Consume();
-                CreateProjectsForCustomersInSql.Consume();
+                // CreateProjectsForCustomersInSql.Consume();
+                CreateProjectsForCustomersInCsv.Consume();
+                // InvoiceManipulation.Consume();
+                // ManipulateTasks.Consume();
+                // InsertWork.Consume();
+                // CreateProjectTransactionalApi2.Consume();
+                // ManipulateExternalKeys.Consume();
+                // GetWorkUnitChangeLog.Consume();
             }
             catch (Exception ex)
             {

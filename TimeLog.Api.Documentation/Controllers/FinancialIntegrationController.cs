@@ -52,7 +52,7 @@
 
         public ActionResult VismaAdministration()
         {
-            return this.View("Index");
+            return this.View("Visma");
         }
 
         public ActionResult Fortnox()
@@ -75,14 +75,24 @@
             return this.View("Index");
         }
 
-        public ActionResult Install()
+        public ActionResult MiddlewareInstall()
         {
-            return this.View("Index");
+            return this.View("MiddlewareInstall");
         }
 
         public ActionResult ConfigurationFile()
         {
             return this.View();
+        }
+
+        public ActionResult Dinero()
+        {
+            return this.View("Dinero");
+        }
+
+        public ActionResult Uniconta()
+        {
+            return this.View("Uniconta");
         }
     }
 }

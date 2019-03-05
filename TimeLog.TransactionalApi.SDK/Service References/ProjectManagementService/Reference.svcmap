@@ -19,12 +19,12 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="https://app4.timelog.com/soxdemo4/WebServices/ProjectManagement/V1_6/ProjectManagementServiceSecure.svc" Protocol="http" SourceId="1" />
+    <MetadataSource Address="https://app3.timelog.com/local/WebServices/ProjectManagement/V1_7/ProjectManagementServiceSecure.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="ProjectManagementServiceSecure11.disco" MetadataType="Disco" ID="c4872130-6116-46a1-8452-3c8d45ea33fb" SourceId="1" SourceUrl="https://app4.timelog.com/soxdemo4/WebServices/ProjectManagement/V1_6/ProjectManagementServiceSecure.svc?disco" />
-    <MetadataFile FileName="ProjectManagementServiceSecure22.wsdl" MetadataType="Wsdl" ID="13856c96-77a2-4475-9546-37879ac52776" SourceId="1" SourceUrl="https://app4.timelog.com/soxdemo4/WebServices/ProjectManagement/V1_6/ProjectManagementServiceSecure.svc?wsdl=wsdl0" />
-    <MetadataFile FileName="ProjectManagementServiceSecure23.wsdl" MetadataType="Wsdl" ID="3e9cd046-5406-43fd-b6ad-c951a901c984" SourceId="1" SourceUrl="https://app4.timelog.com/soxdemo4/WebServices/ProjectManagement/V1_6/ProjectManagementServiceSecure.svc?wsdl" />
+    <MetadataFile FileName="ProjectManagementServiceSecure.wsdl" MetadataType="Wsdl" ID="ebb9892c-5871-418f-acd6-73849c17a274" SourceId="1" SourceUrl="https://app3.timelog.com/local/WebServices/ProjectManagement/V1_7/ProjectManagementServiceSecure.svc?wsdl=wsdl0" />
+    <MetadataFile FileName="ProjectManagementServiceSecure.disco" MetadataType="Disco" ID="15df97e6-075a-494c-84c8-6bf3dbb01e2a" SourceId="1" SourceUrl="https://app3.timelog.com/local/WebServices/ProjectManagement/V1_7/ProjectManagementServiceSecure.svc?disco" />
+    <MetadataFile FileName="ProjectManagementServiceSecure1.wsdl" MetadataType="Wsdl" ID="a030b6e6-31e2-4595-ad2f-9ee86d26b1c5" SourceId="1" SourceUrl="https://app3.timelog.com/local/WebServices/ProjectManagement/V1_7/ProjectManagementServiceSecure.svc?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

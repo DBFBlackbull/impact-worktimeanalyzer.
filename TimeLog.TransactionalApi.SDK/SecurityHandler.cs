@@ -179,8 +179,8 @@
                                  {
                                      Expires = DateTime.ParseExact(ConfigurationManager.AppSettings["TimeLogProjectRawTokenExpires"], "yyyyMMddHHmmssK", new CultureInfo("da-DK")),
                                      Hash = ConfigurationManager.AppSettings["TimeLogProjectRawTokenHash"],
-                                     Initials = username
-                };
+                                     Initials = ConfigurationManager.AppSettings["TimeLogProjectRawTokenInitials"]
+                                 };
 
                 messages = new List<string>();
                 return true;

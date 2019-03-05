@@ -33,8 +33,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeLog.ReportingApi.Export
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeLog.Api.Documentation", "TimeLog.Api.Documentation\TimeLog.Api.Documentation.csproj", "{5A484ED7-6249-4B14-B9D4-32F1BB47127C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeLog.MicrosoftBiSync", "TimeLog.MicrosoftBiSync\TimeLog.MicrosoftBiSync.csproj", "{94841BE3-FF0D-456D-BABD-86C9A8541B14}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeLog.Library", "TimeLog.Library\TimeLog.Library.csproj", "{0ABB99CF-54EC-4415-9675-25096E7FC01E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impact.Website", "Impact.Website\Impact.Website.csproj", "{67213E17-57F1-43E5-85E9-E39E37F174F3}"

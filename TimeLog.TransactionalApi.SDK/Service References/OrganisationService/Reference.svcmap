@@ -19,11 +19,11 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="https://app4.timelog.com/coldemo/WebServices/Organisation/V1_5/OrganisationServiceSecure.svc" Protocol="http" SourceId="1" />
+    <MetadataSource Address="https://app3.timelog.com/local/WebServices/Organisation/V1_7/OrganisationServiceSecure.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="OrganisationServiceSecure.disco" MetadataType="Disco" ID="69733f37-04fc-419e-9b11-af32b5cb3713" SourceId="1" SourceUrl="https://app4.timelog.com/coldemo/WebServices/Organisation/V1_5/OrganisationServiceSecure.svc?disco" />
-    <MetadataFile FileName="OrganisationServiceSecure.wsdl" MetadataType="Wsdl" ID="8c7d944f-a5ae-4ec7-a482-5cd4917af452" SourceId="1" SourceUrl="https://app4.timelog.com/coldemo/WebServices/Organisation/V1_5/OrganisationServiceSecure.svc?wsdl" />
+    <MetadataFile FileName="OrganisationServiceSecure.disco" MetadataType="Disco" ID="7d8ba613-71fe-4f20-bc95-38b9272270f5" SourceId="1" SourceUrl="https://app3.timelog.com/local/WebServices/Organisation/V1_7/OrganisationServiceSecure.svc?disco" />
+    <MetadataFile FileName="OrganisationServiceSecure.wsdl" MetadataType="Wsdl" ID="43c235b3-008b-46b8-b8ec-f4963c04225e" SourceId="1" SourceUrl="https://app3.timelog.com/local/WebServices/Organisation/V1_7/OrganisationServiceSecure.svc?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
