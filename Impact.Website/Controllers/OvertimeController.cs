@@ -53,9 +53,9 @@ namespace Impact.Website.Controllers
             var quarter = _timeService.GetQuarter(dateTime);
             List<Week> rawWeeks = _timeService.GetWeeksInQuarter(quarter, token).ToList();
 
-            var now = DateTime.Now;
+            var now = DateTime.Today;
 
-            var previousWeeks = rawWeeks.Where(w => w.Dates.All(date => date < now)).ToList();
+            var previousWeeks = rawWeeks.Where(w => w.Dates.LastOrDefault() < now).ToList();
             var normalizedPreviousWeek = _timeService.GetNormalizedWeeks(previousWeeks).ToList();
             var normalizedAllWeeks = _timeService.GetNormalizedWeeks(rawWeeks).ToList();
 
