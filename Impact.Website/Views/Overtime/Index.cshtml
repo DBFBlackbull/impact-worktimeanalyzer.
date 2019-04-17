@@ -12,10 +12,10 @@
                 <form>
                     <div class="form-group form-inline">
                         @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control", onchange = "Submit()"})
-                        @Html.CheckBoxFor(m => m.BarColumnChartViewModel.IsNormalized, new { id = "toggle-normalized", data_toggle = "toggle", data_off = "Registrerede Timer", data_on = "Udbetale Timer" })
+                        @Html.CheckBoxFor(m => m.BarColumnChartViewModel.IsNormalized, new { id = "toggle-normalized", data_toggle = "toggle", data_width = "200", data_height = "38", data_off = "Registrerede Timer", data_on = "Udbetale Timer", style="margin-right: 5px" })
                         @if (Model.ShowIncludeAllWeeksButton)
                         {
-                            @Html.CheckBoxFor(m => m.IncludeAllWeeks, new { id = "toggle-allWeeks", data_toggle = "toggle", data_off = "Tidligere uger", data_on = "Alle uger" })
+                            @Html.CheckBoxFor(m => m.IncludeAllWeeks, new { id = "toggle-allWeeks", data_toggle = "toggle", data_width = "200", data_height = "38", data_off = "Tidligere uger", data_on = "Alle uger" })
                         }
                     </div>
                 </form>
@@ -40,8 +40,73 @@
         <div class="col-md-4">
             <div id="@Model.PieChartViewModel.DivId"></div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div id="@Model.PotentialChartViewModel.DivId"></div>
+        </div>
+        <div class="col-md-5">
+            <form>
+                <div class="form-group">
+                    @* <input type="number" class="form-control" id="monthlyPay" placeholder="Månedsløn"> *@
+                    <label for="monthlyPay">Månedsløn</label>
+                    <div class="input-group mb-3">
+                        <input id="monthlyPay" type="number" class="form-control" placeholder="20,000" aria-label="20,000">
+                        <div class="input-group-append">
+                            <span class="input-group-text">kr</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="hourlyPay">Timeløn</label>
+                    <div class="input-group mb-3">
+                        <input id="hourlyPay" disabled type="number" class="form-control" placeholder="200" aria-label="200" >
+                        <div class="input-group-append">
+                            <span class="input-group-text">kr</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend ">
+                                <span class="input-group-text danger" style="width: 130px">Flex (37,5-39)</span>
+                            </div>
+                            <input type="number" disabled class="form-control" id="flex0" >
+                            <input type="number" disabled class="form-control" id="flex0u" >
+                            <div class="input-group-append">
+                                <span class="input-group-text">kr</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text warning" style="width: 130px">Flex (39-44)</span>
+                            </div>
+                            <input type="number" disabled class="form-control" id="flex1" >
+                            <input type="number" disabled class="form-control" id="flex1u" >
+                            <div class="input-group-append">
+                                <span class="input-group-text">kr</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text success" style="width: 130px">Udbetalt (44+)</span>
+                            </div>
+                            <input type="number" disabled class="form-control" id="flex2" >
+                            <input type="number" disabled class="form-control" id="flex2u" >
+                            <div class="input-group-append">
+                                <span class="input-group-text">kr</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -64,5 +129,56 @@
             drawPieChart(pie); 
             drawGaugeChart(potential);
         });
+
+        updateValues();
+        
+        $('#toggle-normalized').change(function () {
+            updateValues();
+        });
+        $('#toggle-allWeeks').change(function() {
+            updateValues();
+        });
+        
+        $('#monthlyPay').change(function () {
+            var hourly = this.value / 162.5;
+            var hourlyRounded = round2D(hourly);
+            if (hourlyRounded === 0)
+                $('#hourlyPay').val("");
+            else {
+                $('#hourlyPay').val(hourlyRounded);
+                calculatePayout();
+            }
+        });
     };
+
+    function round2D(number) {
+        return Math.round(number * 100) / 100;
+    }
+    
+    function updateValues() {
+        var showNormalized = $('#toggle-normalized').prop('checked');
+        var showAllWeeks = $('#toggle-allWeeks').prop('checked');
+
+        var data;
+        //All data sets defined
+        if (showNormalized && showAllWeeks) {
+            data = @JavaScriptConvert.SerializeObject(Model.SummedViewModel.NormalizedAll);
+        } else if (showNormalized) {
+            data = @JavaScriptConvert.SerializeObject(Model.SummedViewModel.NormalizedPrevious);
+        } else {
+            data = @JavaScriptConvert.SerializeObject(Model.SummedViewModel.RawAll);
+        }
+            
+        $('#flex0').val(data.flex0);
+        $('#flex1').val(data.flex100);
+        $('#flex2').val(data.payout);
+        calculatePayout();
+    }
+
+    function calculatePayout() {
+        var hourlyRounded = $('#hourlyPay').val();
+        $('#flex0u').val( $('#flex0').val() * 0 );
+        $('#flex1u').val( round2D( $('#flex1').val() * hourlyRounded) );
+        $('#flex2u').val( round2D( $('#flex2').val() * hourlyRounded * 1.5) );
+    }
 </script>

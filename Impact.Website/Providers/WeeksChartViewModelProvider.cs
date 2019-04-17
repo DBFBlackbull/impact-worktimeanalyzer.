@@ -51,11 +51,6 @@ namespace Impact.Website.Providers
                 ViewWindow = viewWindowViewModel
             };
 
-            var hAxisViewModel = new BarColumnOptions.AxisViewModel
-            {
-                Title = "Uge"
-            };
-
             var optionsViewModel = new BarColumnOptions.OptionsViewModel
             {
                 Width = 1600,
@@ -69,7 +64,6 @@ namespace Impact.Website.Providers
                 Animation = animationViewModel,
                 Bar = barViewModel,
                 VAxis = vAxisViewModel,
-                HAxis = hAxisViewModel
             };
 
             return optionsViewModel;

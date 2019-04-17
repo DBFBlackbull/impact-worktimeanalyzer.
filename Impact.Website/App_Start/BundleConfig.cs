@@ -24,16 +24,16 @@ namespace Impact.Website
 						"~/Scripts/modernizr-*"));
 
 			bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-					  "~/Scripts/bootstrap.js",
-					  "~/Scripts/BootstrapToggle/bootstrap.toggle.min.js",
+					  "~/Scripts/Bootstrap/bootstrap.js",
+					  "~/Scripts/BootstrapToggle/bootstrap4-toggle.min.js",
 					  "~/Scripts/respond.js"));
 		    
 		    bundles.Add(new StyleBundle("~/Content/site").Include(
 		              "~/Content/site.css"));
 		    
 			bundles.Add(new StyleBundle("~/Content/bootstrap").Include(
-					  "~/Content/bootstrap.css",
-					  "~/Content/BootstrapToggle/bootstrap.toggle.min.css"));
+					  "~/Content/Bootstrap/bootstrap.css",
+					  "~/Content/BootstrapToggle/bootstrap4-toggle.min.css"));
 
             bundles.Add(new StyleBundle("~/Content/impact2").Include(
                     "~/Content/Impact/impact.css"));

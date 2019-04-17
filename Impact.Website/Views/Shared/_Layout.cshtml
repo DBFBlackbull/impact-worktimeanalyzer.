@@ -10,39 +10,35 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Timelog Analyzer", "Index", "Site", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Overarbejde", "Index", "Overtime")</li>
-                    <li>@Html.ActionLink("Fed torsdag", "Index", "AwesomeThursday")</li>
-                    <li>@Html.ActionLink("About", "About", "Login")</li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li>@Html.ActionLink("Logout", "Logout", "Login")</li>
-                </ul>
-            </div>
+<div class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
+    <div class="container">
+        @Html.ActionLink("Timelog Analyzer", "Index", "Site", new {area = ""}, new {@class = "navbar-brand"})
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">@Html.ActionLink("Overarbejde", "Index", "Overtime", new {area = ""}, new {@class = "nav-link"})</li>
+                <li class="nav-item">@Html.ActionLink("Fed torsdag", "Index", "AwesomeThursday", new {area = ""}, new {@class = "nav-link"})</li>
+                <li class="nav-item">@Html.ActionLink("About", "About", "Login", new {area = ""}, new {@class = "nav-link"})</li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">@Html.ActionLink("Logout", "Logout", "Login", new {area = ""}, new {@class = "nav-link"})</li>
+            </ul>
         </div>
     </div>
-    <div class="body-content">
-        @RenderBody()
-	    <hr />
-	    <div class="container">
-		    <footer>
-			    <p>Made by Peter Bjerg Mogensen &copy; @DateTime.Now.Year</p>
-		    </footer>
-	    </div>
+</div>
+<div class="body-content">
+    @RenderBody()
+    <hr/>
+    <div class="container">
+        <footer>
+            <p>Made by Peter Bjerg Mogensen &copy; @DateTime.Now.Year</p>
+        </footer>
     </div>
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+</div>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@RenderSection("scripts", required: false)
 </body>
 </html>

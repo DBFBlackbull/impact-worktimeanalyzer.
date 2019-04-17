@@ -31,7 +31,7 @@ namespace Impact.Website.Controllers
                 return RedirectToAction("Index", "Login");
             
             var awesomeThursdays = _timeRepository.GetAwesomeThursdays(token).ToList();
-            var disclaimer = 
+            const string disclaimer = 
                 "<p>Fed torsdag er i personalehåndbogen punkt 1.6.4 defineret til at være <i>'fra kl 12.30 og resten af arbejdsdagen'</i>. " +
                 "Denne tidsmængde er afhænging af hvornår man møder om morgenen. " +
                 "Antages det at der mødes kl 8.00 vil man altså have 3,5 timers Fed torsdag, men møder man først kl 9.00 har man 4,5 timers Fed torsdag.</p>" +
@@ -50,7 +50,7 @@ namespace Impact.Website.Controllers
             return View(awesomeThursdayViewModel);
         }
         
-        private BarColumnChartViewModel CreateBalanceViewModel(List<Month> months)
+        private static BarColumnChartViewModel CreateBalanceViewModel(List<Month> months)
         {
             var sum = months.Sum(m => m.RegisteredHours);
             var awesomeThursdayRegistered = Math.Round(Convert.ToDecimal(sum), 2);

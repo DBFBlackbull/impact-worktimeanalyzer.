@@ -197,24 +197,33 @@
     <Compile Include="Models\QuarterViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\SiteViewModel.cs" />
+    <Compile Include="Models\SummedViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\WeeksChartViewModelProvider.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\BootstrapToggle\bootstrap.toggle.min.css" />
+    <Content Include="Content\BootstrapToggle\bootstrap4-toggle.min.css" />
+    <Content Include="Content\Bootstrap\bootstrap-grid.css" />
+    <Content Include="Content\Bootstrap\bootstrap-grid.min.css" />
+    <Content Include="Content\Bootstrap\bootstrap-reboot.css" />
+    <Content Include="Content\Bootstrap\bootstrap-reboot.min.css" />
+    <Content Include="Content\Bootstrap\bootstrap.css" />
+    <Content Include="Content\Bootstrap\bootstrap.min.css" />
     <Content Include="Content\Impact\impact.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Properties\PublishProfiles\TimelogAnalyzer - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\BootstrapToggle\bootstrap.toggle.min.js" />
+    <Content Include="Scripts\BootstrapToggle\bootstrap4-toggle.min.js" />
+    <Content Include="Scripts\Bootstrap\bootstrap.bundle.js" />
+    <Content Include="Scripts\Bootstrap\bootstrap.bundle.min.js" />
+    <Content Include="Scripts\Bootstrap\bootstrap.js" />
+    <Content Include="Scripts\Bootstrap\bootstrap.min.js" />
     <Content Include="Scripts\Charts\charts.js" />
     <Content Include="Scripts\Charts\loader.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />

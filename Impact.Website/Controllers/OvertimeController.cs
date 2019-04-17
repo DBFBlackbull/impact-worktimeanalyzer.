@@ -66,6 +66,7 @@ namespace Impact.Website.Controllers
             quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PieChartViewModel = CreatePieChartViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PotentialChartViewModel = CreateGaugeChartViewModel(normalizedPreviousWeek, normalizedAllWeeks);
+            quarterViewModel.SummedViewModel = CreateSummedViewModel(rawWeeks, normalizedPreviousWeek, normalizedAllWeeks);
 
             if (normalizedPreviousWeek.Count < rawWeeks.Count)
             {
@@ -77,8 +78,8 @@ namespace Impact.Website.Controllers
             
             return quarterViewModel;
         }
-        
-        private BarColumnChartViewModel CreateBalanceViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
+
+        private static BarColumnChartViewModel CreateBalanceViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
         {
             var overHoursPrevious = normalizedPreviousWeek.Sum(w => w.InterestHours + w.MoveableOvertimeHours);
             var missingHoursPrevious = normalizedPreviousWeek.Sum(w => ApplicationConstants.NormalWorkWeek - (w.WorkHours + w.HolidayHours + w.QuarterEdgeHours));
@@ -108,11 +109,11 @@ namespace Impact.Website.Controllers
                 new object[]
                 {
                     new Column{Label = "", Type = "string"},
-                    new Column{Label = "Timer", Type = "number"},
+                    new Column{Label = "Flex", Type = "number"},
                      
                 }
             };
-            allData.Add(new object[] {"Saldo", balanceHoursAll});
+            allData.Add(new object[] {"Flex", balanceHoursAll});
             
             var color = balanceHoursPrevious >= 0 ? ApplicationConstants.Color.Blue : ApplicationConstants.Color.Black;
 
@@ -131,8 +132,8 @@ namespace Impact.Website.Controllers
                 },
                 Chart =new BarColumnOptions.MaterialOptionsViewModel.ChartViewModel
                 {
-                    Title = "Time saldo",
-                    Subtitle = "Viser din \"time-saldo\" for dette kvartal. Dette er summen af dine flytbare timer (interessetid + 39-44 overarbejde) minus dine manglende timer (hvis du er gået tidligt hjem en uge)" +
+                    Title = "Flex saldo",
+                    Subtitle = "Viser dine Flex-timer for dette kvartal. Dette er summen af dine Flex-timer (Flex 37,5-39 + Flex 39-44) minus dine manglende timer (hvis du er gået tidligt hjem en uge)" +
                                "\nKort sagt: Er grafen i minus skal du arbejde længere en uge. Er grafen i plus kan du gå tidligt hjem en uge"
                 }
             };
@@ -147,7 +148,7 @@ namespace Impact.Website.Controllers
             return balanceViewModel;
         }
 
-        private PieChartViewModel CreatePieChartViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
+        private static PieChartViewModel CreatePieChartViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
         {
             var interestHoursSumPrevious = normalizedPreviousWeek.Sum(w => w.InterestHours);
             var moveableOvertimeHoursPrevious = normalizedPreviousWeek.Sum(w => w.MoveableOvertimeHours);
@@ -161,8 +162,11 @@ namespace Impact.Website.Controllers
                 }
             };
 
-            previousWeeksData.Add(new object[] {"Interessetid : 0% løn", interestHoursSumPrevious});
-            previousWeeksData.Add(new object[] {"39-44 : 100% løn", moveableOvertimeHoursPrevious});
+            const string flexZeroPercent = "Flex (37,5-39) : 0% løn";
+            const string flex100Percent = "Flex (39-44) : 0% løn";
+            
+            previousWeeksData.Add(new object[] {flexZeroPercent, interestHoursSumPrevious});
+            previousWeeksData.Add(new object[] {flex100Percent, moveableOvertimeHoursPrevious});
             
             var interestHoursSumAll = normalizedAllWeeks.Sum(w => w.InterestHours);
             var moveableOvertimeHoursAll = normalizedAllWeeks.Sum(w => w.MoveableOvertimeHours);
@@ -176,12 +180,12 @@ namespace Impact.Website.Controllers
                 }
             };
 
-            allWeeksData.Add(new object[] {"Interessetid : 0% løn", interestHoursSumAll});
-            allWeeksData.Add(new object[] {"39-44 : 100% løn", moveableOvertimeHoursAll});
+            allWeeksData.Add(new object[] {flexZeroPercent, interestHoursSumAll});
+            allWeeksData.Add(new object[] {flex100Percent, moveableOvertimeHoursAll});
 
             var optionViewModel = new PieChartViewModel.OptionViewModel
             {
-                Title = "Interessetid vs Overarbejde",
+                Title = "0% løn vs 100% løn",
                 Colors = new List<string> {ApplicationConstants.Color.Red, ApplicationConstants.Color.Orange}
             };
 
@@ -194,9 +198,9 @@ namespace Impact.Website.Controllers
             return pieChartViewModel;
         }
         
-        private GaugeChartViewModel CreateGaugeChartViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
+        private static GaugeChartViewModel CreateGaugeChartViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
         {
-            var percentile = (ApplicationConstants.MoveableConst / ApplicationConstants.InterestConst);
+            const decimal percentile = ApplicationConstants.MoveableConst / ApplicationConstants.InterestConst;
             
             var interestHoursSumPrevious = normalizedPreviousWeek.Sum(w => w.InterestHours);
             var moveableOvertimeHoursPrevious = normalizedPreviousWeek.Sum(w => w.MoveableOvertimeHours);
@@ -210,7 +214,8 @@ namespace Impact.Website.Controllers
                     new Column {Label = "Value", Type = "number"}
                 }
             };
-            previousWeeksData.Add(new object[] {"Potentiale", percentPrevious});
+            var gaugeTitle = "Potentiale";
+            previousWeeksData.Add(new object[] {gaugeTitle, percentPrevious});
             
             var interestHoursSumAll = normalizedAllWeeks.Sum(w => w.InterestHours);
             var moveableOvertimeHoursAll = normalizedAllWeeks.Sum(w => w.MoveableOvertimeHours);
@@ -223,7 +228,7 @@ namespace Impact.Website.Controllers
                     new Column {Label = "Value", Type = "number"}
                 }
             };
-            allWeeksData.Add(new object[] {"Potentiale", percentAll});
+            allWeeksData.Add(new object[] {gaugeTitle, percentAll});
             
             var potentialOptions = new GaugeChartViewModel.OptionsViewModel(0, 33, 66, 100);
             var potentialChartViewModel = new GaugeChartViewModel
@@ -262,6 +267,23 @@ namespace Impact.Website.Controllers
             }
 
             return selectListItems;
+        }
+
+        private static SummedViewModel CreateSummedViewModel(List<Week> rawWeeks, List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
+        {
+            SummedViewModel.Data Func(List<Week> weeks) => new SummedViewModel.Data
+            {
+                Flex0 = weeks.Sum(w => w.InterestHours), 
+                Flex100 = weeks.Sum(w => w.MoveableOvertimeHours), 
+                Payout = weeks.Sum(w => w.LockedOvertimeHours),
+            };
+
+            return new SummedViewModel
+            {
+                RawAll = Func(rawWeeks),
+                NormalizedPrevious = Func(normalizedPreviousWeek),
+                NormalizedAll = Func(normalizedAllWeeks),
+            };
         }
     }
 }

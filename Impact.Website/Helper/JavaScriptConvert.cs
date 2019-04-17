@@ -5,7 +5,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Impact.Website.Helper
 {
-    public class JavaScriptConvert
+    public static class JavaScriptConvert
     {
         public static IHtmlString SerializeObject(object value)
         {
@@ -16,7 +16,6 @@ namespace Impact.Website.Helper
                 {
                     ContractResolver = new CamelCasePropertyNamesContractResolver(),
                     NullValueHandling = NullValueHandling.Ignore,
-                    DefaultValueHandling = DefaultValueHandling.Ignore
                 };
 
                 jsonWriter.QuoteName = false;

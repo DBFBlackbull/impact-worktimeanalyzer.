@@ -16,5 +16,6 @@ namespace Impact.Website.Models
         public BarColumnChartViewModel BarColumnChartViewModel { get; set; }
         public PieChartViewModel PieChartViewModel { get; set; }
         public GaugeChartViewModel PotentialChartViewModel { get; set; }
+        public SummedViewModel SummedViewModel { get; set; }
     }
 }
