@@ -23,7 +23,7 @@ namespace Impact.Website
 			bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
 						"~/Scripts/modernizr-*"));
 
-			bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
+			bundles.Add(new ScriptBundle("~/bundles/bootstrap4").Include(
 					  "~/Scripts/Bootstrap/bootstrap.js",
 					  "~/Scripts/BootstrapToggle/bootstrap4-toggle.min.js",
 					  "~/Scripts/respond.js"));
@@ -31,7 +31,7 @@ namespace Impact.Website
 		    bundles.Add(new StyleBundle("~/Content/site").Include(
 		              "~/Content/site.css"));
 		    
-			bundles.Add(new StyleBundle("~/Content/bootstrap").Include(
+			bundles.Add(new StyleBundle("~/Content/bootstrap4").Include(
 					  "~/Content/Bootstrap/bootstrap.css",
 					  "~/Content/BootstrapToggle/bootstrap4-toggle.min.css"));
 
