@@ -62,6 +62,7 @@ namespace Impact.Website.Controllers
             var quarterViewModel = new QuarterViewModel();
             quarterViewModel.SelectedQuarter = quarter.MidDate.ToShortDateString();
             quarterViewModel.Quarters = GetSelectList(quarter);
+            quarterViewModel.OvertimePaycheck = GetOvertimePayoutMonth(quarter);
 
             quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PieChartViewModel = CreatePieChartViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
@@ -267,6 +268,40 @@ namespace Impact.Website.Controllers
             }
 
             return selectListItems;
+        }
+
+        private static string GetOvertimePayoutMonth(Quarter quarter)
+        {
+            // The payout month got changed at this specific date. See "PdfRegistreringer/Fortroligt Information vedr udbetalingstidspunkt for overarbejde.pdf"
+            if (quarter.MidDate < new DateTime(2017, 8, 15))
+            {
+                switch (quarter.Number)
+                {
+                    case 1:
+                        return $"April {quarter.MidDate.Year}";
+                    case 2:
+                        return $"Juli {quarter.MidDate.Year}";
+                    case 3:
+                        return $"Oktober {quarter.MidDate.Year}";
+                    case 4:
+                        return $"Februar {quarter.MidDate.Year + 1}";
+                    default:
+                        throw new IndexOutOfRangeException("Quarter was now 1, 2, 3, or 4. Real value: " + quarter);
+                }
+            }
+            switch (quarter.Number)
+            {
+                case 1:
+                    return $"Maj {quarter.MidDate.Year}";
+                case 2:
+                    return $"August {quarter.MidDate.Year}";
+                case 3:
+                    return $"November {quarter.MidDate.Year}";
+                case 4:
+                    return $"Marts {quarter.MidDate.Year + 1}";
+                default:
+                    throw new IndexOutOfRangeException("Quarter was now 1, 2, 3, or 4. Real value: " + quarter);
+            }
         }
 
         private static SummedViewModel CreateSummedViewModel(List<Week> rawWeeks, List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)

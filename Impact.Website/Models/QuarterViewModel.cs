@@ -11,6 +11,7 @@ namespace Impact.Website.Models
         public string SelectedQuarter { get; set; }
         public bool IncludeAllWeeks { get; set; }
         public bool ShowIncludeAllWeeksButton { get; set; }
+        public string OvertimePaycheck { get; set; }
         
         public BarColumnChartViewModel BalanceChartViewModel { get; set; }
         public BarColumnChartViewModel BarColumnChartViewModel { get; set; }
