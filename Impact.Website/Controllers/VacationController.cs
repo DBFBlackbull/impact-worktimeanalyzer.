@@ -7,7 +7,6 @@ using Impact.Core.Constants;
 using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
 using Impact.Website.Models;
-using Impact.Website.Models.Charts;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
 
 namespace Impact.Website.Controllers

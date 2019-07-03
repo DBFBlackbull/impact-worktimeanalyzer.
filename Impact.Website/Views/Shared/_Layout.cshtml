@@ -19,7 +19,8 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">@Html.ActionLink("Overarbejde", "Index", "Overtime", new {area = ""}, new {@class = "nav-link"})</li>
-                <li class="nav-item">@Html.ActionLink("Fed torsdag", "Index", "AwesomeThursday", new {area = ""}, new {@class = "nav-link"})</li>
+                <li class="nav-item">@Html.ActionLink("Fed torsdag / R&D", "Index", "AwesomeThursday", new {area = ""}, new {@class = "nav-link"})</li>
+                <li class="nav-item">@Html.ActionLink("Ferie / Feriefridage", "Index", "Vacation", new {area = ""}, new {@class = "nav-link"})</li>
                 <li class="nav-item">@Html.ActionLink("About", "About", "Login", new {area = ""}, new {@class = "nav-link"})</li>
             </ul>
             <ul class="navbar-nav ml-auto">
@@ -41,4 +42,12 @@
 @Scripts.Render("~/bundles/bootstrap4")
 @RenderSection("scripts", required: false)
 </body>
+<script>
+var links = document.querySelectorAll('.nav-link');
+links.forEach(function (el) { 
+    if (el.href === window.location.href) {
+        el.classList.add('active');
+    }
+ })
+</script>
 </html>

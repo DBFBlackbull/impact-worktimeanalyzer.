@@ -30,6 +30,8 @@
 @Scripts.Render("~/bundles/charts")
 <script>
     window.onload = function() {
+        
+        
         var balance = @JavaScriptConvert.SerializeObject(Model.BalanceChartViewModel);
         var overview = @JavaScriptConvert.SerializeObject(Model.BarColumnChartViewModel);
         
