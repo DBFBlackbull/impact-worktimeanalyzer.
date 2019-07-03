@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Impact.Business.Holiday;
-using Impact.Core.Contants;
+using Impact.Core.Constants;
 using Impact.Core.Interfaces;
 using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
@@ -87,8 +87,8 @@ namespace Impact.Business.Time
             var weeks = weeksList.ConvertAll(w => w.Clone());
 
             var lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < ApplicationConstants.NormalWorkWeek);
-            var moveableWeeks = weeks.Where(w => w.MoveableOvertimeHours > 0).ToList();
-            MoveHours(lowWeeks, moveableWeeks, "MoveableOvertimeHours");
+            var movableWeeks = weeks.Where(w => w.MovableOvertimeHours > 0).ToList();
+            MoveHours(lowWeeks, movableWeeks, "MovableOvertimeHours");
             
             lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < ApplicationConstants.NormalWorkWeek);
             var interestWeeks = weeks.Where(w => w.InterestHours > 0).ToList();
@@ -104,40 +104,61 @@ namespace Impact.Business.Time
             List<Month> lowMonths = months.Where(m => m.Hours < ApplicationConstants.AwesomeThursdayApproximation).ToList();
             List<Month> highMonths = months.Where(m => m.Hours > ApplicationConstants.AwesomeThursdayApproximation).ToList();
             
-            MoveHours2(lowMonths, highMonths, null);
+            MoveHours(lowMonths, highMonths, null);
             
             return months;
         }
 
-        private static void MoveHours<T>(IEnumerable<IAbsorbable<T>> lowHoursElements, List<T> moveableHoursElements, string propertyName)
+        public VacationYear GetVacationYear(DateTime date)
         {
-            foreach (var lowHoursElement in lowHoursElements)
+            DateTime start;
+            DateTime end;
+
+            var year = date.Year;
+
+            var miniVacationStart = new DateTime(2020, 5, 1);
+            var miniVacationEnd = new DateTime(2020, 8, 31);
+            if (miniVacationStart <= date && date <= miniVacationEnd)
             {
-                var elementsAbsorbed = 0;
-                foreach (var moveableHoursElement in moveableHoursElements)
+                return new VacationYear(miniVacationStart, miniVacationEnd)
                 {
-                    var doneAbsorbing = lowHoursElement.AbsorbHours(moveableHoursElement, propertyName);
-                    if (doneAbsorbing)
-                        break;
-                    elementsAbsorbed++;
-                }
-                moveableHoursElements.RemoveRange(0, elementsAbsorbed);
+                    TotalVacationDays = 16.64m,
+                    TotalExtraVacationDays = 3.33m
+                };
             }
+            if (date < new DateTime(2020, 9, 1)) //Old vacation year
+            {
+                if (date.Month < 5) // before May, use last years vacation calendar
+                    year -= 1;
+            
+                start = new DateTime(year, 5, 1);
+                end = new DateTime(year + 1, 4, 30);
+            } 
+            else //New vacation year. 16 months period to spend, up from 12 months
+            {
+                if (date.Month < 9)
+                    year -= 1;
+            
+                start = new DateTime(year, 9, 1);
+                end = new DateTime(year + 1, 12, 31);
+            }
+
+            return new VacationYear(start, end);
         }
-        
-        private static void MoveHours2(List<Month> lowHoursElements, List<Month> moveableHoursElements, string propertyName)
+
+        private static void MoveHours<T>(IEnumerable<IAbsorbable<T>> lowHoursElements, List<T> movableHoursElements, string propertyName)
         {
             foreach (var lowHoursElement in lowHoursElements)
             {
                 var elementsAbsorbed = 0;
-                foreach (var moveableHoursElement in moveableHoursElements)
+                foreach (var movableHoursElement in movableHoursElements)
                 {
-                    var doneAbsorbing = lowHoursElement.AbsorbHours(moveableHoursElement, propertyName);
+                    var doneAbsorbing = lowHoursElement.AbsorbHours(movableHoursElement, propertyName);
                     if (doneAbsorbing)
                         break;
                     elementsAbsorbed++;
                 }
-                moveableHoursElements.RemoveRange(0, elementsAbsorbed);
+                movableHoursElements.RemoveRange(0, elementsAbsorbed);
             }
         }
     }

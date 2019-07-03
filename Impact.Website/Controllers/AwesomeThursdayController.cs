@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Impact.Business.Time;
-using Impact.Core.Contants;
+using Impact.Core.Constants;
 using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
 using Impact.Website.Models;
@@ -97,7 +97,7 @@ namespace Impact.Website.Controllers
             var balanceViewModel = new BarColumnChartViewModel
             {
                 DivId = "balance_chart",
-                RawWeeks = googleFormatedBalance,
+                RawData = googleFormatedBalance,
                 Options = options
             };
             return balanceViewModel;
@@ -137,8 +137,8 @@ namespace Impact.Website.Controllers
             var overviewChartViewModel = new BarColumnChartViewModel
             {
                 DivId = "overview_chart",
-                RawWeeks = GetDataArray(months),
-                NormalizedAllWeeks = GetDataArray(normalizedMonths),
+                RawData = GetDataArray(months),
+                NormalizedAllData = GetDataArray(normalizedMonths),
                 Options = optionsViewModel
             };
 

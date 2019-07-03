@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
-using Impact.Core.Contants;
+using Impact.Core.Constants;
 using Impact.Core.Interfaces;
 
 namespace Impact.Core.Model
@@ -24,7 +24,7 @@ namespace Impact.Core.Model
         public decimal HolidayHours { get; set; }
         public decimal WorkHours { get; set; }
         public decimal InterestHours { get; set; }
-        public decimal MoveableOvertimeHours { get; set; }
+        public decimal MovableOvertimeHours { get; set; }
         public decimal LockedOvertimeHours { get; set; }
 
         // So ugly please find a better solution. Really really
@@ -55,14 +55,14 @@ namespace Impact.Core.Model
                 return;
             }
 
-            if (hours >= ApplicationConstants.MoveableConst)
+            if (hours >= ApplicationConstants.MovableConst)
             {
-                MoveableOvertimeHours = ApplicationConstants.MoveableConst;
-                hours -= ApplicationConstants.MoveableConst;
+                MovableOvertimeHours = ApplicationConstants.MovableConst;
+                hours -= ApplicationConstants.MovableConst;
             }
             else
             {
-                MoveableOvertimeHours = hours;
+                MovableOvertimeHours = hours;
                 return;
             }
 
@@ -84,18 +84,18 @@ namespace Impact.Core.Model
             if (propertyInfo == null) 
                 return false;
             
-            var moveableHours = (decimal)propertyInfo.GetValue(otherWeek);
+            var movableHours = (decimal)propertyInfo.GetValue(otherWeek);
 
             var missingHours = ApplicationConstants.NormalWorkWeek - (WorkHours + HolidayHours + QuarterEdgeHours);
-            if (missingHours > moveableHours)
+            if (missingHours > movableHours)
             {
-                WorkHours += moveableHours;
+                WorkHours += movableHours;
                 propertyInfo.SetValue(otherWeek, 0m);
                 return false;
             }
 
             WorkHours += missingHours;
-            propertyInfo.SetValue(otherWeek, moveableHours - missingHours);
+            propertyInfo.SetValue(otherWeek, movableHours - missingHours);
             return true;
         }
 
@@ -103,14 +103,19 @@ namespace Impact.Core.Model
         {
             return new object[]
             {
-                "Uge " + Number,
+                GetDisplayNumber(),
                 QuarterEdgeHours == 0 ? (decimal?)null : QuarterEdgeHours, "fill-color: #EFEFEF; opacity: 0.5",
                 HolidayHours == 0 ? (decimal?)null : HolidayHours,
                 WorkHours, // This needs to be animated, therefore must not be null
                 InterestHours == 0 ? defaultValue : InterestHours, // This needs to be animated, therefore must not be null
-                MoveableOvertimeHours == 0 ? defaultValue : MoveableOvertimeHours, // This needs to be animated, therefore must not be null
+                MovableOvertimeHours == 0 ? defaultValue : MovableOvertimeHours, // This needs to be animated, therefore must not be null
                 LockedOvertimeHours == 0 ? (decimal?)null : LockedOvertimeHours
             };
+        }
+
+        public string GetDisplayNumber()
+        {
+            return $"Uge {Number}";
         }
 
         public Week Clone()

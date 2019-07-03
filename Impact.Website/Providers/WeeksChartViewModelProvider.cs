@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Impact.Core.Contants;
+using Impact.Core.Constants;
 using Impact.Core.Model;
 using Impact.Website.Models;
 using Impact.Website.Models.Charts;
@@ -17,9 +17,9 @@ namespace Impact.Website.Providers
             var weeksViewModel = new BarColumnChartViewModel();
             weeksViewModel.DivId = "weeks_chart";
             weeksViewModel.IsNormalized = isNormalized;
-            weeksViewModel.RawWeeks = GetDataArray(weeksList, null);
-            weeksViewModel.NormalizedPreviousWeeks = GetDataArray(normalizedPreviousWeek, 0);
-            weeksViewModel.NormalizedAllWeeks = GetDataArray(normalizedWeeks, 0);
+            weeksViewModel.RawData = GetDataArray(weeksList, null);
+            weeksViewModel.NormalizedPreviousData = GetDataArray(normalizedPreviousWeek, 0);
+            weeksViewModel.NormalizedAllData = GetDataArray(normalizedWeeks, 0);
             weeksViewModel.Options = GetOptions(quarter, weeksList);
             
             return weeksViewModel;

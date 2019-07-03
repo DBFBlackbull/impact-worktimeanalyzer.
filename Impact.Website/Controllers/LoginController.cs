@@ -1,7 +1,7 @@
 ﻿using System.Web.Mvc;
 using Impact.Business.Login;
 using Impact.Business.Time;
-using Impact.Core.Contants;
+using Impact.Core.Constants;
 using Impact.Website.Models;
 
 namespace Impact.Website.Controllers

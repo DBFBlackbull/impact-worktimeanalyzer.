@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Impact.Core.Contants;
+using Impact.Core.Constants;
 using Impact.Core.Model;
 
 namespace Impact.Business.Holiday
@@ -25,7 +25,7 @@ namespace Impact.Business.Holiday
 //                        new DateTime(year, 12, 24), // Christmas is not a holiday without a union settlement
                         new DateTime(year, 12, 25),
                         new DateTime(year, 12, 26),
-//                        new DateTime(year, 12, 31), // New years eve is not a holyday without a union settlement
+//                        new DateTime(year, 12, 31), // New years eve is not a holiday without a union settlement
                     };
                 default:
                     throw new ArgumentOutOfRangeException(nameof(quarter.Number), "There are only 4 quarters in a year dummy!");

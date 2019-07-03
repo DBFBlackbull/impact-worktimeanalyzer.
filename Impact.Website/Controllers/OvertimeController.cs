@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Impact.Business.Time;
-using Impact.Core.Contants;
+using Impact.Core.Constants;
 using Impact.Core.Model;
 using Impact.Website.Models;
 using Impact.Website.Models.Charts;
@@ -82,11 +82,11 @@ namespace Impact.Website.Controllers
 
         private static BarColumnChartViewModel CreateBalanceViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
         {
-            var overHoursPrevious = normalizedPreviousWeek.Sum(w => w.InterestHours + w.MoveableOvertimeHours);
+            var overHoursPrevious = normalizedPreviousWeek.Sum(w => w.InterestHours + w.MovableOvertimeHours);
             var missingHoursPrevious = normalizedPreviousWeek.Sum(w => ApplicationConstants.NormalWorkWeek - (w.WorkHours + w.HolidayHours + w.QuarterEdgeHours));
             var balanceHoursPrevious = overHoursPrevious - missingHoursPrevious;
 
-            var overHoursAll = normalizedAllWeeks.Sum(w => w.InterestHours + w.MoveableOvertimeHours);
+            var overHoursAll = normalizedAllWeeks.Sum(w => w.InterestHours + w.MovableOvertimeHours);
             var missingHoursAll = normalizedAllWeeks.Sum(w => ApplicationConstants.NormalWorkWeek - (w.WorkHours + w.HolidayHours + w.QuarterEdgeHours));
             var balanceHoursAll = overHoursAll - missingHoursAll;
 
@@ -142,8 +142,8 @@ namespace Impact.Website.Controllers
             var balanceViewModel = new BarColumnChartViewModel
             {
                 DivId = "balance_chart",
-                NormalizedPreviousWeeks = previousData,
-                NormalizedAllWeeks = allData,
+                NormalizedPreviousData = previousData,
+                NormalizedAllData = allData,
                 Options = options
             };
             return balanceViewModel;
@@ -152,7 +152,7 @@ namespace Impact.Website.Controllers
         private static PieChartViewModel CreatePieChartViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
         {
             var interestHoursSumPrevious = normalizedPreviousWeek.Sum(w => w.InterestHours);
-            var moveableOvertimeHoursPrevious = normalizedPreviousWeek.Sum(w => w.MoveableOvertimeHours);
+            var moveableOvertimeHoursPrevious = normalizedPreviousWeek.Sum(w => w.MovableOvertimeHours);
 
             List<object[]> previousWeeksData = new List<object[]>
             {
@@ -170,7 +170,7 @@ namespace Impact.Website.Controllers
             previousWeeksData.Add(new object[] {flex100Percent, moveableOvertimeHoursPrevious});
             
             var interestHoursSumAll = normalizedAllWeeks.Sum(w => w.InterestHours);
-            var moveableOvertimeHoursAll = normalizedAllWeeks.Sum(w => w.MoveableOvertimeHours);
+            var moveableOvertimeHoursAll = normalizedAllWeeks.Sum(w => w.MovableOvertimeHours);
 
             List<object[]> allWeeksData = new List<object[]>
             {
@@ -193,18 +193,18 @@ namespace Impact.Website.Controllers
             var pieChartViewModel = new PieChartViewModel();
             pieChartViewModel.DivId = "pie_chart";
             pieChartViewModel.Options = optionViewModel;
-            pieChartViewModel.NormalizedPreviousWeeks = previousWeeksData;
-            pieChartViewModel.NormalizedAllWeeks = allWeeksData;
+            pieChartViewModel.NormalizedPreviousData = previousWeeksData;
+            pieChartViewModel.NormalizedAllData = allWeeksData;
             
             return pieChartViewModel;
         }
         
         private static GaugeChartViewModel CreateGaugeChartViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
         {
-            const decimal percentile = ApplicationConstants.MoveableConst / ApplicationConstants.InterestConst;
+            const decimal percentile = ApplicationConstants.MovableConst / ApplicationConstants.InterestConst;
             
             var interestHoursSumPrevious = normalizedPreviousWeek.Sum(w => w.InterestHours);
-            var moveableOvertimeHoursPrevious = normalizedPreviousWeek.Sum(w => w.MoveableOvertimeHours);
+            var moveableOvertimeHoursPrevious = normalizedPreviousWeek.Sum(w => w.MovableOvertimeHours);
             
             var percentPrevious = interestHoursSumPrevious == 0 ? 100 : Math.Round(moveableOvertimeHoursPrevious / interestHoursSumPrevious / percentile * 100);
             List<object[]> previousWeeksData = new List<object[]>
@@ -219,7 +219,7 @@ namespace Impact.Website.Controllers
             previousWeeksData.Add(new object[] {gaugeTitle, percentPrevious});
             
             var interestHoursSumAll = normalizedAllWeeks.Sum(w => w.InterestHours);
-            var moveableOvertimeHoursAll = normalizedAllWeeks.Sum(w => w.MoveableOvertimeHours);
+            var moveableOvertimeHoursAll = normalizedAllWeeks.Sum(w => w.MovableOvertimeHours);
             var percentAll = interestHoursSumAll == 0 ? 100 : Math.Round(moveableOvertimeHoursAll / interestHoursSumAll / percentile * 100);
             List<object[]> allWeeksData = new List<object[]>
             {
@@ -235,8 +235,8 @@ namespace Impact.Website.Controllers
             var potentialChartViewModel = new GaugeChartViewModel
             {
                 DivId = "potential_chart", 
-                NormalizedPreviousWeeks = previousWeeksData,
-                NormalizedAllWeeks = allWeeksData,
+                NormalizedPreviousData = previousWeeksData,
+                NormalizedAllData = allWeeksData,
                 Options = potentialOptions, 
             };
             return potentialChartViewModel;
@@ -248,7 +248,7 @@ namespace Impact.Website.Controllers
             var selectListItems = new List<SelectListItem>();
             var groupsMap = new Dictionary<int, SelectListGroup>();
 
-            for (int i = 16 - 1; i >= 0; i--)
+            for (int i = 15; i >= 0; i--)
             {
                 var date = startDate.AddMonths(i * -3);
                 var selectQuarter = _timeService.GetQuarter(date);
@@ -309,7 +309,7 @@ namespace Impact.Website.Controllers
             SummedViewModel.Data Func(List<Week> weeks) => new SummedViewModel.Data
             {
                 Flex0 = weeks.Sum(w => w.InterestHours), 
-                Flex100 = weeks.Sum(w => w.MoveableOvertimeHours), 
+                Flex100 = weeks.Sum(w => w.MovableOvertimeHours), 
                 Payout = weeks.Sum(w => w.LockedOvertimeHours),
             };
 

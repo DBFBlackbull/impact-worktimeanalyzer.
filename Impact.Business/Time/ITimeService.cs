@@ -11,5 +11,6 @@ namespace Impact.Business.Time
 	    IEnumerable<Week> GetWeeksInQuarter(Quarter quarter, SecurityToken securityToken);
 	    IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList);
 	    IEnumerable<Month> GetNormalizedMonths(List<Month> monthsList);
+	    VacationYear GetVacationYear(DateTime date);
 	}
 }

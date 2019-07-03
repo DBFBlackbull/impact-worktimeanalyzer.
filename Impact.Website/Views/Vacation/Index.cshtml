@@ -1,0 +1,70 @@
+﻿@model Impact.Website.Models.VacationViewModel
+@{
+    ViewBag.Title = "Ferieoversigt";
+     var remainingVacationDays = Model.VacationYear.TotalVacationDays - @Model.SummedVacationDays;
+     var remainingExtraVacationDays = Model.VacationYear.TotalExtraVacationDays - Model.SummedExtraVacationDays;
+}
+<div class="container">
+    <h2>Vælg ferieår</h2>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Index", "Vacation", FormMethod.Post, new {id = "vacationForm", name = "vacationForm"}))
+            {
+                <div class="col-md-12">
+                    <form>
+                        <div class="form-group form-inline">
+                            @Html.DropDownListFor(m => m.SelectedVacationYear, Model.VacationYears, new {@class = "form-control", onchange = "Submit()"})
+                        </div>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <p>Feriedage tilbage: @Model.VacationYear.TotalVacationDays - @Model.SummedVacationDays = @remainingVacationDays dage / @(remainingVacationDays * 7.5m) timer *</p>
+            <p>Feriefridage tilbage: @Model.VacationYear.TotalExtraVacationDays - @Model.SummedExtraVacationDays = @remainingExtraVacationDays dage / @(remainingExtraVacationDays * 7.5m) timer *</p>
+            <p>* Det antages at medarbejderen har optjent fuld ferie og ff dage. De 25 ferie og 5 FF dage er ikke udregnet ud fra tidligere registreringer.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="@Model.DivId"></div>
+            <p>** Feriefridage er på grafen ovenfor vist med negative tal (f.eks. -7.5). Dette er gjort for at de skal fremstå med en anden farve og dermed er nemmere at skelne fra den regulære ferie. (Der er pt. ingen måde at overstyre farven på)</p>
+            <p>*** Hvis en dag både indeholder ferie timer og FF timer, så er tallene lagt sammen, og bliver vist med blå farve</p>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/bundles/charts")
+<script>
+    function Submit() {
+        document.vacationForm.submit();
+    }
+
+    window.onload = function() {
+        google.charts.load('current', { packages: ['calendar'] });
+        google.charts.setOnLoadCallback(function() {
+            drawChart();
+        });
+    };
+    
+    function drawChart() {
+        var dataTable = new google.visualization.DataTable();
+        dataTable.addColumn({ type: 'date', id: 'Date' });
+        dataTable.addColumn({ type: 'number', id: 'Ferie/Feriefridage' });
+        dataTable.addRows([
+          @foreach (var day in Model.VacationDays)
+          {
+              <text>[ new Date(@day.Date.Year, @day.Date.Month-1, @day.Date.Day), @day.GetHours()],</text>
+          }
+        ]);
+        
+        var options = {
+            title: "@Html.Raw(Model.VacationYear.GetLongDisplayString())",
+            height: 350,
+        };
+        
+        var chart = new google.visualization.Calendar(document.getElementById('@Model.DivId'));
+        chart.draw(dataTable, options);
+    }
+</script>

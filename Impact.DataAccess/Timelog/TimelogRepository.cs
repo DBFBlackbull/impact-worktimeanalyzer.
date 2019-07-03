@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Impact.Core.Contants;
+using Impact.Core.Constants;
 using Impact.Core.Model;
+using Impact.DataAccess.Strategies;
 using TimeLog.TransactionalApi.SDK;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
 using ExecutionStatus = TimeLog.TransactionalApi.SDK.ProjectManagementService.ExecutionStatus;
@@ -13,92 +15,42 @@ namespace Impact.DataAccess.Timelog
 {
     public class TimeLogRepository : ITimeRepository
     {
-        private static readonly CultureInfo DanishCultureInfo = new CultureInfo("da-DK");
-        private static readonly Calendar DanishCalendar = DanishCultureInfo.Calendar;
-        private static readonly DayOfWeek DanishFirstDayOfWeek = DanishCultureInfo.DateTimeFormat.FirstDayOfWeek;
-        private static readonly CalendarWeekRule DanishCalendarWeekRule = DanishCultureInfo.DateTimeFormat.CalendarWeekRule;
-        
+        private static readonly ProjectManagementServiceClient Client = ProjectManagementHandler.Instance.ProjectManagementClient;
+
         public IEnumerable<Week> GetWeeksInQuarter(Quarter quarter, SecurityToken token)
         {
-            var instanceProjectManagementClient = ProjectManagementHandler.Instance.ProjectManagementClient;
-            var result = instanceProjectManagementClient.GetWorkPaged(token.Initials, quarter.From, quarter.To, 1, 500, token);
-
-            var weeksToHoursDictionary = new Dictionary<int, Week>();
-            
-            if (result.ResponseState != ExecutionStatus.Success) 
-                return weeksToHoursDictionary.Values;
-            
-            var workUnitFlats = result.Return;
-            foreach (var workUnitFlat in workUnitFlats)
-            {
-                var dateTime = workUnitFlat.Date;
-                var weekNumber = DanishCalendar.GetWeekOfYear(dateTime, DanishCalendarWeekRule, DanishFirstDayOfWeek);
-
-                if (!weeksToHoursDictionary.TryGetValue(weekNumber, out var week))
-                    weeksToHoursDictionary[weekNumber] = week = CreateWeek(weekNumber, dateTime);
-
-                week.TotalHours += workUnitFlat.Hours;
-            }
-
-            return weeksToHoursDictionary.Values.OrderBy(w => w.Number);;
-        }
-
-        private static Week CreateWeek(int weekNumber, DateTime dateTime)
-        {
-            var day = dateTime;
-            while (day.DayOfWeek != DayOfWeek.Monday)
-            {
-                day = day.AddDays(-1);
-            }
-            var week = new Week { Number = weekNumber };
-            week.Dates.Add(day);
-            week.Dates.Add(day.AddDays(1));
-            week.Dates.Add(day.AddDays(2));
-            week.Dates.Add(day.AddDays(3));
-            week.Dates.Add(day.AddDays(4));
-            return week;
+            return GetWorkUnitsData<Week>(quarter.From, quarter.To, token, new AddWeekStrategy());
         }
 
         public IEnumerable<Month> GetAwesomeThursdays(SecurityToken token)
         {
-            var dateToMonth = new Dictionary<DateTime, Month>();
+            return GetWorkUnitsData<Month>(ApplicationConstants.TimelogStart, DateTime.Now, token, new AddMonthStrategy());
+        }
 
-            var instanceProjectManagementClient = ProjectManagementHandler.Instance.ProjectManagementClient;
-            var result = instanceProjectManagementClient.GetWorkPaged(token.Initials, new DateTime(2012, 1, 1), DateTime.Now, 1, 1, token);
-            DateTime firstRecord = result.Return.Min(w => w.Date);
+        public IEnumerable<VacationDay> GetVacationDays(DateTime from, DateTime to, SecurityToken token)
+        {
+            return GetWorkUnitsData<VacationDay>(from, to, token, new AddVacationDayStrategy(from, to));
+        }
 
-            while (firstRecord < DateTime.Now)
-            {
-                var dateTime = new DateTime(firstRecord.Year, firstRecord.Month, 1);
-                dateToMonth[dateTime] = new Month(dateTime);
-                firstRecord = firstRecord.AddMonths(1);
-            }
-            
-            WorkUnitFlat[] workUnitFlats;
+        private static IEnumerable<T> GetWorkUnitsData<T>(DateTime from, DateTime to, SecurityToken token, IAddRegistrationStrategy<T> strategy)
+        {
+            WorkUnitFlat[] registrations;
             var pageIndex = 1;
             do
             {
-                result = instanceProjectManagementClient.GetWorkPaged(token.Initials, new DateTime(2012, 1, 1), DateTime.Now, pageIndex, ApplicationConstants.PageSize, token);
+                var result = Client.GetWorkPaged(token.Initials, from, to, pageIndex, ApplicationConstants.PageSize, token);
                 if (result.ResponseState != ExecutionStatus.Success)
                     break;
                 
-                workUnitFlats = result.Return;
+                registrations = result.Return;
+
+                foreach (var registration in registrations)
+                    strategy.AddRegistration(registration);
                 
-                var awesomeThursdays = workUnitFlats.Where(w => w.TaskName == "Fed torsdag" || w.TaskName == "PL Fed Torsdag").ToList();
-                foreach (var awesomeThursday in awesomeThursdays)
-                {
-                    var dateTime = new DateTime(awesomeThursday.Date.Year, awesomeThursday.Date.Month, 1);
-                    if (!dateToMonth.TryGetValue(dateTime, out var month))
-                        dateToMonth[dateTime] = month = new Month(dateTime);
-
-                    month.RegisteredHours += awesomeThursday.Hours;
-                }
-
                 pageIndex++;
-            } while (workUnitFlats.Length == ApplicationConstants.PageSize);
-            
-            dateToMonth.Values.ToList().ForEach(m => m.ConvertToDecimal());
-            return dateToMonth.Values.OrderBy(m => m.Date);
+            } while (registrations.Length == ApplicationConstants.PageSize);
+
+            return strategy.GetList();
         }
     }
 }

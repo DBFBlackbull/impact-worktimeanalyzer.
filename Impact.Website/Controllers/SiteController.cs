@@ -1,5 +1,5 @@
 ﻿using System.Web.Mvc;
-using Impact.Core.Contants;
+using Impact.Core.Constants;
 using Impact.Website.Models;
 
 namespace Impact.Website.Controllers

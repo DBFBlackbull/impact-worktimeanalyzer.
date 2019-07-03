@@ -7,8 +7,8 @@ namespace Impact.Website.Models.Charts
         string DivId { get; set; }
         bool IsNormalized { get; set; }
 
-        List<object[]> RawWeeks { get; set; }
-        List<object[]> NormalizedPreviousWeeks { get; set; }
-        List<object[]> NormalizedAllWeeks { get; set; }
+        List<object[]> RawData { get; set; }
+        List<object[]> NormalizedPreviousData { get; set; }
+        List<object[]> NormalizedAllData { get; set; }
     }
 }

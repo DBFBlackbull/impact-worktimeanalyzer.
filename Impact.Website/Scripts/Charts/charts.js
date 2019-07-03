@@ -58,50 +58,50 @@ function getRawData(chartModel) {
     var showNormalized = $('#toggle-normalized').prop('checked');
     var showAllWeeks = $('#toggle-allWeeks').prop('checked');
 
-    var rawWeeksDefined = chartModel.rawWeeks !== undefined;
-    var normalizedPreviousWeeksDefined = chartModel.normalizedPreviousWeeks !== undefined;
-    var normalizedAllWeeksDefined = chartModel.normalizedAllWeeks !== undefined;
+    var rawDataDefined = chartModel.rawData !== undefined;
+    var normalizedPreviousDataDefined = chartModel.normalizedPreviousData !== undefined;
+    var normalizedAllDataDefined = chartModel.normalizedAllData !== undefined;
     
     //Only raw defined
-    if (!normalizedPreviousWeeksDefined && !normalizedAllWeeksDefined) {
-        return chartModel.rawWeeks;
+    if (!normalizedPreviousDataDefined && !normalizedAllDataDefined) {
+        return chartModel.rawData;
     }
 
     //Only previous defined
-    if (!rawWeeksDefined && !normalizedAllWeeksDefined) {
-        return chartModel.normalizedPreviousWeeks;
+    if (!rawDataDefined && !normalizedAllDataDefined) {
+        return chartModel.normalizedPreviousData;
     }
     
     //Only normalized all defined
-    if (!rawWeeksDefined && !normalizedPreviousWeeksDefined) {
-        return chartModel.normalizedAllWeeks;
+    if (!rawDataDefined && !normalizedPreviousDataDefined) {
+        return chartModel.normalizedAllData;
     }
     
     //All data sets defined
-    if (rawWeeksDefined && normalizedPreviousWeeksDefined && normalizedAllWeeksDefined) {
+    if (rawDataDefined && normalizedPreviousDataDefined && normalizedAllDataDefined) {
         if (showNormalized && showAllWeeks) {
-            return chartModel.normalizedAllWeeks;
+            return chartModel.normalizedAllData;
         }
         if (showNormalized) {
-            return chartModel.normalizedPreviousWeeks;
+            return chartModel.normalizedPreviousData;
         }
-        return chartModel.rawWeeks;
+        return chartModel.rawData;
     }
     
     // normalized previous and all are defined
-    if (!rawWeeksDefined) {
+    if (!rawDataDefined) {
         if (showNormalized && showAllWeeks) {
-            return chartModel.normalizedAllWeeks;
+            return chartModel.normalizedAllData;
         }
-        return chartModel.normalizedPreviousWeeks;
+        return chartModel.normalizedPreviousData;
     }
     
     // raw and normalized all are defined
-    if (!normalizedPreviousWeeksDefined) {
+    if (!normalizedPreviousDataDefined) {
         if (showNormalized) {
-            return chartModel.normalizedAllWeeks;
+            return chartModel.normalizedAllData;
         }
-        return chartModel.rawWeeks;
+        return chartModel.rawData;
     }
     
     console.log('No dataset could be found. Does the model only have raw and normalized previous?')

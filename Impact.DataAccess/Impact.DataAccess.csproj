@@ -42,6 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Strategies\AddMonthStrategy.cs" />
+    <Compile Include="Strategies\AddVacationDayStrategy.cs" />
+    <Compile Include="Strategies\AddWeekStrategy.cs" />
+    <Compile Include="Strategies\IAddRegistrationStrategy.cs" />
     <Compile Include="Timelog\ITimeRepository.cs" />
     <Compile Include="Timelog\TimelogRepository.cs" />
   </ItemGroup>

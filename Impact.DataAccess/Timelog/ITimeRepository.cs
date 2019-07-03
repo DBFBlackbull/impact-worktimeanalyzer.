@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Impact.Core.Model;
-using TimeLog.TransactionalApi.SDK.SecurityService;
 using SecurityToken = TimeLog.TransactionalApi.SDK.ProjectManagementService.SecurityToken;
 
 namespace Impact.DataAccess.Timelog
@@ -9,5 +9,6 @@ namespace Impact.DataAccess.Timelog
     {
         IEnumerable<Week> GetWeeksInQuarter(Quarter quarter, SecurityToken token);
         IEnumerable<Month> GetAwesomeThursdays(SecurityToken token);
+        IEnumerable<VacationDay> GetVacationDays(DateTime from, DateTime to, SecurityToken token);
     }
 }

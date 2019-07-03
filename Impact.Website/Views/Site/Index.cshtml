@@ -19,18 +19,18 @@
 		</div>
 		<div class="col-md-4">
 			<div class="jumbotron">
-				<h2>Fed torsdags Analyse</h2>
-				<p>Denne side giver dig et overblik over alle dine registrerede fed torsdags timer med et fokus på din "saldo"</p>
-				<p>Du kan her finde ud af om du har fed torsdags timer til gode, eller har brugt flere end tiltænkt</p>
+				<h2>Fed torsdags / R&D Analyse</h2>
+				<p>Denne side giver dig et overblik over alle dine registrerede fed torsdags / R&D timer med et fokus på din "saldo"</p>
+				<p>Du kan her finde ud af om du har fed torsdags timer til gode, eller har brugt flere end tiltænkt.</p>
 				@Html.ActionLink("Analyser!", "Index", "AwesomeThursday", null, new { @class = "btn btn-primary"})
 			</div>
 		</div>
 		<div class="col-md-4">
 			<div class="jumbotron">
-				<h2>Coming soon&trade;</h2>
-				<p>Har du nogle gode ideer til en ny feature baseret på Timelog? Kom forbi og prik PBM på skulderen. Så kan det være at den kommer i den næste version</p>
-				@* @Html.ActionLink("Analyser!", "Index", "DemoOvertime", null, new { @class = "btn btn-primary"}) *@
-				<button class="btn btn-primary" onclick="execute(this)">Analyser!</button>
+				<h2>Ferieoversigt</h2>
+				<p>Mangler du et godt overblik over hvor mange ferie og feriefridage du har registreret i ferieåret?</p>
+				<p>Du kan se hvor mange dage / timer ferie og feriefridage du kan registrere i ferieåret, eller om du har registreret mere end tilgængeligt.</p>
+				@Html.ActionLink("Få overblik", "Index", "Vacation", null, new { @class = "btn btn-primary"})
 			</div>
 		</div>
 	</div>

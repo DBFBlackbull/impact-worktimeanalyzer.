@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Globalization;
 
-namespace Impact.Core.Contants
+namespace Impact.Core.Constants
 {
     public static class ApplicationConstants
     {
+        public static readonly CultureInfo DanishCultureInfo = new CultureInfo("da-DK");
         public static readonly DateTime TimelogStart = new DateTime(2012, 1, 1);
 
         public const decimal NormalWorkDay = 7.5m;
         public const decimal NormalWorkWeek = 37.5m;
         public const decimal InterestConst = 1.5m;
-        public const decimal MoveableConst = 5m;
+        public const decimal MovableConst = 5m;
         public const decimal AwesomeThursdayApproximation = NormalWorkDay / 2;
 
         public const string Token = "token";

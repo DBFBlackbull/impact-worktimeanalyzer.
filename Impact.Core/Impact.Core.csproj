@@ -39,12 +39,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Contants\ApplicationConstants.cs" />
+    <Compile Include="Constants\ApplicationConstants.cs" />
     <Compile Include="Extension\DateTimeExtensions.cs" />
     <Compile Include="Interfaces\Cloneable.cs" />
     <Compile Include="Interfaces\IAbsorbable.cs" />
+    <Compile Include="Model\VacationDay.cs" />
     <Compile Include="Model\Month.cs" />
     <Compile Include="Model\Quarter.cs" />
+    <Compile Include="Model\VacationYear.cs" />
     <Compile Include="Model\Week.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

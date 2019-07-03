@@ -8,9 +8,9 @@ namespace Impact.Website.Models.Charts
         public string DivId { get; set; }
         public bool IsNormalized { get; set; }
 
-        public List<object[]> RawWeeks { get; set; }
-        public List<object[]> NormalizedPreviousWeeks { get; set; }
-        public List<object[]> NormalizedAllWeeks { get; set; }
+        public List<object[]> RawData { get; set; }
+        public List<object[]> NormalizedPreviousData { get; set; }
+        public List<object[]> NormalizedAllData { get; set; }
 
         public BarColumnOptions Options { get; set; }
     }

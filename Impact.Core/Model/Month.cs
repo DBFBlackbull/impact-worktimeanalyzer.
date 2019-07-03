@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Impact.Core.Contants;
+using Impact.Core.Constants;
 using Impact.Core.Interfaces;
 
 namespace Impact.Core.Model
@@ -27,13 +27,13 @@ namespace Impact.Core.Model
         
         public bool AbsorbHours(Month otherMonth, string propertyName)
         {
-            var moveableHours = otherMonth.Hours - ApplicationConstants.AwesomeThursdayApproximation;
+            var movableHours = otherMonth.Hours - ApplicationConstants.AwesomeThursdayApproximation;
 
             var missingHours = ApplicationConstants.AwesomeThursdayApproximation - Hours;
-            if (missingHours > moveableHours)
+            if (missingHours > movableHours)
             {
-                Hours += moveableHours;
-                otherMonth.Hours -= moveableHours;
+                Hours += movableHours;
+                otherMonth.Hours -= movableHours;
                 return false;
             }
 
