@@ -1,13 +1,13 @@
 ﻿@using Impact.Website.Helper
 @model Impact.Website.Models.AwesomeThursdayViewModel
 @{
-    ViewBag.Title = "Fed torsdag";
+    ViewBag.Title = "Fed torsdag / R&D";
 }
 <div class="container">
-    <h2>Fed torsdags analyse</h2>
+    <h2>Fed torsdags / R&D analyse</h2>
     <div class="row">
         <div class="col-md-12 form-group">
-            @Html.CheckBoxFor(m => m.BarColumnChartViewModel.IsNormalized, new {id = "toggle-normalized", data_toggle = "toggle", data_width = "200", data_height = "38", data_off = "Registrerede Timer", data_on = "Udjævnede timer",})
+            @Html.CheckBoxFor(m => m.BarColumnChartViewModel.IsNormalized, new {id = "toggle-normalized", data_toggle = "toggle", data_width = "200", data_height = "38", data_off = "Registrerede timer", data_on = "Gennemsnitlige timer",})
         </div>
     </div>
     <div class="row">

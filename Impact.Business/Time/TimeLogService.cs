@@ -101,10 +101,23 @@ namespace Impact.Business.Time
         {
             var months = monthsList.ConvertAll(m => m.Clone());
 
-            List<Month> lowMonths = months.Where(m => m.Hours < ApplicationConstants.AwesomeThursdayApproximation).ToList();
-            List<Month> highMonths = months.Where(m => m.Hours > ApplicationConstants.AwesomeThursdayApproximation).ToList();
+            List<Month> lowAwesomeMonths = months
+                .Where(m => m.Date < ApplicationConstants.RAndDStartDate)
+                .Where(m => m.AwesomeThursdayHours + m.RAndDHours < ApplicationConstants.AwesomeThursdayApproximation)
+                .ToList();
+            List<Month> highAwesomeMonths = months
+                .Where(m => m.Date < ApplicationConstants.RAndDStartDate)
+                .Where(m => m.AwesomeThursdayHours + m.RAndDHours > ApplicationConstants.AwesomeThursdayApproximation)
+                .ToList();
+            MoveHours(lowAwesomeMonths, highAwesomeMonths, null);
             
-            MoveHours(lowMonths, highMonths, null);
+            List<Month> lowRAndDMonths = months
+                .Where(m => m.AwesomeThursdayHours + m.RAndDHours < ApplicationConstants.AwesomeThursdayApproximation)
+                .ToList();
+            List<Month> highRAndDMonths = months
+                .Where(m => m.AwesomeThursdayHours + m.RAndDHours > ApplicationConstants.AwesomeThursdayApproximation)
+                .ToList();
+            MoveHours(lowRAndDMonths, highRAndDMonths, null);
             
             return months;
         }

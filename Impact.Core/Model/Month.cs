@@ -17,28 +17,48 @@ namespace Impact.Core.Model
         }
 
         public DateTime Date { get; set; }
-        public double RegisteredHours { get; set; }
-        public decimal Hours { get; set; }
+        public double AwesomeThursdayRawHours { get; set; }
+        public double RAndDRawHours { get; set; }
+        public decimal AwesomeThursdayHours { get; set; }
+        public decimal RAndDHours { get; set; }
 
         public void ConvertToDecimal()
         {
-            Hours = Math.Round(Convert.ToDecimal(RegisteredHours), 2);
+            AwesomeThursdayHours = Math.Round(Convert.ToDecimal(AwesomeThursdayRawHours), 2);
+            RAndDHours = Math.Round(Convert.ToDecimal(RAndDRawHours), 2);
         }
         
         public bool AbsorbHours(Month otherMonth, string propertyName)
         {
-            var movableHours = otherMonth.Hours - ApplicationConstants.AwesomeThursdayApproximation;
-
-            var missingHours = ApplicationConstants.AwesomeThursdayApproximation - Hours;
+            if (Date < ApplicationConstants.RAndDStartDate)
+            {
+                var movableAwesomeHours = otherMonth.AwesomeThursdayHours - ApplicationConstants.AwesomeThursdayApproximation;
+                var missingAwesomeHours = ApplicationConstants.AwesomeThursdayApproximation - AwesomeThursdayHours;
+                
+                if (missingAwesomeHours > movableAwesomeHours)
+                {
+                    AwesomeThursdayHours += movableAwesomeHours;
+                    otherMonth.AwesomeThursdayHours -= movableAwesomeHours;
+                    return false;
+                }
+                
+                AwesomeThursdayHours += missingAwesomeHours;
+                otherMonth.AwesomeThursdayHours -= missingAwesomeHours;
+                return true;
+            }
+            
+            var movableHours = (otherMonth.AwesomeThursdayHours + otherMonth.RAndDHours) - ApplicationConstants.AwesomeThursdayApproximation;
+            var missingHours = ApplicationConstants.AwesomeThursdayApproximation - (AwesomeThursdayHours + RAndDHours);
+            
             if (missingHours > movableHours)
             {
-                Hours += movableHours;
-                otherMonth.Hours -= movableHours;
+                RAndDHours += movableHours;
+                otherMonth.RAndDHours -= movableHours;
                 return false;
             }
 
-            Hours += missingHours;
-            otherMonth.Hours -= missingHours;
+            RAndDHours += missingHours;
+            otherMonth.RAndDHours -= missingHours;
             return true;
         }
         
@@ -47,7 +67,8 @@ namespace Impact.Core.Model
             return new object[]
             {
                 $"{Date:Y}",
-                Hours = Hours
+                AwesomeThursdayHours = AwesomeThursdayHours,
+                RAndDHours = RAndDHours,
             };
         }
         

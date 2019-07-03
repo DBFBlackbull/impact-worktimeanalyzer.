@@ -21,10 +21,18 @@ namespace Impact.DataAccess.Strategies
             if (!Months.TryGetValue(dateTime, out var month))
                 Months[dateTime] = month = new Month(dateTime);
 
-            if (registration.TaskName != "Fed torsdag" && registration.TaskName != "PL Fed Torsdag") 
-                return;
-            
-            month.RegisteredHours += registration.Hours;
+            switch (registration.TaskName)
+            {
+                case "Fed torsdag":
+                case "PL Fed Torsdag":
+                    month.AwesomeThursdayRawHours += registration.Hours;
+                    break;
+                case "R&D":
+                    month.RAndDRawHours = registration.Hours;
+                    break;
+                default:
+                    return;
+            }
         }
 
         public IEnumerable<Month> GetList()

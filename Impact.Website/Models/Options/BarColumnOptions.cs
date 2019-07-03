@@ -10,10 +10,10 @@ namespace Impact.Website.Models.Options
         public List<string> Colors { get; set; }
         public AxisViewModel VAxis { get; set; }
         public AxisViewModel HAxis { get; set; }
+        public bool IsStacked { get; set; }
         
         public class OptionsViewModel : BarColumnOptions
         {
-            public bool IsStacked { get; set; }
             public string Title { get; set; }
             public BarViewModel Bar { get; set; }
             public AnimationViewModel Animation { get; set; }

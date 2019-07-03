@@ -7,6 +7,7 @@ namespace Impact.Core.Constants
     {
         public static readonly CultureInfo DanishCultureInfo = new CultureInfo("da-DK");
         public static readonly DateTime TimelogStart = new DateTime(2012, 1, 1);
+        public static readonly DateTime RAndDStartDate = new DateTime(2018, 12, 11);
 
         public const decimal NormalWorkDay = 7.5m;
         public const decimal NormalWorkWeek = 37.5m;
