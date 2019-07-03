@@ -15,9 +15,13 @@ namespace Impact.Core.Constants
         public const decimal MovableConst = 5m;
         public const decimal AwesomeThursdayApproximation = NormalWorkDay / 2;
 
-        public const string Token = "token";
-        public const string FullName = "fullName";
-        public const int PageSize = 500;
+        public static class SessionName
+        {
+            public const string Token = "token";
+            public const string FullName = "fullName";
+            public const string IsDeveloper = "isDeveloper";
+            public const string HireDate = "hireDate";
+        }
         
         public static class Color
         {

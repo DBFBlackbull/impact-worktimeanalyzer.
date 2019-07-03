@@ -27,10 +27,11 @@ namespace Impact.Website.Controllers
         // GET: AwesomeThursday
         public ActionResult Index()
         {
-            if (!(HttpContext.Session[ApplicationConstants.Token] is SecurityToken token))
+            if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
-            
-            var awesomeThursdays = _timeRepository.GetAwesomeThursdays(token).ToList();
+
+            var hireDate = (DateTime) HttpContext.Session[ApplicationConstants.SessionName.HireDate];
+            var awesomeThursdays = _timeRepository.GetAwesomeThursdays(hireDate, token).ToList();
             const string disclaimer = 
                 "<p>Fed torsdag / R&D er i personalehåndbogen punkt 1.6.4 defineret til at være <i>'fra kl 12.30 og resten af arbejdsdagen'</i>. " +
                 "Denne tidsmængde er afhænging af hvornår man møder om morgenen. " +

@@ -25,9 +25,12 @@ namespace Impact.Website.Controllers
 	    // GET: Analyzer
         public ActionResult Index()
         {
-            if (!(HttpContext.Session[ApplicationConstants.Token] is SecurityToken token))
+            if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
-            
+
+            if (!(bool) HttpContext.Session[ApplicationConstants.SessionName.IsDeveloper])
+                return RedirectToAction("Index", "Site");
+
             var quarterViewModel = CreateViewModels(DateTime.Now, token);
             quarterViewModel.ShowIncludeAllWeeksButton = true;
             return View(quarterViewModel);
@@ -39,8 +42,11 @@ namespace Impact.Website.Controllers
             if (!ModelState.IsValid)
                 return View(viewModel);
 
-            if (!(HttpContext.Session[ApplicationConstants.Token] is SecurityToken token))
+            if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
+            
+            if (!(bool) HttpContext.Session[ApplicationConstants.SessionName.IsDeveloper])
+                return RedirectToAction("Index", "Site");
 
             var dateTime = DateTime.Parse(viewModel.SelectedQuarter);
             var quarterViewModel = CreateViewModels(dateTime, token, viewModel.BarColumnChartViewModel.IsNormalized);

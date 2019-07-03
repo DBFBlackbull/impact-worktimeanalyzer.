@@ -16,15 +16,16 @@ namespace Impact.DataAccess.Timelog
     public class TimeLogRepository : ITimeRepository
     {
         private static readonly ProjectManagementServiceClient Client = ProjectManagementHandler.Instance.ProjectManagementClient;
+        private const int PageSize = 500;
 
         public IEnumerable<Week> GetWeeksInQuarter(Quarter quarter, SecurityToken token)
         {
             return GetWorkUnitsData<Week>(quarter.From, quarter.To, token, new AddWeekStrategy());
         }
 
-        public IEnumerable<Month> GetAwesomeThursdays(SecurityToken token)
+        public IEnumerable<Month> GetAwesomeThursdays(DateTime hireDate, SecurityToken token)
         {
-            return GetWorkUnitsData<Month>(ApplicationConstants.TimelogStart, DateTime.Now, token, new AddMonthStrategy());
+            return GetWorkUnitsData<Month>(hireDate, DateTime.Now, token, new AddMonthStrategy(hireDate));
         }
 
         public IEnumerable<VacationDay> GetVacationDays(DateTime from, DateTime to, SecurityToken token)
@@ -38,7 +39,7 @@ namespace Impact.DataAccess.Timelog
             var pageIndex = 1;
             do
             {
-                var result = Client.GetWorkPaged(token.Initials, from, to, pageIndex, ApplicationConstants.PageSize, token);
+                var result = Client.GetWorkPaged(token.Initials, from, to, pageIndex, PageSize, token);
                 if (result.ResponseState != ExecutionStatus.Success)
                     break;
                 
@@ -48,7 +49,7 @@ namespace Impact.DataAccess.Timelog
                     strategy.AddRegistration(registration);
                 
                 pageIndex++;
-            } while (registrations.Length == ApplicationConstants.PageSize);
+            } while (registrations.Length == PageSize);
 
             return strategy.GetList();
         }

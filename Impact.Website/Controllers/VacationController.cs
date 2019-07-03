@@ -25,7 +25,7 @@ namespace Impact.Website.Controllers
         // GET
         public ActionResult Index()
         {
-            if (!(HttpContext.Session[ApplicationConstants.Token] is SecurityToken token))
+            if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
 
             var vacationYear = _timeService.GetVacationYear(DateTime.Now);
@@ -51,7 +51,7 @@ namespace Impact.Website.Controllers
             if (!ModelState.IsValid)
                 return View(viewModel);
             
-            if (!(HttpContext.Session[ApplicationConstants.Token] is SecurityToken token))
+            if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
             
             var dateTime = DateTime.Parse(viewModel.SelectedVacationYear);

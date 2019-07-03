@@ -9,7 +9,7 @@ namespace Impact.Website.Controllers
         // GET: Site
         public ActionResult Index()
         {
-            if (!(HttpContext.Session[ApplicationConstants.FullName] is string fullName))
+            if (!(HttpContext.Session[ApplicationConstants.SessionName.FullName] is string fullName))
                 return RedirectToAction("Index", "Login");
             
             return View(new SiteViewModel(fullName));
