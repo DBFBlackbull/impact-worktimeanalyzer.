@@ -14,13 +14,30 @@ namespace Impact.Core.Model
             switch (Number)
             {
                 case 1:
-                    return "1. Kvartal: Januar til Marts";
+                    return "1. Kvartal";
                 case 2:
-                    return "2. Kvartal: April til Juni";
+                    return "2. Kvartal";
                 case 3:
-                    return "3. Kvartal: Juli til September";
+                    return "3. Kvartal";
                 case 4:
-                    return "4. Kvartal: Oktober til December";
+                    return "4. Kvartal";
+                default:
+                    throw new IndexOutOfRangeException("Quarter was now 1, 2, 3, or 4. Real value: " + Number);
+            }
+        }
+
+        public string GetDisplayMonths()
+        {
+            switch (Number)
+            {
+                case 1:
+                    return "Januar til Marts";
+                case 2:
+                    return "April til Juni";
+                case 3:
+                    return "Juli til September";
+                case 4:
+                    return "Oktober til December";
                 default:
                     throw new IndexOutOfRangeException("Quarter was now 1, 2, 3, or 4. Real value: " + Number);
             }

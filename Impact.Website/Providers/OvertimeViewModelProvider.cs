@@ -91,7 +91,7 @@ namespace Impact.Website.Providers
                 Width = 1600,
                 Height = 800,
                 IsStacked = true,
-                Title = quarter.GetDisplayTitle(),
+                Title = $"{quarter.GetDisplayTitle()}: {quarter.GetDisplayMonths()}",
                 Colors = new List<string> 
                 {
                     ApplicationConstants.Color.White, 
