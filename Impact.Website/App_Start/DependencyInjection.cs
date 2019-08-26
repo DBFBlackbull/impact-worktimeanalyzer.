@@ -1,15 +1,17 @@
 ﻿using System.Web.Mvc;
+using AutoMapper;
 using Impact.Business.Holiday;
 using Impact.Business.Login;
 using Impact.Business.Time;
 using Impact.DataAccess.Timelog;
+using Impact.Website.Models;
 using SimpleInjector;
 using SimpleInjector.Integration.Web;
 using SimpleInjector.Integration.Web.Mvc;
 
 namespace Impact.Website
 {
-	public class DependencyInjection
+	public static class DependencyInjection
 	{
 		public static void SetupDependencyInjection()
 		{
@@ -21,6 +23,14 @@ namespace Impact.Website
 			container.Register<ITimeService, TimeLogService>(Lifestyle.Scoped);
 			container.Register<ITimeRepository, TimeLogRepository>(Lifestyle.Scoped);
 			container.Register<IHolidayService, HolidayService>(Lifestyle.Scoped);
+			container.RegisterSingleton(() =>
+			{
+				var config = new MapperConfiguration(cfg =>
+					{
+						cfg.CreateMap<QuarterViewModel, DemoOvertimeViewModel>();
+					});
+				return config.CreateMapper();
+			});
 
 			container.Verify();
 

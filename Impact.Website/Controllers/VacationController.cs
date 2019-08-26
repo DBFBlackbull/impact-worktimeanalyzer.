@@ -48,11 +48,11 @@ namespace Impact.Website.Controllers
         [HttpPost]
         public ActionResult Index(VacationViewModel viewModel)
         {
-            if (!ModelState.IsValid)
-                return View(viewModel);
-            
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
+            
+            if (!ModelState.IsValid)
+                return View(viewModel);
             
             var dateTime = DateTime.Parse(viewModel.SelectedVacationYear);
             var vacationYear = _timeService.GetVacationYear(dateTime);

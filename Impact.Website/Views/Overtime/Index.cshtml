@@ -9,16 +9,14 @@
         @using (Html.BeginForm("Index", "Overtime", FormMethod.Post, new {id = "quarterForm", name = "quarterForm"}))
         { 
             <div class="col-md-12">
-                <form>
-                    <div class="form-group form-inline">
-                        @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control", onchange = "Submit()"})
-                        @Html.CheckBoxFor(m => m.BarColumnChartViewModel.IsNormalized, new { id = "toggle-normalized", data_toggle = "toggle", data_width = "200", data_height = "38", data_off = "Registrerede timer", data_on = "Udbetale timer", style="margin-right: 5px" })
-                        @if (Model.ShowIncludeAllWeeksButton)
-                        {
-                            @Html.CheckBoxFor(m => m.IncludeAllWeeks, new { id = "toggle-allWeeks", data_toggle = "toggle", data_width = "200", data_height = "38", data_off = "Tidligere uger", data_on = "Alle uger" })
-                        }
-                    </div>
-                </form>
+                <div class="form-group form-inline">
+                    @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control", onchange = "Submit()"})
+                    @Html.CheckBoxFor(m => m.BarColumnChartViewModel.IsNormalized, new { id = "toggle-normalized", data_toggle = "toggle", data_width = "200", data_height = "38", data_off = "Registrerede timer", data_on = "Udbetale timer", style="margin-right: 5px" })
+                    @if (Model.ShowIncludeAllWeeksButton)
+                    {
+                        @Html.CheckBoxFor(m => m.IncludeAllWeeks, new { id = "toggle-allWeeks", data_toggle = "toggle", data_width = "200", data_height = "38", data_off = "Tidligere uger", data_on = "Alle uger" })
+                    }
+                </div>
             </div>
         }
     </div>

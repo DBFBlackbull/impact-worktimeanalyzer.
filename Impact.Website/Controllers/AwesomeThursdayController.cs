@@ -149,7 +149,7 @@ namespace Impact.Website.Controllers
 
         private static List<object[]> GetDataArray(IEnumerable<Month> months)
         {
-            List<object[]> googleFormatedWeeks = new List<object[]>
+            List<object[]> googleFormattedWeeks = new List<object[]>
             {
                 new object[]
                 {
@@ -158,8 +158,8 @@ namespace Impact.Website.Controllers
                     new Column {Label = "R&D", Type = "number"}
                 }
             };
-            googleFormatedWeeks.AddRange(months.Select(month => month.ToArray()));
-            return googleFormatedWeeks;
+            googleFormattedWeeks.AddRange(months.Select(month => month.ToArray()));
+            return googleFormattedWeeks;
         }
     }
 }

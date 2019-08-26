@@ -4,33 +4,47 @@
 }
 <div class="container">
     <h2>Demo kvartal</h2>
-    <div class="row">
-        <div class="col-md-4">
-            @for (int i = 0; i < 5; i++)
-            {
-            <p>
-                @Model.Weeks[i].GetDisplayNumber()
-                @Html.TextBoxFor(m => m.Weeks[i].TotalHours)
-            </p>
-            }
+    @using (Html.BeginForm("Index", "DemoOvertime", FormMethod.Post, new {id = "demoQuarterForm", name = "demoQuarterForm"}))
+    {
+        <div class="row">
+            <div class="col-md-4">
+                @for (int i = 0; i < 5; i++)
+                {
+                    <p>
+                        @Model.InputWeeks[i].GetDisplayNumber()
+                        @Html.TextBoxFor(m => m.InputWeeks[i].TotalHours)
+                    </p>
+                    @Html.HiddenFor(m => m.InputWeeks[i].Number)
+                }
+            </div>
+            <div class="col-md-4">
+                @for (int i = 5; i < 10; i++)
+                {
+                    <p>
+                        @Model.InputWeeks[i].GetDisplayNumber()
+                        @Html.TextBoxFor(m => m.InputWeeks[i].TotalHours)
+                    </p>
+                    @Html.HiddenFor(m => m.InputWeeks[i].Number)
+                }
+            </div>
+            <div class="col-md-4">
+                @for (int i = 10; i < Model.InputWeeks.Count; i++)
+                {
+                    <p>
+                        @Model.InputWeeks[i].GetDisplayNumber()
+                        @Html.TextBoxFor(m => m.InputWeeks[i].TotalHours)
+                    </p>
+                    @Html.HiddenFor(m => m.InputWeeks[i].Number)
+                }
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
         </div>
-        <div class="col-md-4">
-            @for (int i = 5; i < 10; i++)
-            {
-            <p>
-                @Model.Weeks[i].GetDisplayNumber()
-                @Html.TextBoxFor(m => m.Weeks[i].TotalHours)
-            </p>
-            }
-        </div>
-        <div class="col-md-4">
-            @for (int i = 10; i < Model.Weeks.Count; i++)
-            {
-            <p>
-                @Model.Weeks[i].GetDisplayNumber()
-                @Html.TextBoxFor(m => m.Weeks[i].TotalHours)
-            </p>
-            }
-        </div>
-    </div>
+    }
 </div>
+@RenderPage("~/Views/Overtime/Index.cshtml")
+<script>
+//Ugly hack to remove second heading. Should find a better way to do this
+var h2s = document.querySelectorAll('h2');
+var lastH2 = h2s.item(h2s.length -1);
+lastH2.remove();
+</script>

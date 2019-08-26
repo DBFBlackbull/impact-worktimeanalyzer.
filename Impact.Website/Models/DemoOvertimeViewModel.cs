@@ -3,13 +3,12 @@ using Impact.Core.Model;
 
 namespace Impact.Website.Models
 {
-    public class DemoOvertimeViewModel
+    public class DemoOvertimeViewModel : QuarterViewModel
     {
-        public List<Week> Weeks { get; set; }
-
+        public List<Week> InputWeeks { get; set; }
         public DemoOvertimeViewModel()
         {
-            Weeks = new List<Week>();
+            InputWeeks = new List<Week>();
         }
     }
 }
