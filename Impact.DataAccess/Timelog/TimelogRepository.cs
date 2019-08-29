@@ -18,7 +18,7 @@ namespace Impact.DataAccess.Timelog
         private static readonly ProjectManagementServiceClient Client = ProjectManagementHandler.Instance.ProjectManagementClient;
         private const int PageSize = 500;
 
-        public IEnumerable<Week> GetWeeksInQuarter(Quarter quarter, SecurityToken token)
+        public IEnumerable<Week> GetRawWeeksInQuarter(Quarter quarter, SecurityToken token)
         {
             return GetWorkUnitsData<Week>(quarter.From, quarter.To, token, new AddWeekStrategy());
         }

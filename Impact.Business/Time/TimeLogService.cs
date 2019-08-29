@@ -69,9 +69,8 @@ namespace Impact.Business.Time
             return quarter;
         }
 
-        public IEnumerable<Week> GetWeeksInQuarter(Quarter quarter, SecurityToken securityToken)
+        public IEnumerable<Week> CategorizeWeeks(Quarter quarter, List<Week> rawWeeks)
         {
-            var rawWeeks = _timeRepository.GetWeeksInQuarter(quarter, securityToken).ToList();
             _holidayService.AddHolidayHours(quarter, rawWeeks);
             rawWeeks.FirstOrDefault()?.AddQuarterEdgeHours(quarter);
 
@@ -129,11 +128,10 @@ namespace Impact.Business.Time
 
             var year = date.Year;
 
-            var miniVacationStart = new DateTime(2020, 5, 1);
-            var miniVacationEnd = new DateTime(2020, 8, 31);
-            if (miniVacationStart <= date && date <= miniVacationEnd)
+            
+            if (ApplicationConstants.MiniVacationStart <= date && date <= ApplicationConstants.MiniVacationEnd)
             {
-                return new VacationYear(miniVacationStart, miniVacationEnd)
+                return new VacationYear(ApplicationConstants.MiniVacationStart, ApplicationConstants.MiniVacationEnd)
                 {
                     TotalVacationDays = 16.64m,
                     TotalExtraVacationDays = 3.33m

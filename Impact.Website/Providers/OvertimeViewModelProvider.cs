@@ -1,27 +1,42 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Impact.Business.Holiday;
 using Impact.Business.Time;
 using Impact.Core.Constants;
 using Impact.Core.Model;
+using Impact.DataAccess.Timelog;
 using Impact.Website.Models;
 using Impact.Website.Models.Charts;
 using Impact.Website.Models.Options;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
+using WebGrease.Css.Extensions;
 
 namespace Impact.Website.Providers
 {
-    public static class OvertimeViewModelProvider
+    public class OvertimeViewModelProvider
     {
-        public static QuarterViewModel CreateViewModels(ITimeService timeService, Quarter quarter, SecurityToken token, bool isNormalized = false, List<Week> rawWeeksOverride = null)
+        private readonly ITimeService _timeService;
+        private readonly ITimeRepository _timeRepository;
+        private readonly IHolidayService _holidayService;
+
+        public OvertimeViewModelProvider(ITimeService timeService, ITimeRepository timeRepository, IHolidayService holidayService)
         {
-            List<Week> rawWeeks = rawWeeksOverride ?? timeService.GetWeeksInQuarter(quarter, token).ToList();
+            _timeService = timeService;
+            _timeRepository = timeRepository;
+            _holidayService = holidayService;
+        }
+
+        public QuarterViewModel CreateViewModels(Quarter quarter, SecurityToken token, bool isNormalized = false, List<Week> rawWeeksOverride = null)
+        {
+            var rawWeeks = rawWeeksOverride ?? _timeRepository.GetRawWeeksInQuarter(quarter, token).ToList();
+            rawWeeks = _timeService.CategorizeWeeks(quarter, rawWeeks).ToList();
 
             var now = DateTime.Today;
 
             var previousWeeks = rawWeeks.Where(w => w.Dates.LastOrDefault() < now).ToList();
-            var normalizedPreviousWeek = timeService.GetNormalizedWeeks(previousWeeks).ToList();
-            var normalizedAllWeeks = timeService.GetNormalizedWeeks(rawWeeks).ToList();
+            var normalizedPreviousWeek = _timeService.GetNormalizedWeeks(previousWeeks).ToList();
+            var normalizedAllWeeks = _timeService.GetNormalizedWeeks(rawWeeks).ToList();
 
             var quarterViewModel = new QuarterViewModel();
             quarterViewModel.SelectedQuarter = quarter.MidDate.ToShortDateString();

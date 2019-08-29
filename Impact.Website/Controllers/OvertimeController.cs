@@ -16,10 +16,12 @@ namespace Impact.Website.Controllers
     public class OvertimeController : Controller
     {
         private readonly ITimeService _timeService;
+        private readonly OvertimeViewModelProvider _viewModelProvider;
 
-        public OvertimeController(ITimeService timeService)
+        public OvertimeController(ITimeService timeService, OvertimeViewModelProvider viewModelProvider)
         {
             _timeService = timeService;
+            _viewModelProvider = viewModelProvider;
         }
 
 	    // GET: Analyzer
@@ -32,7 +34,7 @@ namespace Impact.Website.Controllers
                 return RedirectToAction("Index", "Site");
 
             var quarter = _timeService.GetQuarter(DateTime.Now);
-            var quarterViewModel = OvertimeViewModelProvider.CreateViewModels(_timeService, quarter, token);
+            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, token);
             quarterViewModel.Quarters = GetSelectList(quarter);
             quarterViewModel.ShowIncludeAllWeeksButton = true;
             return View(quarterViewModel);
@@ -52,7 +54,7 @@ namespace Impact.Website.Controllers
 
             var dateTime = DateTime.Parse(viewModel.SelectedQuarter);
             var quarter = _timeService.GetQuarter(dateTime);
-            var quarterViewModel = OvertimeViewModelProvider.CreateViewModels(_timeService, quarter, token, viewModel.BarColumnChartViewModel.IsNormalized);
+            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, token, viewModel.BarColumnChartViewModel.IsNormalized);
             quarterViewModel.Quarters = GetSelectList(quarter);
             quarterViewModel.ShowIncludeAllWeeksButton = quarterViewModel.Quarters.Last().Selected;
             return View(quarterViewModel);

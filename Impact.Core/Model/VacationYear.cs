@@ -19,6 +19,11 @@ namespace Impact.Core.Model
 
         public string GetShortDisplayString()
         {
+            // Special case for mini-vacation. Remove in 5 years, when no longer relevant
+            if (StartDate.Year == ApplicationConstants.MiniVacationStart.Year && 
+                EndDate.Year == ApplicationConstants.MiniVacationEnd.Year)
+                return $"Mini-ferieår {StartDate.Year}/{EndDate.Year}";
+            
             return $"Ferieår {StartDate.Year}/{EndDate.Year}";
         }
 

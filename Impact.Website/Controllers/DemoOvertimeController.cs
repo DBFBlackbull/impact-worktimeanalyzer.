@@ -14,11 +14,13 @@ namespace Impact.Website.Controllers
     public class DemoOvertimeController : Controller
     {
         private readonly ITimeService _timeService;
+        private readonly OvertimeViewModelProvider _viewModelProvider;
         private readonly IMapper _mapper;
 
-        public DemoOvertimeController(ITimeService timeService, IMapper mapper)
+        public DemoOvertimeController(ITimeService timeService, OvertimeViewModelProvider viewModelProvider, IMapper mapper)
         {
             _timeService = timeService;
+            _viewModelProvider = viewModelProvider;
             _mapper = mapper;
         }
 
@@ -37,11 +39,12 @@ namespace Impact.Website.Controllers
                 inputWeeks.Add(new Week
                 {
                     Number = i,
+                    TotalHours = 37.5 
                 });
             }
             
             var quarter = _timeService.GetQuarter(new DateTime(2017, 2, 15));
-            var quarterViewModel = OvertimeViewModelProvider.CreateViewModels(_timeService, quarter, token, rawWeeksOverride: inputWeeks);
+            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, token, rawWeeksOverride: inputWeeks);
             quarterViewModel.Quarters = GetSelectList(quarter);
             var demoOvertimeViewModel = _mapper.Map<DemoOvertimeViewModel>(quarterViewModel);
             demoOvertimeViewModel.InputWeeks = inputWeeks;
@@ -62,8 +65,7 @@ namespace Impact.Website.Controllers
                 return View(viewModel);
             
             var quarter = _timeService.GetQuarter(new DateTime(2017, 2, 15));
-            viewModel.InputWeeks.ForEach(week => week.CategorizeHours());
-            var quarterViewModel = OvertimeViewModelProvider.CreateViewModels(_timeService, quarter, token, rawWeeksOverride: viewModel.InputWeeks);
+            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, token, viewModel.BarColumnChartViewModel.IsNormalized, viewModel.InputWeeks);
             quarterViewModel.Quarters = GetSelectList(quarter);
             var demoOvertimeViewModel = _mapper.Map<DemoOvertimeViewModel>(quarterViewModel);
             demoOvertimeViewModel.InputWeeks = viewModel.InputWeeks;

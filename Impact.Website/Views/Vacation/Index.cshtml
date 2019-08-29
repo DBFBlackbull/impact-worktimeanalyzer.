@@ -1,4 +1,5 @@
-﻿@model Impact.Website.Models.VacationViewModel
+﻿@using Impact.Core.Constants
+@model Impact.Website.Models.VacationViewModel
 @{
     ViewBag.Title = "Ferieoversigt";
      var remainingVacationDays = Model.VacationYear.TotalVacationDays - @Model.SummedVacationDays;
@@ -22,15 +23,15 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <p>Feriedage tilbage: @Model.VacationYear.TotalVacationDays - @Model.SummedVacationDays = @remainingVacationDays dage / @(remainingVacationDays * 7.5m) timer *</p>
-            <p>Feriefridage tilbage: @Model.VacationYear.TotalExtraVacationDays - @Model.SummedExtraVacationDays = @remainingExtraVacationDays dage / @(remainingExtraVacationDays * 7.5m) timer *</p>
-            <p>* Det antages at medarbejderen har optjent fuld ferie og FF dage. De 25 ferie og 5 FF dage er <strong>ikke</strong> udregnet ud fra tidligere registreringer.</p>
+            <p>Feriedage tilbage: @Model.VacationYear.TotalVacationDays - @Model.SummedVacationDays = <strong>@remainingVacationDays dage</strong> / @(remainingVacationDays * ApplicationConstants.NormalWorkDay) timer *</p>
+            <p>Feriefridage tilbage: @Model.VacationYear.TotalExtraVacationDays - @Model.SummedExtraVacationDays = <strong>@remainingExtraVacationDays dage</strong> / @(remainingExtraVacationDays * ApplicationConstants.NormalWorkDay) timer *</p>
+            <p>* Det antages at medarbejderen har optjent fuld ferie og FF dage. De @Model.VacationYear.TotalVacationDays ferie- og @Model.VacationYear.TotalExtraVacationDays FF-dage er <strong>ikke</strong> udregnet ud fra tidligere registreringer.</p>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
             <div id="@Model.DivId"></div>
-            <p>** Feriefridage er på grafen ovenfor vist med negative tal (f.eks. -7.5). Dette er gjort for at de skal fremstå med en anden farve og dermed er nemmere at skelne fra den regulære ferie. (Der er pt. ingen måde at overstyre farven på)</p>
+            <p>** Feriefridage er på grafen ovenfor vist med negative tal (f.eks. -7.5). Dette er gjort for at de skal fremstå med en anden farve (orange) og dermed er nemmere at skelne fra den regulære ferie (blå). (Der er pt. ingen måde at overstyre farven på)</p>
             <p>*** Hvis en dag både indeholder ferie timer og FF timer, så er tallene lagt sammen, og bliver vist med blå farve</p>
         </div>
     </div>

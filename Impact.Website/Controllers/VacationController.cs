@@ -90,8 +90,8 @@ namespace Impact.Website.Controllers
             }
             
             // Special case for mini-vacation period
-            // Delete in 5 years when no longer relevant. Lolol like I'm gonna remember this xD
-            if (selectListItems.All(v => v.Text != "Ferieår 2020/2020"))
+            // TODO Delete in 5 years when no longer relevant. Lolol like I'm gonna remember this xD
+            if (selectListItems.All(v => v.Value != ApplicationConstants.MiniVacationStart.ToShortDateString()))
             {
                 var vacationYear = _timeService.GetVacationYear(new DateTime(2020, 5, 1));
                 selectListItems.Add(new SelectListItem

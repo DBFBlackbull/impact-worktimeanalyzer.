@@ -8,7 +8,20 @@ namespace Impact.Business.Holiday
 {
     public class HolidayService : IHolidayService
     {
-        public IEnumerable<DateTime> CalculateHolidays(Quarter quarter)
+        public void AddHolidayHours(Quarter quarter, IEnumerable<Week> weeks)
+        {
+            var holidays = CalculateHolidays(quarter).ToList();
+            foreach (var week in weeks)
+            {
+                foreach (var date in week.Dates)
+                {
+                    if (holidays.Contains(date))
+                        week.HolidayHours += ApplicationConstants.NormalWorkDay;
+                }
+            }
+        }
+        
+        private IEnumerable<DateTime> CalculateHolidays(Quarter quarter)
         {
             var year = quarter.MidDate.Year;
             switch (quarter.Number)
@@ -32,20 +45,7 @@ namespace Impact.Business.Holiday
             }
         }
 
-        public void AddHolidayHours(Quarter quarter, IEnumerable<Week> weeks)
-        {
-            var holidays = CalculateHolidays(quarter).ToList();
-            foreach (var week in weeks)
-            {
-                foreach (var date in week.Dates)
-                {
-                    if (holidays.Contains(date))
-                        week.HolidayHours += ApplicationConstants.NormalWorkDay;
-                }
-            }
-        }
-
-        private List<DateTime> EasterBasedHolidays(Quarter quarter)
+        private static IEnumerable<DateTime> EasterBasedHolidays(Quarter quarter)
         {
             var year = quarter.MidDate.Year;
             var easter = CalculateEaster(year);
@@ -59,7 +59,7 @@ namespace Impact.Business.Holiday
                 easter.AddDays(39), //Kristi Himmelfart
                 easter.AddDays(50), //2. Pinsedag
             };
-            easterBasedHolidays.RemoveAll(d => d < quarter.From || d > quarter.To);
+            easterBasedHolidays.RemoveAll(d => d < quarter.From || quarter.To < d);
             return easterBasedHolidays;
         }
 
@@ -69,7 +69,7 @@ namespace Impact.Business.Holiday
         /// </summary>
         /// <param name="year">The year for which easter is to be calculated</param>
         /// <returns>The date that easter falls on</returns>
-        private DateTime CalculateEaster(int year)
+        private static DateTime CalculateEaster(int year)
         {
             int g = year % 19;
             int c = year / 100;

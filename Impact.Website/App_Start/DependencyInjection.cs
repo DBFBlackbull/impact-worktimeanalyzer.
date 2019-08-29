@@ -5,6 +5,7 @@ using Impact.Business.Login;
 using Impact.Business.Time;
 using Impact.DataAccess.Timelog;
 using Impact.Website.Models;
+using Impact.Website.Providers;
 using SimpleInjector;
 using SimpleInjector.Integration.Web;
 using SimpleInjector.Integration.Web.Mvc;
@@ -22,7 +23,8 @@ namespace Impact.Website
 			container.Register<ILoginService, TimelogLoginService>(Lifestyle.Scoped);
 			container.Register<ITimeService, TimeLogService>(Lifestyle.Scoped);
 			container.Register<ITimeRepository, TimeLogRepository>(Lifestyle.Scoped);
-			container.Register<IHolidayService, HolidayService>(Lifestyle.Scoped);
+			container.Register<OvertimeViewModelProvider, OvertimeViewModelProvider>(Lifestyle.Scoped);
+			container.RegisterSingleton<IHolidayService, HolidayService>();
 			container.RegisterSingleton(() =>
 			{
 				var config = new MapperConfiguration(cfg =>

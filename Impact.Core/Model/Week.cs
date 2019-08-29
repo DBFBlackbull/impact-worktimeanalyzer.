@@ -73,7 +73,7 @@ namespace Impact.Core.Model
         {
             foreach (var date in Dates)
             {
-                if (date < quarter.From || date > quarter.To)
+                if (date < quarter.From || quarter.To < date)
                     QuarterEdgeHours += ApplicationConstants.NormalWorkDay;
             }
         }
