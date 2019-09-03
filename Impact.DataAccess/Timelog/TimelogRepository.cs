@@ -30,7 +30,7 @@ namespace Impact.DataAccess.Timelog
 
         public IEnumerable<VacationDay> GetVacationDays(DateTime from, DateTime to, SecurityToken token)
         {
-            return GetWorkUnitsData<VacationDay>(from, to, token, new AddVacationDayStrategy(from, to));
+            return GetWorkUnitsData<VacationDay>(from, to, token, new AddVacationDayStrategy());
         }
 
         private static IEnumerable<T> GetWorkUnitsData<T>(DateTime from, DateTime to, SecurityToken token, IAddRegistrationStrategy<T> strategy)
@@ -42,7 +42,7 @@ namespace Impact.DataAccess.Timelog
                 var result = Client.GetWorkPaged(token.Initials, from, to, pageIndex, PageSize, token);
                 if (result.ResponseState != ExecutionStatus.Success)
                     break;
-                
+
                 registrations = result.Return;
 
                 foreach (var registration in registrations)

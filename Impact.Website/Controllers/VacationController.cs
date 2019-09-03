@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Impact.Business.Holiday;
 using Impact.Business.Time;
 using Impact.Core.Constants;
 using Impact.Core.Model;
@@ -15,11 +16,13 @@ namespace Impact.Website.Controllers
     {
         private readonly ITimeService _timeService;
         private readonly ITimeRepository _timeRepository;
+        private readonly IHolidayService _holidayService;
 
-        public VacationController(ITimeService timeService, ITimeRepository timeRepository)
+        public VacationController(ITimeService timeService, ITimeRepository timeRepository, IHolidayService holidayService)
         {
             _timeService = timeService;
             _timeRepository = timeRepository;
+            _holidayService = holidayService;
         }
 
         // GET
@@ -29,13 +32,14 @@ namespace Impact.Website.Controllers
                 return RedirectToAction("Index", "Login");
 
             var vacationYear = _timeService.GetVacationYear(DateTime.Now);
-            var vacationDays = _timeRepository.GetVacationDays(vacationYear.StartDate, vacationYear.EndDate, token).ToList();
+            List<VacationDay> vacationDays = _timeRepository.GetVacationDays(vacationYear.StartDate, vacationYear.EndDate, token).ToList();
+            vacationDays.AddRange(_holidayService.GetHolidays(vacationYear));
 
             var vacationViewModel = new VacationViewModel
             {
                 DivId = "calendar_chart",
                 VacationYears = GetSelectList(vacationYear),
-                SelectedVacationYear = vacationYear.StartDate.ToShortDateString(),
+                SelectedVacationYear = vacationYear.StartDate.ToString("s"),
                 VacationYear = vacationYear,
                 VacationDays = vacationDays,
                 SummedVacationDays = Math.Round(Convert.ToDecimal(vacationDays.Sum(v => v.VacationHours) / 7.5), 2),
@@ -57,12 +61,13 @@ namespace Impact.Website.Controllers
             var dateTime = DateTime.Parse(viewModel.SelectedVacationYear);
             var vacationYear = _timeService.GetVacationYear(dateTime);
             var vacationDays = _timeRepository.GetVacationDays(vacationYear.StartDate, vacationYear.EndDate, token).ToList();
+            vacationDays.AddRange(_holidayService.GetHolidays(vacationYear));
             
             var vacationViewModel = new VacationViewModel
             {
                 DivId = "calendar_chart",
                 VacationYears = GetSelectList(vacationYear),
-                SelectedVacationYear = vacationYear.StartDate.ToShortDateString(),
+                SelectedVacationYear = vacationYear.StartDate.ToString("s"),
                 VacationYear = vacationYear,
                 VacationDays = vacationDays,
                 SummedVacationDays = Math.Round(Convert.ToDecimal(vacationDays.Sum(v => v.VacationHours) / 7.5), 2),
@@ -84,7 +89,7 @@ namespace Impact.Website.Controllers
                 selectListItems.Add(new SelectListItem
                 {
                     Selected = vacationYear.StartDate == selectedYear.StartDate,
-                    Value = vacationYear.StartDate.ToShortDateString(),
+                    Value = vacationYear.StartDate.ToString("s"),
                     Text = vacationYear.GetShortDisplayString()
                 });
             }
@@ -97,12 +102,12 @@ namespace Impact.Website.Controllers
                 selectListItems.Add(new SelectListItem
                 {
                     Selected = vacationYear.StartDate == selectedYear.StartDate,
-                    Value = vacationYear.StartDate.ToShortDateString(),
+                    Value = vacationYear.StartDate.ToString("s"),
                     Text = vacationYear.GetShortDisplayString()
                 });
             } 
 
-            return selectListItems.OrderBy(v => v.Text).ToList();;
+            return selectListItems.OrderBy(v => v.Value).ToList();;
         }
     }
 }

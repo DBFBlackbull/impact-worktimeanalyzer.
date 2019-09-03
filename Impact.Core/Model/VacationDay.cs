@@ -6,12 +6,18 @@ namespace Impact.Core.Model
     public class VacationDay
     {
         public DateTime Date { get; set; }
+        public string Name { get; set; }
         public double VacationHours { get; set; }
         public double ExtraVacationHours { get; set; }
 
         public VacationDay(DateTime date)
         {
             Date = date;
+        }
+        
+        public VacationDay(DateTime date, string name) : this(date)
+        {
+            Name = name;
         }
 
         public string GetHours()

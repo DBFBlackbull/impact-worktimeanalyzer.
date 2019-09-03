@@ -14,7 +14,7 @@ namespace Impact.Business.Login
     {
         private static readonly OrganisationServiceClient Client = OrganisationHandler.Instance.OrganisationClient;
         private const int PageSize = 100;
-        private static readonly Regex UnitDeveloper = new Regex(@"^Unit\s\d\s-\s[BF]E\d", RegexOptions.Compiled);
+        private static readonly Regex UnitDeveloper = new Regex(@"^Unit\s\d\s-\s[BF]E", RegexOptions.Compiled);
 
         public bool IsAuthorized(string username, string password, out SecurityToken securityToken, out string fullName, out bool isDeveloper, out DateTime hireDate)
         {

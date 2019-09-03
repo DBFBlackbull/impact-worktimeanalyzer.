@@ -12,13 +12,9 @@ namespace Impact.DataAccess.Strategies
         private const string ExtraVacationId = "60";
         private Dictionary<DateTime, VacationDay> VacationDays { get; }
 
-        public AddVacationDayStrategy(DateTime from, DateTime to)
+        public AddVacationDayStrategy()
         {
-            VacationDays = new Dictionary<DateTime, VacationDay>
-            {
-                {from, new VacationDay(from)},
-                {to, new VacationDay(to)},
-            };
+            VacationDays = new Dictionary<DateTime, VacationDay>();
         }
 
         public void AddRegistration(WorkUnitFlat registration)

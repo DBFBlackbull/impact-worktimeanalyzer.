@@ -10,57 +10,47 @@ namespace Impact.Business.Holiday
     {
         public void AddHolidayHours(Quarter quarter, IEnumerable<Week> weeks)
         {
-            var holidays = CalculateHolidays(quarter).ToList();
+            var holidays = GetHolidays(quarter.From, quarter.To);
             foreach (var week in weeks)
             {
                 foreach (var date in week.Dates)
                 {
-                    if (holidays.Contains(date))
+                    if (holidays.ContainsKey(date))
                         week.HolidayHours += ApplicationConstants.NormalWorkDay;
                 }
             }
         }
-        
-        private IEnumerable<DateTime> CalculateHolidays(Quarter quarter)
+
+        public IEnumerable<VacationDay> GetHolidays(VacationYear vacationYear)
         {
-            var year = quarter.MidDate.Year;
-            switch (quarter.Number)
-            {
-                case 1 :
-                    return new List<DateTime>(EasterBasedHolidays(quarter)) { new DateTime(year, 1, 1), };
-                case 2 :
-                    return EasterBasedHolidays(quarter);
-                case 3 :
-                    return new List<DateTime>();
-                case 4 :
-                    return new List<DateTime>
-                    {
-//                        new DateTime(year, 12, 24), // Christmas is not a holiday without a union settlement
-                        new DateTime(year, 12, 25),
-                        new DateTime(year, 12, 26),
-//                        new DateTime(year, 12, 31), // New years eve is not a holiday without a union settlement
-                    };
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(quarter.Number), "There are only 4 quarters in a year dummy!");
-            }
+            var dateTimes = GetHolidays(vacationYear.StartDate, vacationYear.EndDate);
+            return dateTimes.Select(kv => new VacationDay(kv.Key, kv.Value));
         }
 
-        private static IEnumerable<DateTime> EasterBasedHolidays(Quarter quarter)
+        private static Dictionary<DateTime, string> GetHolidays(DateTime from, DateTime to)
         {
-            var year = quarter.MidDate.Year;
-            var easter = CalculateEaster(year);
-
-            var easterBasedHolidays = new List<DateTime>
+            var holidays = new Dictionary<DateTime, string>();
+            foreach (var year in new HashSet<int> {from.Year, to.Year})
             {
-                easter.AddDays(-3), //Skærtorsdag
-                easter.AddDays(-2), //Langfredag
-                easter.AddDays(1),  //2. Påskedag
-                easter.AddDays(26), //Store Bededag
-                easter.AddDays(39), //Kristi Himmelfart
-                easter.AddDays(50), //2. Pinsedag
-            };
-            easterBasedHolidays.RemoveAll(d => d < quarter.From || quarter.To < d);
-            return easterBasedHolidays;
+                holidays.Add(new DateTime(year, 1, 1), "Nytårsdag"); //Nytårsdag
+                
+                var easter = CalculateEaster(year);
+                holidays.Add(easter.AddDays(-3), "Skærtorsdag");
+                holidays.Add(easter.AddDays(-2), "Langfredag");
+                holidays.Add(easter.AddDays(1),  "Påskedag");
+                holidays.Add(easter.AddDays(26), "Store bededag");
+                holidays.Add(easter.AddDays(39), "Kristi himmelfart");
+                holidays.Add(easter.AddDays(50), "2. Pinsedag");
+
+//                holidays.Add(new DateTime(year, 12, 24)); // Christmas is not a holiday without a union settlement
+                holidays.Add(new DateTime(year, 12, 25), "1. juledag");
+                holidays.Add(new DateTime(year, 12, 26), "2. juledag");
+//                holidays.Add(new DateTime(year, 12, 31)); // New years eve is not a holiday without a union settlement
+            }
+
+            return holidays
+                .Where(kv => from <= kv.Key && kv.Key <= to)
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
         /// <summary>

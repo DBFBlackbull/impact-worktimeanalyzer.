@@ -5,6 +5,12 @@
      var remainingVacationDays = Model.VacationYear.TotalVacationDays - @Model.SummedVacationDays;
      var remainingExtraVacationDays = Model.VacationYear.TotalExtraVacationDays - Model.SummedExtraVacationDays;
 }
+<style>
+    /*Overwrite white squares to green to better highlight Holidays*/
+    rect[fill="#ffffff"][stroke-width="1"] {
+    	fill: #28a745; !important;
+    }
+</style>
 <div class="container">
     <h2>Vælg ferieår</h2>
     <div class="row">
@@ -25,13 +31,36 @@
         <div class="col-md-12">
             <p>Feriedage tilbage: @Model.VacationYear.TotalVacationDays - @Model.SummedVacationDays = <strong>@remainingVacationDays dage</strong> / @(remainingVacationDays * ApplicationConstants.NormalWorkDay) timer *</p>
             <p>Feriefridage tilbage: @Model.VacationYear.TotalExtraVacationDays - @Model.SummedExtraVacationDays = <strong>@remainingExtraVacationDays dage</strong> / @(remainingExtraVacationDays * ApplicationConstants.NormalWorkDay) timer *</p>
-            <p>* Det antages at medarbejderen har optjent fuld ferie og FF dage. De @Model.VacationYear.TotalVacationDays ferie- og @Model.VacationYear.TotalExtraVacationDays FF-dage er <strong>ikke</strong> udregnet ud fra tidligere registreringer.</p>
+            <p>
+                <svg width="16" height="16">
+                    <rect width="16" height="16" style="fill:#4e7ce1;stroke-width:1;stroke:#ffffff"/>
+                </svg>
+                Ferie
+                <br/>
+                <svg width="16" height="16">
+                  <rect width="16" height="16" style="fill:#e8792a;stroke-width:1;stroke:#ffffff" />
+                </svg>
+                Feriefridage
+                <br/>
+                <svg width="16" height="16">
+                    <rect width="16" height="16" style="fill:#28a745;stroke-width:1;stroke:#ffffff" />
+                </svg>
+                Helligdage
+            </p>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
             <div id="@Model.DivId"></div>
-            <p>** Feriefridage er på grafen ovenfor vist med negative tal (f.eks. -7.5). Dette er gjort for at de skal fremstå med en anden farve (orange) og dermed er nemmere at skelne fra den regulære ferie (blå). (Der er pt. ingen måde at overstyre farven på)</p>
+            Her er helligdagene i det indeværende ferie år
+            <ul>
+                @foreach (var vacationDay in @Model.VacationDays.Where(d => !string.IsNullOrEmpty(d.Name)))
+                {
+                    <li>@vacationDay.Date.ToString("dd MMMM yyyy") - @vacationDay.Name</li>
+                }
+            </ul>
+            <p>* Det antages at medarbejderen har optjent fuld ferie og FF dage. De @Model.VacationYear.TotalVacationDays ferie- og @Model.VacationYear.TotalExtraVacationDays FF-dage er <strong>ikke</strong> udregnet ud fra tidligere registreringer.</p>
+            <p>** Feriefridage er på grafen ovenfor vist med negative tal (f.eks. -7.5). Dette er gjort for at de skal fremstå med en anden farve (orange) og dermed er nemmere at skelne fra den regulære ferie (blå). Hellidage er vist med værdien 0, og farven bliver overstyret i css så den er grøn i stedet for hvid (Der er pt. ingen måde at vælge farven i frameworket)</p>
             <p>*** Hvis en dag både indeholder ferie timer og FF timer, så er tallene lagt sammen, og bliver vist med blå farve</p>
         </div>
     </div>
