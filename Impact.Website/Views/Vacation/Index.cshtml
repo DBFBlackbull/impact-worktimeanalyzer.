@@ -1,4 +1,5 @@
-﻿@using Impact.Core.Constants
+﻿@using System.Globalization
+@using Impact.Core.Constants
 @model Impact.Website.Models.VacationViewModel
 @{
     ViewBag.Title = "Ferieoversigt";
@@ -8,7 +9,7 @@
 <style>
     /*Overwrite white squares to green to better highlight Holidays*/
     rect[fill="#ffffff"][stroke-width="1"] {
-    	fill: #28a745; !important;
+    	fill: #28a745 !important;
     }
 </style>
 <div class="container">
@@ -54,7 +55,7 @@
             <div id="@Model.DivId"></div>
             Her er helligdagene i det indeværende ferie år
             <ul>
-                @foreach (var vacationDay in @Model.VacationDays.Where(d => !string.IsNullOrEmpty(d.Name)))
+                @foreach (var vacationDay in Model.VacationDays.Where(d => !string.IsNullOrEmpty(d.Name)))
                 {
                     <li>@vacationDay.Date.ToString("dd MMMM yyyy") - @vacationDay.Name</li>
                 }
@@ -75,6 +76,7 @@
         google.charts.load('current', { packages: ['calendar'] });
         google.charts.setOnLoadCallback(function() {
             drawChart();
+            addHolidayDescription();
         });
     };
     
@@ -96,5 +98,46 @@
         
         var chart = new google.visualization.Calendar(document.getElementById('@Model.DivId'));
         chart.draw(dataTable, options);
+    }
+    
+    function addHolidayDescription() {
+        // Select the node that will be observed for mutations
+        const targetNode = document.getElementById('@Model.DivId');
+        
+        // Options for the observer (which mutations to observe)
+        const config = { attributes: false, childList: true, subtree: true };
+        
+        let dict = {};
+        @foreach (var day in Model.VacationDays.Where(d => !string.IsNullOrEmpty(d.Name)))
+        {
+            <text>dict['@day.Date.ToString("MMMM d, yyyy: 0", new CultureInfo("en-GB"))'] = '@Html.Raw(HttpUtility.JavaScriptStringEncode(day.Name))';</text>
+        }
+        
+        const callback = function(mutationsList, observer) {
+            for(let mutation of mutationsList) {
+                let node = mutation.addedNodes[0];
+                if (mutation.type === 'childList' && 
+                    mutation.addedNodes.length === 1 &&
+                    node.className === 'google-visualization-tooltip') {
+                    
+                    let innerText = node.innerText;
+                    let dictElement = dict[innerText];
+                    if (dictElement === undefined) 
+                        return;
+                    
+                    let newInnerText = innerText.substring(0, innerText.length - 1);
+                    let replace = node.innerHTML.replace(innerText, newInnerText + '<br/>' + dictElement);
+                    
+                    node.innerHTML = replace;
+                    node.style.width = '190px';
+                }
+            }
+        };
+        
+        // Create an observer instance linked to the callback function
+        const observer = new MutationObserver(callback);
+        
+        // Start observing the target node for configured mutations
+        observer.observe(targetNode, config);
     }
 </script>

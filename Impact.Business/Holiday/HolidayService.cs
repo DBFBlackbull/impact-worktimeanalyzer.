@@ -38,13 +38,13 @@ namespace Impact.Business.Holiday
                 holidays.Add(easter.AddDays(-3), "Skærtorsdag");
                 holidays.Add(easter.AddDays(-2), "Langfredag");
                 holidays.Add(easter.AddDays(1),  "Påskedag");
-                holidays.Add(easter.AddDays(26), "Store bededag");
-                holidays.Add(easter.AddDays(39), "Kristi himmelfart");
+                holidays.Add(easter.AddDays(26), "Store Bededag");
+                holidays.Add(easter.AddDays(39), "Kristi Himmelfart");
                 holidays.Add(easter.AddDays(50), "2. Pinsedag");
 
 //                holidays.Add(new DateTime(year, 12, 24)); // Christmas is not a holiday without a union settlement
-                holidays.Add(new DateTime(year, 12, 25), "1. juledag");
-                holidays.Add(new DateTime(year, 12, 26), "2. juledag");
+                holidays.Add(new DateTime(year, 12, 25), "1. Juledag");
+                holidays.Add(new DateTime(year, 12, 26), "2. Juledag");
 //                holidays.Add(new DateTime(year, 12, 31)); // New years eve is not a holiday without a union settlement
             }
 
