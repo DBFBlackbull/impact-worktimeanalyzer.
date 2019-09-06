@@ -247,14 +247,14 @@ namespace Impact.Website.Providers
                      
                 }
             };
-            previousData.Add(new object[] {"Saldo", balanceHoursPrevious});
+            previousData.Add(new object[] {"Flex", balanceHoursPrevious});
             
             List<object[]> allData = new List<object[]>
             {
                 new object[]
                 {
                     new Column{Label = "", Type = "string"},
-                    new Column{Label = "Flex", Type = "number"},
+                    new Column{Label = "Timer", Type = "number"},
                      
                 }
             };
