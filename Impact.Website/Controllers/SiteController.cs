@@ -17,5 +17,10 @@ namespace Impact.Website.Controllers
             
             return View(new SiteViewModel(HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).FullName));
         }
+        
+        public ActionResult About()
+        {
+            return View();
+        }
     }
 }

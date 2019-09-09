@@ -251,6 +251,7 @@
     <Content Include="Views\DemoOvertime\Index.cshtml" />
     <Content Include="Views\Overtime\Index.cshtml" />
     <Content Include="Views\Profile\Index.cshtml" />
+    <Content Include="Views\Site\About.cshtml" />
     <Content Include="Views\Site\Index.cshtml" />
     <Content Include="Views\Vacation\Index.cshtml" />
     <Content Include="Web.config" />
@@ -264,7 +265,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Login\About.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>

@@ -48,12 +48,5 @@ namespace Impact.Website.Controllers
 	        HttpContext.Session.RemoveAll();
 	        return RedirectToAction("Index");
 	    }
-
-		public ActionResult About()
-		{
-			ViewBag.Message = "Your application description page.";
-
-			return View();
-		}
 	}
 }
