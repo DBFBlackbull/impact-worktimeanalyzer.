@@ -80,8 +80,8 @@ namespace Impact.Website.Controllers
                 new SelectListItem
                 {
                     Selected = true,
-                    Value = quarter.MidDate.ToShortDateString(),
-                    Text = quarter.GetDisplayTitle() + " " + quarter.MidDate.Year
+                    Value = quarter.From.ToShortDateString(),
+                    Text = quarter.GetDisplayTitle() + " " + quarter.From.Year
                 }
             };
         }

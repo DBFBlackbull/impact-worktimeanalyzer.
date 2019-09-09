@@ -63,14 +63,15 @@ namespace Impact.Website.Controllers
         private IEnumerable<SelectListItem> GetSelectList(Quarter quarter)
         {
             var hireDate = (DateTime) HttpContext.Session[ApplicationConstants.SessionName.HireDate];
+            var start = _timeService.GetQuarter(hireDate).From;
             var selectListItems = new List<SelectListItem>();
             var groupsMap = new Dictionary<int, SelectListGroup>();
 
-            var now = DateTime.Now.Date;
-            while (hireDate < now)
+            var now = DateTime.Now;
+            while (start < now)
             {
-                var selectQuarter = _timeService.GetQuarter(hireDate);
-                var currentDate = selectQuarter.MidDate;
+                var selectQuarter = _timeService.GetQuarter(start);
+                var currentDate = selectQuarter.From;
                 var currentYear = currentDate.Year;
 
                 if (!groupsMap.TryGetValue(currentYear, out var group))
@@ -79,13 +80,15 @@ namespace Impact.Website.Controllers
                 selectListItems.Add(new SelectListItem
                 {
                     Group = group,
-                    Selected = quarter.MidDate == currentDate,
+                    Selected = quarter.From == currentDate,
                     Value = currentDate.ToShortDateString(),
                     Text = selectQuarter.GetDisplayTitle() + " " + currentYear
                 });
                 
-                hireDate = hireDate.AddMonths(3);
+                start = start.AddMonths(3);
             }
+            
+            
 
             return selectListItems;
         }

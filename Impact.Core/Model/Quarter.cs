@@ -7,8 +7,6 @@ namespace Impact.Core.Model
         public int Number { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
-        public DateTime MidDate { get; set; }
-
         public string GetDisplayTitle()
         {
             switch (Number)
@@ -46,18 +44,18 @@ namespace Impact.Core.Model
         public string GetDisplayOvertimePayoutMonth()
         {
             // The payout month got changed at this specific date. See "PdfRegistreringer/Fortroligt Information vedr udbetalingstidspunkt for overarbejde.pdf"
-            if (MidDate < new DateTime(2017, 8, 15))
+            if (From < new DateTime(2017, 8, 15))
             {
                 switch (Number)
                 {
                     case 1:
-                        return $"April {MidDate.Year}";
+                        return $"April {From.Year}";
                     case 2:
-                        return $"Juli {MidDate.Year}";
+                        return $"Juli {From.Year}";
                     case 3:
-                        return $"Oktober {MidDate.Year}";
+                        return $"Oktober {From.Year}";
                     case 4:
-                        return $"Februar {MidDate.Year + 1}";
+                        return $"Februar {From.Year + 1}";
                     default:
                         throw new IndexOutOfRangeException("Quarter was now 1, 2, 3, or 4. Real value: " + Number);
                 }
@@ -65,13 +63,13 @@ namespace Impact.Core.Model
             switch (Number)
             {
                 case 1:
-                    return $"Maj {MidDate.Year}";
+                    return $"Maj {From.Year}";
                 case 2:
-                    return $"August {MidDate.Year}";
+                    return $"August {From.Year}";
                 case 3:
-                    return $"November {MidDate.Year}";
+                    return $"November {From.Year}";
                 case 4:
-                    return $"Marts {MidDate.Year + 1}";
+                    return $"Marts {From.Year + 1}";
                 default:
                     throw new IndexOutOfRangeException("Quarter was now 1, 2, 3, or 4. Real value: " + Number);
             }

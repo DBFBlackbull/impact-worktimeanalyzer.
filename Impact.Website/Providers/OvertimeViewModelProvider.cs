@@ -38,7 +38,7 @@ namespace Impact.Website.Providers
             var normalizedAllWeeks = _timeService.GetNormalizedWeeks(rawWeeks).ToList();
 
             var quarterViewModel = new QuarterViewModel();
-            quarterViewModel.SelectedQuarter = quarter.MidDate.ToShortDateString();
+            quarterViewModel.SelectedQuarter = quarter.From.ToShortDateString();
             quarterViewModel.OvertimePaycheck = quarter.GetDisplayOvertimePayoutMonth();
 
             quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
