@@ -1,4 +1,4 @@
-﻿using System.Web.Mvc;
+using System.Web.Mvc;
 using Impact.Core.Constants;
 using Impact.Core.Extension;
 using Impact.Core.Model;
@@ -7,15 +7,16 @@ using TimeLog.TransactionalApi.SDK.ProjectManagementService;
 
 namespace Impact.Website.Controllers
 {
-    public class SiteController : Controller
+    public class ProfileController : Controller
     {
-        // GET: Site
+        // GET
         public ActionResult Index()
         {
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken))
                 return RedirectToAction("Index", "Login");
-            
-            return View(new SiteViewModel(HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).FullName));
+
+            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
+            return View(new ProfileViewModel(profile));
         }
     }
 }

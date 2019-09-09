@@ -1,4 +1,6 @@
 ﻿@using Impact.Core.Constants
+@using Impact.Core.Extension
+@using Impact.Core.Model
 @model Impact.Website.Models.SiteViewModel
 @{
 	ViewBag.Title = "Vælg side";
@@ -9,7 +11,7 @@
 		<h1>Velkommen @Model.FullName</h1>
 	</div>
 	<div class="row">
-		@if ((bool?) Session[ApplicationConstants.SessionName.IsDeveloper] ?? false)
+		@if (Session.Get<Profile>(ApplicationConstants.SessionName.Profile).IsDeveloper)
 		{
 			<div class="col-md-4">
 				<div class="jumbotron">

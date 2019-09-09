@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,8 +42,10 @@
   <ItemGroup>
     <Compile Include="Constants\ApplicationConstants.cs" />
     <Compile Include="Extension\DateTimeExtensions.cs" />
+    <Compile Include="Extension\SessionExtensions.cs" />
     <Compile Include="Interfaces\Cloneable.cs" />
     <Compile Include="Interfaces\IAbsorbable.cs" />
+    <Compile Include="Model\Profile.cs" />
     <Compile Include="Model\VacationDay.cs" />
     <Compile Include="Model\Month.cs" />
     <Compile Include="Model\Quarter.cs" />

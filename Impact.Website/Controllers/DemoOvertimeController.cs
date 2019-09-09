@@ -4,10 +4,12 @@ using System.Web.Mvc;
 using AutoMapper;
 using Impact.Business.Time;
 using Impact.Core.Constants;
+using Impact.Core.Extension;
 using Impact.Core.Model;
 using Impact.Website.Models;
 using Impact.Website.Providers;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
+using Profile = Impact.Core.Model.Profile;
 
 namespace Impact.Website.Controllers
 {
@@ -29,8 +31,8 @@ namespace Impact.Website.Controllers
         {
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
-            
-            if (!(bool) HttpContext.Session[ApplicationConstants.SessionName.IsDeveloper])
+
+            if (!HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).IsDeveloper)
                 return RedirectToAction("Index", "Site");
             
             List<Week> inputWeeks = new List<Week>();
@@ -58,7 +60,7 @@ namespace Impact.Website.Controllers
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
             
-            if (!(bool) HttpContext.Session[ApplicationConstants.SessionName.IsDeveloper])
+            if (!HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).IsDeveloper)
                 return RedirectToAction("Index", "Site");
             
             if (!ModelState.IsValid)

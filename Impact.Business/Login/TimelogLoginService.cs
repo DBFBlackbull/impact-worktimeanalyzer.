@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Impact.Core.Constants;
+using Impact.Core.Model;
 using TimeLog.TransactionalApi.SDK;
 using TimeLog.TransactionalApi.SDK.OrganisationService;
 using ExecutionStatus = TimeLog.TransactionalApi.SDK.OrganisationService.ExecutionStatus;
@@ -16,12 +17,10 @@ namespace Impact.Business.Login
         private const int PageSize = 100;
         private static readonly Regex UnitDeveloper = new Regex(@"^Unit\s\d\s-\s[BF]E", RegexOptions.Compiled);
 
-        public bool IsAuthorized(string username, string password, out SecurityToken securityToken, out string fullName, out bool isDeveloper, out DateTime hireDate)
+        public bool IsAuthorized(string username, string password, out SecurityToken securityToken, out Profile profile)
         {
-            fullName = string.Empty;
-            isDeveloper = false;
+            profile = new Profile();
             securityToken = null;
-            hireDate = DateTime.MinValue;
             if (!SecurityHandler.Instance.TryAuthenticate(username, password, out var messages))
                 return false;
 
@@ -29,10 +28,18 @@ namespace Impact.Business.Login
             if (employee == null)
                 throw new NullReferenceException("GetEmployee failed. This should NEVER happen. How can you even be logged in if you do not exists in timelog. It makes no sense\n" +
                                                  "Please screenshot this error page and send it to PBM");
-            
-            fullName = employee.Fullname;
-            isDeveloper = IsDeveloper(employee);
-            hireDate = employee.HiredDate; 
+
+            profile.FirstName = employee.FirstName;
+            profile.LastName = employee.LastName;
+            profile.FullName = employee.Fullname;
+            profile.Initials = employee.Initials;
+            profile.Department = employee.DepartmentName;
+            profile.Title = employee.Title;
+            profile.CostPrice = employee.CostPrice;
+            profile.HourlyRate = employee.HourlyRate;
+            profile.HireDate = employee.HiredDate;
+            profile.IsDeveloper = IsDeveloper(employee);
+
             securityToken = ProjectManagementHandler.Instance.Token;
 
             return true;

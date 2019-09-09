@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Impact.Business.Time;
 using Impact.Core.Constants;
+using Impact.Core.Extension;
 using Impact.Core.Model;
 using Impact.Website.Models;
 using Impact.Website.Models.Charts;
@@ -30,7 +31,7 @@ namespace Impact.Website.Controllers
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
 
-            if (!(bool) HttpContext.Session[ApplicationConstants.SessionName.IsDeveloper])
+            if (!HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).IsDeveloper)
                 return RedirectToAction("Index", "Site");
 
             var quarter = _timeService.GetQuarter(DateTime.Now);
@@ -46,7 +47,7 @@ namespace Impact.Website.Controllers
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
             
-            if (!(bool) HttpContext.Session[ApplicationConstants.SessionName.IsDeveloper])
+            if (!HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).IsDeveloper)
                 return RedirectToAction("Index", "Site");
             
             if (!ModelState.IsValid)
@@ -62,7 +63,7 @@ namespace Impact.Website.Controllers
         
         private IEnumerable<SelectListItem> GetSelectList(Quarter quarter)
         {
-            var hireDate = (DateTime) HttpContext.Session[ApplicationConstants.SessionName.HireDate];
+            var hireDate = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).HireDate;
             var start = _timeService.GetQuarter(hireDate).From;
             var selectListItems = new List<SelectListItem>();
             var groupsMap = new Dictionary<int, SelectListGroup>();

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Impact.Business.Time;
 using Impact.Core.Constants;
+using Impact.Core.Extension;
 using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
 using Impact.Website.Models;
@@ -30,8 +31,8 @@ namespace Impact.Website.Controllers
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
 
-            var hireDate = (DateTime) HttpContext.Session[ApplicationConstants.SessionName.HireDate];
-            var awesomeThursdays = _timeRepository.GetAwesomeThursdays(hireDate, token).ToList();
+            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
+            var awesomeThursdays = _timeRepository.GetAwesomeThursdays(profile.HireDate, token).ToList();
             const string disclaimer = 
                 "<p>Fed torsdag / R&D er i personalehåndbogen punkt 1.6.4 defineret til at være <i>'fra kl 12.30 og resten af arbejdsdagen'</i>. " +
                 "Denne tidsmængde er afhænging af hvornår man møder om morgenen. " +

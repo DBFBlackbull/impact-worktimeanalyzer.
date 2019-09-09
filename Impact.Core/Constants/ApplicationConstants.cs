@@ -28,9 +28,7 @@ namespace Impact.Core.Constants
         public static class SessionName
         {
             public const string Token = "token";
-            public const string FullName = "fullName";
-            public const string IsDeveloper = "isDeveloper";
-            public const string HireDate = "hireDate";
+            public const string Profile = "profile";
         }
         
         public static class Color

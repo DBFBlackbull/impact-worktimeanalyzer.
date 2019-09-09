@@ -1,0 +1,42 @@
+@using Impact.Core.Constants
+@model Impact.Website.Models.ProfileViewModel
+@{
+    ViewBag.Title = "Profil";
+}
+<div class="container">
+    <div class="jumbotron">
+        <h2>@Model.FullName (@Model.Initials)</h2>
+    </div>
+    <div class="row">
+        <div class="col-md-3 text-right">@Html.LabelFor(m => m.FirstName)</div>
+        <div class="col-md-9">@Model.FirstName</div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 text-right">@Html.LabelFor(m => m.LastName)</div>
+        <div class="col-md-9">@Model.LastName</div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 text-right">@Html.LabelFor(m => m.Title)</div>
+        <div class="col-md-9">@Model.Title</div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 text-right">@Html.LabelFor(m => m.Department)</div>
+        <div class="col-md-9">@Model.Department</div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 text-right">@Html.LabelFor(m => m.HireDate)</div>
+        <div class="col-md-9">@Model.HireDate.ToShortDateString()</div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 text-right">@Html.LabelFor(m => m.HourlyRate)</div>
+        <div class="col-md-9">@Model.HourlyRate.ToString("C2", ApplicationConstants.DanishCultureInfo)</div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 text-right">@Html.LabelFor(m => m.CostPrice)</div>
+        <div class="col-md-9">@Model.CostPrice.ToString("C2", ApplicationConstants.DanishCultureInfo)</div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 text-right">@Html.LabelFor(m => m.IsDeveloper)</div>
+        <div class="col-md-9">@Model.IsDeveloper</div>
+    </div>
+</div>

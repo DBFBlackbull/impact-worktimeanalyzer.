@@ -1,4 +1,6 @@
 ﻿@using Impact.Core.Constants
+@using Impact.Core.Extension
+@using Impact.Core.Model
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,8 +20,11 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
+        @{
+            var profile = Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
+        }
             <ul class="navbar-nav">
-                @if ((bool?) Session[ApplicationConstants.SessionName.IsDeveloper] ?? false)
+                @if (profile != null && profile.IsDeveloper)
                 {
                     <li class="nav-item">@Html.ActionLink("Overarbejde", "Index", "Overtime", new {area = ""}, new {@class = "nav-link"})</li>
                     <li class="nav-item">@Html.ActionLink("Demo overarbejde", "Index", "DemoOvertime", new {area = ""}, new {@class = "nav-link"})</li>
@@ -28,9 +33,13 @@
                 <li class="nav-item">@Html.ActionLink("Ferie / Feriefridage", "Index", "Vacation", new {area = ""}, new {@class = "nav-link"})</li>
                 <li class="nav-item">@Html.ActionLink("About", "About", "Login", new {area = ""}, new {@class = "nav-link"})</li>
             </ul>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">@Html.ActionLink("Logout", "Logout", "Login", new {area = ""}, new {@class = "nav-link"})</li>
-            </ul>
+            @if (profile != null)
+            {
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">@Html.ActionLink("Logout", "Logout", "Login", new {area = ""}, new {@class = "nav-link"})</li>
+                    <li class="nav-item">@Html.ActionLink(@profile.FullName, "Index", "Profile", new {area = ""}, new {@class = "nav-link"})</li>
+                </ul>
+            }
         </div>
     </div>
 </div>
