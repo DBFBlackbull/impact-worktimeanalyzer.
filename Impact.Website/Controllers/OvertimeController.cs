@@ -62,14 +62,14 @@ namespace Impact.Website.Controllers
         
         private IEnumerable<SelectListItem> GetSelectList(Quarter quarter)
         {
-            var startDate = DateTime.Now;
+            var hireDate = (DateTime) HttpContext.Session[ApplicationConstants.SessionName.HireDate];
             var selectListItems = new List<SelectListItem>();
             var groupsMap = new Dictionary<int, SelectListGroup>();
 
-            for (int i = 15; i >= 0; i--)
+            var now = DateTime.Now.Date;
+            while (hireDate < now)
             {
-                var date = startDate.AddMonths(i * -3);
-                var selectQuarter = _timeService.GetQuarter(date);
+                var selectQuarter = _timeService.GetQuarter(hireDate);
                 var currentDate = selectQuarter.MidDate;
                 var currentYear = currentDate.Year;
 
@@ -83,6 +83,8 @@ namespace Impact.Website.Controllers
                     Value = currentDate.ToShortDateString(),
                     Text = selectQuarter.GetDisplayTitle() + " " + currentYear
                 });
+                
+                hireDate = hireDate.AddMonths(3);
             }
 
             return selectListItems;

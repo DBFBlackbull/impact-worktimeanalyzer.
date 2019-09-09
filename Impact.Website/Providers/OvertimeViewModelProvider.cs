@@ -10,7 +10,6 @@ using Impact.Website.Models;
 using Impact.Website.Models.Charts;
 using Impact.Website.Models.Options;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
-using WebGrease.Css.Extensions;
 
 namespace Impact.Website.Providers
 {
@@ -30,7 +29,7 @@ namespace Impact.Website.Providers
         public QuarterViewModel CreateViewModels(Quarter quarter, SecurityToken token, bool isNormalized = false, List<Week> rawWeeksOverride = null)
         {
             var rawWeeks = rawWeeksOverride ?? _timeRepository.GetRawWeeksInQuarter(quarter, token).ToList();
-            rawWeeks = _timeService.CategorizeWeeks(quarter, rawWeeks).ToList();
+            rawWeeks = _timeService.CategorizeWeeks(quarter, rawWeeks, token).ToList();
 
             var now = DateTime.Today;
 

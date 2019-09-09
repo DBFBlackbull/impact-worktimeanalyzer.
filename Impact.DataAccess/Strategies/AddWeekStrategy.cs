@@ -10,9 +10,6 @@ namespace Impact.DataAccess.Strategies
 {
     public class AddWeekStrategy : IAddRegistrationStrategy<Week>
     {
-        private static readonly Calendar DanishCalendar = ApplicationConstants.DanishCultureInfo.Calendar;
-        private static readonly DayOfWeek DanishFirstDayOfWeek = ApplicationConstants.DanishCultureInfo.DateTimeFormat.FirstDayOfWeek;
-        private static readonly CalendarWeekRule DanishCalendarWeekRule = ApplicationConstants.DanishCultureInfo.DateTimeFormat.CalendarWeekRule;
         private Dictionary<int, Week> Weeks { get; }
         
         public AddWeekStrategy()
@@ -23,7 +20,7 @@ namespace Impact.DataAccess.Strategies
         public void AddRegistration(WorkUnitFlat registration)
         {
             var dateTime = registration.Date;
-            var weekNumber = DanishCalendar.GetWeekOfYear(dateTime, DanishCalendarWeekRule, DanishFirstDayOfWeek);
+            var weekNumber = ApplicationConstants.GetWeekNumber(dateTime);
 
             if (!Weeks.TryGetValue(weekNumber, out var week))
                 Weeks[weekNumber] = week = CreateWeek(weekNumber, dateTime);
@@ -39,7 +36,7 @@ namespace Impact.DataAccess.Strategies
         private static Week CreateWeek(int weekNumber, DateTime dateTime)
         {
             var day = dateTime;
-            while (day.DayOfWeek != DayOfWeek.Monday)
+            while (day.DayOfWeek != ApplicationConstants.DanishFirstDayOfWeek)
             {
                 day = day.AddDays(-1);
             }

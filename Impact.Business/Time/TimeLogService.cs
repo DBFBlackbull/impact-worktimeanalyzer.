@@ -6,7 +6,6 @@ using Impact.Core.Constants;
 using Impact.Core.Interfaces;
 using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
-using TimeLog.TransactionalApi.SDK;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
 
 namespace Impact.Business.Time
@@ -69,8 +68,9 @@ namespace Impact.Business.Time
             return quarter;
         }
 
-        public IEnumerable<Week> CategorizeWeeks(Quarter quarter, List<Week> rawWeeks)
+        public IEnumerable<Week> CategorizeWeeks(Quarter quarter, List<Week> rawWeeks, SecurityToken token)
         {
+            HandleWeek53(quarter, rawWeeks, token);
             _holidayService.AddHolidayHours(quarter, rawWeeks);
             rawWeeks.FirstOrDefault()?.AddQuarterEdgeHours(quarter);
 
@@ -79,6 +79,34 @@ namespace Impact.Business.Time
 
             rawWeeks.ForEach(week => week.CategorizeHours());
             return rawWeeks;
+        }
+
+        /// <summary>
+        /// Fix for week 53. It is ignored at the end of the year, and added to beginning of the next year.
+        /// </summary>
+        /// <param name="quarter"></param>
+        /// <param name="rawWeeks"></param>
+        /// <param name="token"></param>
+        private void HandleWeek53(Quarter quarter, List<Week> rawWeeks, SecurityToken token)
+        {
+            rawWeeks.RemoveAll(w => w.Number == 53);
+
+            var firstWeek = rawWeeks.FirstOrDefault();
+            if (quarter.Number != 1 || firstWeek == null)
+                return;
+            
+            var firstDate = firstWeek.Dates.FirstOrDefault();
+            if (ApplicationConstants.GetWeekNumber(firstDate) != 53)
+                return;
+            
+            var week53Quarter = new Quarter
+            {
+                From = firstDate,
+                To = new DateTime(firstDate.Year, 12, 31)
+            };
+            var week53 = _timeRepository.GetRawWeeksInQuarter(week53Quarter, token).FirstOrDefault();
+            if (week53 != null)
+                firstWeek.TotalHours += week53.TotalHours;
         }
 
         public IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList)

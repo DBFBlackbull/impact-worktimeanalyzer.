@@ -73,6 +73,9 @@ namespace Impact.Core.Model
         {
             foreach (var date in Dates)
             {
+                if (ApplicationConstants.GetWeekNumber(date) == 53)
+                    continue;
+                
                 if (date < quarter.From || quarter.To < date)
                     QuarterEdgeHours += ApplicationConstants.NormalWorkDay;
             }
