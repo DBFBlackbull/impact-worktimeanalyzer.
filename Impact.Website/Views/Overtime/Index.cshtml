@@ -1,4 +1,7 @@
-﻿@using Impact.Website.Helper
+﻿@using Impact.Core.Constants
+@using Impact.Core.Extension
+@using Impact.Core.Model
+@using Impact.Website.Helper
 @model Impact.Website.Models.QuarterViewModel
 @{
     ViewBag.Title = "Overarbejde";
@@ -40,6 +43,13 @@
         </div>
         <div class="col-md-3">
             <div id="@Model.PotentialChartViewModel.DivId"></div>
+            @if (Session.Get<Profile>(ApplicationConstants.SessionName.Profile).Initials == "MAS")
+            {
+                <button id="racer" value="0" onclick="racerUnlock()">Click me</button>
+                <div>
+                    @Html.ActionLink("Thank you", "Racer", "Site", null, new {id = "racerLink", style = "display:none"})
+                </div>
+            }
         </div>
         <div class="col-md-5">
             <form>
@@ -181,5 +191,29 @@
         $('#flex0u').val( $('#flex0').val() * 0 );
         $('#flex1u').val( round2D( $('#flex1').val() * hourlyRounded) );
         $('#flex2u').val( round2D( $('#flex2').val() * hourlyRounded * 1.5) );
+    }
+    
+    function racerUnlock() {
+        let button = $('#racer');
+        let val = parseInt(button.val());
+        button.val(val+1);
+        switch (val) {
+            case 0:
+                button.text("Do it again");
+                break;
+            case 1:
+                button.text("Ohh yes!");
+                break;
+            case 2:
+                button.text("Keep 'em coming!");
+                break;
+            case 3:
+                button.text("Once more!");
+                break;
+            case 4:
+                button.hide();
+                $('#racerLink').show();
+                break;
+        }
     }
 </script>
