@@ -25,10 +25,6 @@ namespace Impact.Website.Controllers
 
         public ActionResult Racer()
         {
-            var initials = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile)?.Initials;
-            if (initials != "MAS" && initials != "PBM")
-                return RedirectToAction("Index");
-            
             return View();
         }
     }
