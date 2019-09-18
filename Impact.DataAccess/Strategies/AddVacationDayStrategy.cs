@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Xml;
+using Impact.Core.Constants;
 using Impact.Core.Model;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
 
@@ -10,6 +13,7 @@ namespace Impact.DataAccess.Strategies
     {
         private const string VacationId = "20"; 
         private const string ExtraVacationId = "60";
+        private XmlNamespaceManager _xnsm;
         private Dictionary<DateTime, VacationDay> VacationDays { get; }
 
         public AddVacationDayStrategy()
@@ -40,6 +44,36 @@ namespace Impact.DataAccess.Strategies
         public IEnumerable<VacationDay> GetList()
         {
             return VacationDays.Values.OrderBy(v => v.Date).ToList();
+        }
+
+        public void AddNamespace(XmlNode node)
+        {
+            _xnsm = new XmlNamespaceManager(node.OwnerDocument.NameTable);
+            _xnsm.AddNamespace(node.Prefix, node.NamespaceURI);
+        }
+        
+        public void AddRegistration(XmlNode registration)
+        {
+            var timeOffCode = registration.SelectSingleNode("tlp:TimeOffCode", _xnsm)?.InnerText;
+            if (timeOffCode != VacationId && timeOffCode != ExtraVacationId)
+                return;
+            
+            var date = DateTime.Parse(registration.SelectSingleNode("tlp:Date", _xnsm)?.InnerText);
+            var hours = double.Parse(registration.SelectSingleNode("tlp:RegHours", _xnsm)?.InnerText ?? "0", CultureInfo.InvariantCulture);
+            var note = registration.SelectSingleNode("tlp:Note", _xnsm)?.InnerText ?? "";
+
+            if (!VacationDays.TryGetValue(date, out var vacationDay))
+                VacationDays[date] = vacationDay = new VacationDay(date, note);
+            
+            switch (timeOffCode)
+            {
+                case VacationId:
+                    vacationDay.VacationHours = hours;
+                    break;
+                case ExtraVacationId:
+                    vacationDay.ExtraVacationHours = hours;
+                    break;
+            }
         }
     }
 }

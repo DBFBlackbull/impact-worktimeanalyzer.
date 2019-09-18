@@ -35,7 +35,7 @@ namespace Impact.Website.Models
             Initials = profile.Initials;
             Title = profile.Title;
             Department = profile.Department;
-            HireDate = profile.HireDate;
+            HireDate = profile.HiredDate;
             HourlyRate = profile.HourlyRate;
             CostPrice = profile.CostPrice;
             IsDeveloper = profile.IsDeveloper;

@@ -63,8 +63,8 @@ namespace Impact.Website.Controllers
         
         private IEnumerable<SelectListItem> GetSelectList(Quarter quarter)
         {
-            var hireDate = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).HireDate;
-            var start = _timeService.GetQuarter(hireDate).From;
+            var hiredDate = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).HiredDate;
+            var start = _timeService.GetQuarter(hiredDate).From;
             var selectListItems = new List<SelectListItem>();
             var groupsMap = new Dictionary<int, SelectListGroup>();
 

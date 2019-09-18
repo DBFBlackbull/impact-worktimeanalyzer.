@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Impact.Business.Holiday;
 using Impact.Business.Time;
 using Impact.Core.Constants;
+using Impact.Core.Extension;
 using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
 using Impact.Website.Models;
@@ -32,7 +33,8 @@ namespace Impact.Website.Controllers
                 return RedirectToAction("Index", "Login");
 
             var vacationYear = _timeService.GetVacationYear(DateTime.Now);
-            List<VacationDay> vacationDays = _timeRepository.GetVacationDays(vacationYear.StartDate, vacationYear.EndDate, token).ToList();
+            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
+            List<VacationDay> vacationDays = _timeRepository.GetVacationDays(vacationYear.StartDate, vacationYear.EndDate, token, profile).ToList();
             vacationDays.AddRange(_holidayService.GetHolidays(vacationYear));
 
             var vacationViewModel = new VacationViewModel
@@ -60,7 +62,8 @@ namespace Impact.Website.Controllers
             
             var dateTime = DateTime.Parse(viewModel.SelectedVacationYear);
             var vacationYear = _timeService.GetVacationYear(dateTime);
-            var vacationDays = _timeRepository.GetVacationDays(vacationYear.StartDate, vacationYear.EndDate, token).ToList();
+            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
+            var vacationDays = _timeRepository.GetVacationDays(vacationYear.StartDate, vacationYear.EndDate, token, profile).ToList();
             vacationDays.AddRange(_holidayService.GetHolidays(vacationYear));
             
             var vacationViewModel = new VacationViewModel

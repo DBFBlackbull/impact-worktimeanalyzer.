@@ -5,6 +5,7 @@ namespace Impact.Core.Constants
 {
     public static class ApplicationConstants
     {
+        public static readonly CultureInfo EnglishCultureInfo = new CultureInfo("en-US");
         public static readonly CultureInfo DanishCultureInfo = new CultureInfo("da-DK");
         private static readonly Calendar DanishCalendar = DanishCultureInfo.Calendar;
         public static readonly DayOfWeek DanishFirstDayOfWeek = DanishCultureInfo.DateTimeFormat.FirstDayOfWeek;

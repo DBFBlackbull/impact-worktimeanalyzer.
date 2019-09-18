@@ -55,9 +55,9 @@
             <div id="@Model.DivId"></div>
             Her er helligdagene i det indeværende ferie år
             <ul>
-                @foreach (var vacationDay in Model.VacationDays.Where(d => !string.IsNullOrEmpty(d.Name)))
+                @foreach (var vacationDay in Model.VacationDays.Where(d => !string.IsNullOrEmpty(d.Comment)))
                 {
-                    <li>@vacationDay.Date.ToString("dd MMMM yyyy") - @vacationDay.Name</li>
+                    <li>@vacationDay.Date.ToString("dd MMMM yyyy") - @vacationDay.Comment</li>
                 }
             </ul>
             <p>* Det antages at medarbejderen har optjent fuld ferie og FF dage. De @Model.VacationYear.TotalVacationDays ferie- og @Model.VacationYear.TotalExtraVacationDays FF-dage er <strong>ikke</strong> udregnet ud fra tidligere registreringer.</p>
@@ -108,10 +108,13 @@
         const config = { attributes: false, childList: true, subtree: true };
         
         let dict = {};
-        @foreach (var day in Model.VacationDays.Where(d => !string.IsNullOrEmpty(d.Name)))
+        @foreach (var day in Model.VacationDays.Where(d => !string.IsNullOrEmpty(d.Comment)))
         {
-            <text>dict['@day.Date.ToString("MMMM d, yyyy: 0", new CultureInfo("en-GB"))'] = '@Html.Raw(HttpUtility.JavaScriptStringEncode(day.Name))';</text>
+            var key = day.Date.ToString("MMMM d, yyyy: ", ApplicationConstants.EnglishCultureInfo.DateTimeFormat) + day.GetHours();
+            <text>dict['@key'] = '@Html.Raw(HttpUtility.JavaScriptStringEncode(day.Comment))';</text>
         }
+        
+        console.log(dict);
         
         const callback = function(mutationsList, observer) {
             for(let mutation of mutationsList) {
@@ -125,11 +128,16 @@
                     if (dictElement === undefined) 
                         return;
                     
-                    let newInnerText = innerText.substring(0, innerText.length - 1);
-                    let replace = node.innerHTML.replace(innerText, newInnerText + '<br/>' + dictElement);
+                    let strings = innerText.split(':');
+                    let newInnerText;
+                    if (strings[1].trim() === '0') {
+                        newInnerText = strings[0].concat(':<br/>', dictElement);
+                    } else {
+                        newInnerText = strings[0].concat(':<br/>', strings[1], ', ', dictElement);
+                    }
                     
-                    node.innerHTML = replace;
-                    node.style.width = '190px';
+                    node.innerHTML = node.innerHTML.replace(innerText, newInnerText);
+                    node.style.width = 'auto';
                 }
             }
         };

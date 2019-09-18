@@ -32,7 +32,7 @@ namespace Impact.Website.Controllers
                 return RedirectToAction("Index", "Login");
 
             var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
-            var awesomeThursdays = _timeRepository.GetAwesomeThursdays(profile.HireDate, token).ToList();
+            var awesomeThursdays = _timeRepository.GetAwesomeThursdays(profile.HiredDate, token).ToList();
             const string disclaimer = 
                 "<p>Fed torsdag / R&D er i personalehåndbogen punkt 1.6.4 defineret til at være <i>'fra kl 12.30 og resten af arbejdsdagen'</i>. " +
                 "Denne tidsmængde er afhænging af hvornår man møder om morgenen. " +
