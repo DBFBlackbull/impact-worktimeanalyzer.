@@ -39,7 +39,7 @@
                 Ferie
                 <br/>
                 <svg width="16" height="16">
-                  <rect width="16" height="16" style="fill:#e8792a;stroke-width:1;stroke:#ffffff" />
+                    <rect width="16" height="16" style="fill:#e8792a;stroke-width:1;stroke:#ffffff" />
                 </svg>
                 Feriefridage
                 <br/>
@@ -53,13 +53,41 @@
     <div class="row">
         <div class="col-md-12">
             <div id="@Model.DivId"></div>
-            Her er helligdagene i det indeværende ferie år
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div id="@Model.DivId"></div>
+            Her er ferie i det indeværende ferie år
             <ul>
-                @foreach (var vacationDay in Model.VacationDays.Where(d => !string.IsNullOrEmpty(d.Comment)))
+                @foreach (var vacationDay in Model.VacationDays.Where(d => d.GetDecimalHours() > 0))
                 {
                     <li>@vacationDay.Date.ToString("dd MMMM yyyy") - @vacationDay.Comment</li>
                 }
             </ul>
+        </div>
+        <div class="col-md-4">
+            <div id="@Model.DivId"></div>
+            Her er feriefridage i det indeværende ferie år
+            <ul>
+                @foreach (var vacationDay in Model.VacationDays.Where(d => d.GetDecimalHours() < 0))
+                {
+                    <li>@vacationDay.Date.ToString("dd MMMM yyyy") - @vacationDay.Comment</li>
+                }
+            </ul>
+        </div>
+        <div class="col-md-4">
+            Her er helligdagene i det indeværende ferie år
+            <ul>
+                @foreach (var vacationDay in Model.VacationDays.Where(d => d.GetDecimalHours() == 0))
+                {
+                    <li>@vacationDay.Date.ToString("dd MMMM yyyy") - @vacationDay.Comment</li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
             <p>* Det antages at medarbejderen har optjent fuld ferie og FF dage. De @Model.VacationYear.TotalVacationDays ferie- og @Model.VacationYear.TotalExtraVacationDays FF-dage er <strong>ikke</strong> udregnet ud fra tidligere registreringer.</p>
             <p>** Feriefridage er på grafen ovenfor vist med negative tal (f.eks. -7.5). Dette er gjort for at de skal fremstå med en anden farve (orange) og dermed er nemmere at skelne fra den regulære ferie (blå). Hellidage er vist med værdien 0, og farven bliver overstyret i css så den er grøn i stedet for hvid (Der er pt. ingen måde at vælge farven i frameworket)</p>
             <p>*** Hvis en dag både indeholder ferie timer og FF timer, så er tallene lagt sammen, og bliver vist med blå farve</p>
@@ -87,7 +115,7 @@
         dataTable.addRows([
           @foreach (var day in Model.VacationDays)
           {
-              <text>[ new Date(@day.Date.Year, @day.Date.Month-1, @day.Date.Day), @day.GetHours()],</text>
+              <text>[ new Date(@day.Date.Year, @day.Date.Month-1, @day.Date.Day), @day.GetStringHours()],</text>
           }
         ]);
         
@@ -110,11 +138,9 @@
         let dict = {};
         @foreach (var day in Model.VacationDays.Where(d => !string.IsNullOrEmpty(d.Comment)))
         {
-            var key = day.Date.ToString("MMMM d, yyyy: ", ApplicationConstants.EnglishCultureInfo.DateTimeFormat) + day.GetHours();
+            var key = day.Date.ToString("MMMM d, yyyy: ", ApplicationConstants.EnglishCultureInfo.DateTimeFormat) + day.GetStringHours();
             <text>dict['@key'] = '@Html.Raw(HttpUtility.JavaScriptStringEncode(day.Comment))';</text>
         }
-        
-        console.log(dict);
         
         const callback = function(mutationsList, observer) {
             for(let mutation of mutationsList) {

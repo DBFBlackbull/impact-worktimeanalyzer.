@@ -20,7 +20,7 @@ namespace Impact.Core.Model
             Comment = comment;
         }
 
-        public string GetHours()
+        public decimal GetDecimalHours()
         {
             decimal result;
             
@@ -31,7 +31,12 @@ namespace Impact.Core.Model
             else
                 result = Math.Round(Convert.ToDecimal(ExtraVacationHours), 2) * -1;
 
-            return result.ToString(CultureInfo.InvariantCulture);
+            return result;
+        }
+        
+        public string GetStringHours()
+        {
+            return GetDecimalHours().ToString(CultureInfo.InvariantCulture);
         }
     }
 }
