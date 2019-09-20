@@ -26,6 +26,7 @@ namespace Impact.DataAccess.Strategies
             switch (registration.TaskName)
             {
                 case "Fed torsdag":
+                case "Fed Torsdag i SD":
                 case "PL Fed Torsdag":
                     Months[$"{registration.Date.Year}{registration.Date.Month}"].AwesomeThursdayRawHours += registration.Hours;
                     break;
