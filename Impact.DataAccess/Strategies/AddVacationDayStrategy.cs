@@ -34,10 +34,10 @@ namespace Impact.DataAccess.Strategies
             {
                 case VacationId:
                     vacationDay.VacationHours = registration.Hours;
-                    break;
+                    return;
                 case ExtraVacationId:
                     vacationDay.ExtraVacationHours = registration.Hours;
-                    break;
+                    return;
             }
         }
 
@@ -69,10 +69,10 @@ namespace Impact.DataAccess.Strategies
             {
                 case VacationId:
                     vacationDay.VacationHours = hours;
-                    break;
+                    return;
                 case ExtraVacationId:
                     vacationDay.ExtraVacationHours = hours;
-                    break;
+                    return;
             }
         }
     }
