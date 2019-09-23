@@ -44,7 +44,7 @@ namespace Impact.Website.Controllers
             
             var awesomeThursdayViewModel = new AwesomeThursdayViewModel
             {
-                BalanceChartViewModel = CreateBalanceViewModel(awesomeThursdays),
+                BalanceChartViewModel = CreateBalanceViewModel(awesomeThursdays, profile.HiredDate),
                 BarColumnChartViewModel = CreateMonthsOverviewViewModel(awesomeThursdays),
                 Disclaimer = disclaimer
             };
@@ -52,7 +52,7 @@ namespace Impact.Website.Controllers
             return View(awesomeThursdayViewModel);
         }
         
-        private static BarColumnChartViewModel CreateBalanceViewModel(List<Month> months)
+        private static BarColumnChartViewModel CreateBalanceViewModel(List<Month> months, DateTime hiredDate)
         {
             var sum = months.Sum(m => m.AwesomeThursdayHours + m.RAndDHours);
             var awesomeThursdayRegistered = Math.Round(Convert.ToDecimal(sum), 2);
@@ -92,7 +92,7 @@ namespace Impact.Website.Controllers
             options.Chart = new BarColumnOptions.MaterialOptionsViewModel.ChartViewModel
             {
                 Title = "Fed torsdags / R&D saldo",
-                Subtitle = "Viser din Fed tordags / R&D \"time-saldo\" siden 2012. Dette er summen af alle dine Fed torsdags / R&D timer divideret med 3,75 time pr. måned"
+                Subtitle = $"Viser din Fed tordags / R&D \"time-saldo\" siden d. {hiredDate:d}. Dette er summen af alle dine Fed torsdags / R&D timer divideret med 3,75 time pr. måned"
             };
 
             var balanceViewModel = new BarColumnChartViewModel

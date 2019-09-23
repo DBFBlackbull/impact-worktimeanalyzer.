@@ -8,7 +8,7 @@ namespace Impact.DataAccess.Timelog
     public interface ITimeRepository
     {
         IEnumerable<Week> GetRawWeeksInQuarter(Quarter quarter, SecurityToken token);
-        IEnumerable<Month> GetAwesomeThursdays(DateTime hireDate, SecurityToken token);
+        IEnumerable<Month> GetAwesomeThursdays(DateTime hiredDate, SecurityToken token);
         IEnumerable<VacationDay> GetVacationDays(DateTime from, DateTime to, SecurityToken token, Profile profile);
     }
 }

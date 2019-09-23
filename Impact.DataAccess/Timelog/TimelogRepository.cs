@@ -27,9 +27,9 @@ namespace Impact.DataAccess.Timelog
             return GetWorkUnitsData<Week>(quarter.From, quarter.To, token, new AddWeekStrategy());
         }
 
-        public IEnumerable<Month> GetAwesomeThursdays(DateTime hireDate, SecurityToken token)
+        public IEnumerable<Month> GetAwesomeThursdays(DateTime hiredDate, SecurityToken token)
         {
-            return GetWorkUnitsData<Month>(hireDate, DateTime.Now, token, new AddMonthStrategy(hireDate));
+            return GetWorkUnitsData<Month>(hiredDate, DateTime.Now, token, new AddMonthStrategy(hiredDate));
         }
 
         public IEnumerable<VacationDay> GetVacationDays(DateTime from, DateTime to, SecurityToken token, Profile profile)
