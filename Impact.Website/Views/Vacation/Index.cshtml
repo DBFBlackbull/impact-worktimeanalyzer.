@@ -62,7 +62,7 @@
             <ul>
                 @foreach (var vacationDay in Model.VacationDays.Where(d => d.GetDecimalHours() > 0))
                 {
-                    <li>@vacationDay.Date.ToString("dd MMMM yyyy") - @vacationDay.Comment</li>
+                    <li>@ApplicationConstants.DanishCultureInfo.TextInfo.ToTitleCase(vacationDay.Date.ToString("dd MMMM yyyy", ApplicationConstants.DanishCultureInfo.DateTimeFormat)) - @vacationDay.Comment</li>
                 }
             </ul>
         </div>
@@ -72,7 +72,7 @@
             <ul>
                 @foreach (var vacationDay in Model.VacationDays.Where(d => d.GetDecimalHours() < 0))
                 {
-                    <li>@vacationDay.Date.ToString("dd MMMM yyyy") - @vacationDay.Comment</li>
+                    <li>@ApplicationConstants.DanishCultureInfo.TextInfo.ToTitleCase(vacationDay.Date.ToString("dd MMMM yyyy", ApplicationConstants.DanishCultureInfo.DateTimeFormat)) - @vacationDay.Comment</li>
                 }
             </ul>
         </div>
@@ -81,7 +81,7 @@
             <ul>
                 @foreach (var vacationDay in Model.VacationDays.Where(d => d.GetDecimalHours() == 0))
                 {
-                    <li>@vacationDay.Date.ToString("dd MMMM yyyy") - @vacationDay.Comment</li>
+                    <li>@ApplicationConstants.DanishCultureInfo.TextInfo.ToTitleCase(vacationDay.Date.ToString("dd MMMM yyyy", ApplicationConstants.DanishCultureInfo.DateTimeFormat)) - @vacationDay.Comment</li>
                 }
             </ul>
         </div>
