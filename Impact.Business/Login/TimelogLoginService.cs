@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Impact.Core.Constants;
+using Impact.Core.Extension;
 using Impact.Core.Model;
 using TimeLog.ReportingApi.SDK;
 using TimeLog.ReportingApi.SDK.ReportingService;
@@ -35,8 +36,6 @@ namespace Impact.Business.Login
                 throw new NullReferenceException("GetEmployee failed. This should NEVER happen. How can you even be logged in if you do not exists in timelog. It makes no sense\n" +
                                                  "Please screenshot this error page and send it to PBM");
 
-            var reportingEmployee = GetReportingEmployee(username);
-
             profile.FirstName = employee.FirstName;
             profile.LastName = employee.LastName;
             profile.FullName = employee.Fullname;
@@ -44,11 +43,16 @@ namespace Impact.Business.Login
             profile.EmployeeId = employee.EmployeeID;
             profile.Title = employee.Title;
             profile.Department = employee.DepartmentName;
-            profile.DepartmentId = reportingEmployee.DepartmentId;
             profile.CostPrice = employee.CostPrice;
             profile.HourlyRate = employee.HourlyRate;
             profile.HiredDate = employee.HiredDate;
             profile.IsDeveloper = IsDeveloper(employee);
+            
+            var reportingEmployee = GetReportingEmployee(employee.EmployeeID, employee.Initials);
+            profile.Email = reportingEmployee.Email;
+            profile.DepartmentId = reportingEmployee.DepartmentId;
+
+            profile.NormalWorkDay = GetReportingNormalWorkDay(employee.EmployeeID, reportingEmployee.DepartmentId);
 
             securityToken = ProjectManagementHandler.Instance.Token;
 
@@ -58,7 +62,6 @@ namespace Impact.Business.Login
         private static Employee GetTransactionalEmployee(string initials)
         {
             var token = OrganisationHandler.Instance.Token;
-            
             var pageIndex = 1;
             Employee[] employees;
 
@@ -79,20 +82,20 @@ namespace Impact.Business.Login
             return null;
         }
 
-        private static Profile GetReportingEmployee(string initials)
+        private static Profile GetReportingEmployee(int employeeId, string initials)
         {
             XmlNode employeeRaw = ReportingClient.GetEmployeesRaw(
                 ReportingHandler.SiteCode,
                 ReportingHandler.ApiId,
                 ReportingHandler.ApiPassword,
-                TimeLog.ReportingApi.SDK.Employee.All,
+                employeeId,
                 initials,
                 TimeLog.ReportingApi.SDK.Department.All,
                 TimeLog.ReportingApi.SDK.EmployeeStatus.Active).FirstChild;
 
             var xnsm = new XmlNamespaceManager(employeeRaw.OwnerDocument.NameTable);
             xnsm.AddNamespace(employeeRaw.Prefix, employeeRaw.NamespaceURI);
-            
+
             return new Profile
             {
                 EmployeeId = int.Parse(employeeRaw.Attributes?["ID"].Value ?? "-1"),
@@ -107,6 +110,32 @@ namespace Impact.Business.Login
                 HiredDate = DateTime.Parse(employeeRaw.SelectSingleNode("tlp:HiredDate", xnsm)?.InnerText),
                 CostPrice = double.Parse(employeeRaw.SelectSingleNode("tlp:CostPrice", xnsm)?.InnerText ?? "0", CultureInfo.InvariantCulture)
             };
+        }
+
+        private static decimal GetReportingNormalWorkDay(int employeeId, int departmentId)
+        {
+            var normalWorkingHoursRaw = ReportingClient.GetEmployeeNormalWorkingHoursRaw(
+                ReportingHandler.SiteCode,
+                ReportingHandler.ApiId,
+                ReportingHandler.ApiPassword,
+                employeeId,
+                departmentId,
+                TimeLog.ReportingApi.SDK.EmployeeStatus.Active);
+            
+            var xnsm = new XmlNamespaceManager(normalWorkingHoursRaw.OwnerDocument.NameTable);
+            xnsm.AddNamespace(normalWorkingHoursRaw.Prefix, normalWorkingHoursRaw.NamespaceURI);
+
+            foreach (XmlNode workingHoursXml in normalWorkingHoursRaw.ChildNodes)
+            {
+                var workingHoursString = workingHoursXml.SelectSingleNode("tlp:WorkingHours", xnsm)?.InnerText;
+                var tryParse = decimal.TryParse(workingHoursString,
+                    NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint,
+                    ApplicationConstants.EnglishCultureInfo.NumberFormat, out var workingHours);
+                if (tryParse && workingHours > 0)
+                    return workingHours.Normalize();
+            }
+
+            return ApplicationConstants.NormalWorkDay;
         }
 
         private static bool IsDeveloper(Employee employee)

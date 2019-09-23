@@ -31,11 +31,12 @@ namespace Impact.Website.Controllers
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
 
-            if (!HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).IsDeveloper)
+            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
+            if (!profile.IsDeveloper)
                 return RedirectToAction("Index", "Site");
 
             var quarter = _timeService.GetQuarter(DateTime.Now);
-            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, token);
+            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile.NormalWorkDay, token);
             quarterViewModel.Quarters = GetSelectList(quarter);
             quarterViewModel.ShowIncludeAllWeeksButton = true;
             return View(quarterViewModel);
@@ -46,8 +47,9 @@ namespace Impact.Website.Controllers
         {
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
-            
-            if (!HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).IsDeveloper)
+
+            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
+            if (!profile.IsDeveloper)
                 return RedirectToAction("Index", "Site");
             
             if (!ModelState.IsValid)
@@ -55,7 +57,7 @@ namespace Impact.Website.Controllers
 
             var dateTime = DateTime.Parse(viewModel.SelectedQuarter);
             var quarter = _timeService.GetQuarter(dateTime);
-            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, token, viewModel.BarColumnChartViewModel.IsNormalized);
+            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile.NormalWorkDay, token, viewModel.BarColumnChartViewModel.IsNormalized);
             quarterViewModel.Quarters = GetSelectList(quarter);
             quarterViewModel.ShowIncludeAllWeeksButton = quarterViewModel.Quarters.Last().Selected;
             return View(quarterViewModel);

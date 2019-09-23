@@ -32,9 +32,10 @@ namespace Impact.Website.Controllers
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
 
-            if (!HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).IsDeveloper)
+            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
+            if (!profile.IsDeveloper)
                 return RedirectToAction("Index", "Site");
-            
+
             List<Week> inputWeeks = new List<Week>();
             for (var i = 1; i < 14; i++)
             {
@@ -46,7 +47,7 @@ namespace Impact.Website.Controllers
             }
             
             var quarter = _timeService.GetQuarter(new DateTime(2017, 2, 15));
-            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, token, rawWeeksOverride: inputWeeks);
+            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile.NormalWorkDay, token, rawWeeksOverride: inputWeeks);
             quarterViewModel.Quarters = GetSelectList(quarter);
             var demoOvertimeViewModel = _mapper.Map<DemoOvertimeViewModel>(quarterViewModel);
             demoOvertimeViewModel.InputWeeks = inputWeeks;
@@ -59,15 +60,16 @@ namespace Impact.Website.Controllers
         {
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
-            
-            if (!HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).IsDeveloper)
+
+            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
+            if (!profile.IsDeveloper)
                 return RedirectToAction("Index", "Site");
             
             if (!ModelState.IsValid)
                 return View(viewModel);
             
             var quarter = _timeService.GetQuarter(new DateTime(2017, 2, 15));
-            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, token, viewModel.BarColumnChartViewModel.IsNormalized, viewModel.InputWeeks);
+            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile.NormalWorkDay, token, viewModel.BarColumnChartViewModel.IsNormalized, viewModel.InputWeeks);
             quarterViewModel.Quarters = GetSelectList(quarter);
             var demoOvertimeViewModel = _mapper.Map<DemoOvertimeViewModel>(quarterViewModel);
             demoOvertimeViewModel.InputWeeks = viewModel.InputWeeks;

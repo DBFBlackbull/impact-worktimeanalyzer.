@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Impact.Business.Holiday;
 using Impact.Business.Time;
 using Impact.Core.Constants;
+using Impact.Core.Extension;
 using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
 using Impact.Website.Models;
@@ -17,34 +17,47 @@ namespace Impact.Website.Providers
     {
         private readonly ITimeService _timeService;
         private readonly ITimeRepository _timeRepository;
-        private readonly IHolidayService _holidayService;
+        private string _flexZero;
+        private string _flex100;
+        private string _payout;
+        private string _flexZeroPercent;
+        private string _flex100Percent;
+        private string _payoutPercent;
 
-        public OvertimeViewModelProvider(ITimeService timeService, ITimeRepository timeRepository, IHolidayService holidayService)
+        public OvertimeViewModelProvider(ITimeService timeService, ITimeRepository timeRepository)
         {
             _timeService = timeService;
             _timeRepository = timeRepository;
-            _holidayService = holidayService;
         }
 
-        public QuarterViewModel CreateViewModels(Quarter quarter, SecurityToken token, bool isNormalized = false, List<Week> rawWeeksOverride = null)
+        public QuarterViewModel CreateViewModels(Quarter quarter, decimal normalWorkDay, SecurityToken token, bool isNormalized = false, List<Week> rawWeeksOverride = null)
         {
             var rawWeeks = rawWeeksOverride ?? _timeRepository.GetRawWeeksInQuarter(quarter, token).ToList();
-            rawWeeks = _timeService.CategorizeWeeks(quarter, rawWeeks, token).ToList();
+            rawWeeks = _timeService.CategorizeWeeks(quarter, rawWeeks, normalWorkDay, token).ToList();
 
+            var normalWorkWeek = normalWorkDay * 5;
+            var interestHoursLimit = (normalWorkWeek + ApplicationConstants.InterestConst).Normalize();
+            var movableHoursLimit = (interestHoursLimit + ApplicationConstants.MovableConst).Normalize();
+            _flexZero = $"Flex ({normalWorkWeek.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}-{interestHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)})";
+            _flex100 = $"Flex ({interestHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}-{movableHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)})";
+            _payout = $"Udbetalt ({movableHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}+)";
+
+            _flexZeroPercent = $"{_flexZero}: 0%";
+            _flex100Percent = $"{_flex100}: 100%";
+            _payoutPercent = $"{_payout}: 150%";
+            
             var now = DateTime.Today;
-
             var previousWeeks = rawWeeks.Where(w => w.Dates.LastOrDefault() < now).ToList();
-            var normalizedPreviousWeek = _timeService.GetNormalizedWeeks(previousWeeks).ToList();
-            var normalizedAllWeeks = _timeService.GetNormalizedWeeks(rawWeeks).ToList();
+            var normalizedPreviousWeek = _timeService.GetNormalizedWeeks(previousWeeks, normalWorkWeek).ToList();
+            var normalizedAllWeeks = _timeService.GetNormalizedWeeks(rawWeeks, normalWorkWeek).ToList();
 
             var quarterViewModel = new QuarterViewModel();
             quarterViewModel.SelectedQuarter = quarter.From.ToShortDateString();
-            quarterViewModel.OvertimePaycheck = quarter.GetDisplayOvertimePayoutMonth();
 
-            quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
+            quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks, normalWorkWeek); 
             quarterViewModel.PieChartViewModel = CreatePieChartViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PotentialChartViewModel = CreateGaugeChartViewModel(normalizedPreviousWeek, normalizedAllWeeks);
-            quarterViewModel.SummedViewModel = CreateSummedViewModel(rawWeeks, normalizedPreviousWeek, normalizedAllWeeks);
+            quarterViewModel.SummedViewModel = CreateSummedViewModel(quarter, rawWeeks, normalizedPreviousWeek, normalizedAllWeeks);
 
             if (normalizedPreviousWeek.Count < rawWeeks.Count)
             {
@@ -56,8 +69,8 @@ namespace Impact.Website.Providers
             
             return quarterViewModel;
         }
-        
-        public static BarColumnChartViewModel CreateWeeksViewModel(Quarter quarter, List<Week> weeksList,
+
+        private BarColumnChartViewModel CreateWeeksViewModel(Quarter quarter, List<Week> weeksList,
             List<Week> normalizedPreviousWeek, List<Week> normalizedWeeks, bool isNormalized)
         {
             List<object[]> GetDataArray(IEnumerable<Week> weeks, decimal? defaultValue)
@@ -70,9 +83,9 @@ namespace Impact.Website.Providers
                         new Column {Label = "Timer uden for kvartalet", Type = "number"}, new Column {Role = "style"},
                         new Column {Label = "Timer fra helligdage", Type = "number"},
                         new Column {Label = "Arbejde, ferie, sygdom", Type = "number"},
-                        new Column {Label = "Flex (37,5-39): 0% løn", Type = "number"},
-                        new Column {Label = "Flex (39-44): 100% løn", Type = "number"},
-                        new Column {Label = "Udbetalt (44+): 150% løn", Type = "number"}
+                        new Column {Label = _flexZeroPercent, Type = "number"},
+                        new Column {Label = _flex100Percent, Type = "number"},
+                        new Column {Label = _payoutPercent, Type = "number"}
                     }
                 };
                 googleFormattedWeeks.AddRange(weeks.Select(week => week.ToArray(defaultValue)));
@@ -130,7 +143,8 @@ namespace Impact.Website.Providers
             weeksViewModel.Options = optionsViewModel;
             return weeksViewModel;
         }
-        public static PieChartViewModel CreatePieChartViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
+
+        private PieChartViewModel CreatePieChartViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
         {
             var interestHoursSumPrevious = normalizedPreviousWeek.Sum(w => w.InterestHours);
             var movableOvertimeHoursPrevious = normalizedPreviousWeek.Sum(w => w.MovableOvertimeHours);
@@ -144,11 +158,8 @@ namespace Impact.Website.Providers
                 }
             };
 
-            const string flexZeroPercent = "Flex (37,5-39) : 0% løn";
-            const string flex100Percent = "Flex (39-44) : 0% løn";
-            
-            previousWeeksData.Add(new object[] {flexZeroPercent, interestHoursSumPrevious});
-            previousWeeksData.Add(new object[] {flex100Percent, movableOvertimeHoursPrevious});
+            previousWeeksData.Add(new object[] {_flexZeroPercent, interestHoursSumPrevious});
+            previousWeeksData.Add(new object[] {_flex100Percent, movableOvertimeHoursPrevious});
             
             var interestHoursSumAll = normalizedAllWeeks.Sum(w => w.InterestHours);
             var movableOvertimeHoursAll = normalizedAllWeeks.Sum(w => w.MovableOvertimeHours);
@@ -162,8 +173,8 @@ namespace Impact.Website.Providers
                 }
             };
 
-            allWeeksData.Add(new object[] {flexZeroPercent, interestHoursSumAll});
-            allWeeksData.Add(new object[] {flex100Percent, movableOvertimeHoursAll});
+            allWeeksData.Add(new object[] {_flexZeroPercent, interestHoursSumAll});
+            allWeeksData.Add(new object[] {_flex100Percent, movableOvertimeHoursAll});
 
             var optionViewModel = new PieChartViewModel.OptionViewModel
             {
@@ -179,8 +190,8 @@ namespace Impact.Website.Providers
             
             return pieChartViewModel;
         }
-        
-        public static GaugeChartViewModel CreateGaugeChartViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
+
+        private static GaugeChartViewModel CreateGaugeChartViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
         {
             const decimal percentile = ApplicationConstants.MovableConst / ApplicationConstants.InterestConst;
             
@@ -222,15 +233,15 @@ namespace Impact.Website.Providers
             };
             return potentialChartViewModel;
         }
-        
-        public static BarColumnChartViewModel CreateBalanceViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
+
+        private BarColumnChartViewModel CreateBalanceViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks, decimal normalWorkWeek)
         {
             var overHoursPrevious = normalizedPreviousWeek.Sum(w => w.InterestHours + w.MovableOvertimeHours);
-            var missingHoursPrevious = normalizedPreviousWeek.Sum(w => ApplicationConstants.NormalWorkWeek - (w.WorkHours + w.HolidayHours + w.QuarterEdgeHours));
+            var missingHoursPrevious = normalizedPreviousWeek.Sum(w => normalWorkWeek - (w.WorkHours + w.HolidayHours + w.QuarterEdgeHours));
             var balanceHoursPrevious = overHoursPrevious - missingHoursPrevious;
 
             var overHoursAll = normalizedAllWeeks.Sum(w => w.InterestHours + w.MovableOvertimeHours);
-            var missingHoursAll = normalizedAllWeeks.Sum(w => ApplicationConstants.NormalWorkWeek - (w.WorkHours + w.HolidayHours + w.QuarterEdgeHours));
+            var missingHoursAll = normalizedAllWeeks.Sum(w => normalWorkWeek - (w.WorkHours + w.HolidayHours + w.QuarterEdgeHours));
             var balanceHoursAll = overHoursAll - missingHoursAll;
 
             var maxBalance = Math.Max(Math.Abs(balanceHoursPrevious), Math.Abs(balanceHoursAll));
@@ -277,7 +288,7 @@ namespace Impact.Website.Providers
                 Chart = new BarColumnOptions.MaterialOptionsViewModel.ChartViewModel
                 {
                     Title = "Flex saldo",
-                    Subtitle = "Viser dine Flex-timer for dette kvartal. Dette er summen af dine Flex-timer (Flex 37,5-39 + Flex 39-44) minus dine manglende timer (hvis du er gået tidligt hjem en uge)" +
+                    Subtitle = $"Viser dine Flex-timer for dette kvartal. Dette er summen af dine Flex-timer ({_flexZero} + {_flex100}) minus dine manglende timer (hvis du er gået tidligt hjem en uge)" +
                                "\nKort sagt: Er grafen i minus skal du arbejde længere en uge. Er grafen i plus kan du gå tidligt hjem en uge"
                 }
             };
@@ -291,8 +302,8 @@ namespace Impact.Website.Providers
             };
             return balanceViewModel;
         }
-        
-        public static SummedViewModel CreateSummedViewModel(List<Week> rawWeeks, List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
+
+        private SummedViewModel CreateSummedViewModel(Quarter quarter, List<Week> rawWeeks, List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
         {
             SummedViewModel.Data Func(List<Week> weeks) => new SummedViewModel.Data
             {
@@ -303,6 +314,10 @@ namespace Impact.Website.Providers
 
             return new SummedViewModel
             {
+                FlexZero = _flexZero,
+                Flex100 = _flex100,
+                Payout = _payout,
+                PayoutMonth = quarter.GetDisplayOvertimePayoutMonth(),
                 RawAll = Func(rawWeeks),
                 NormalizedPrevious = Func(normalizedPreviousWeek),
                 NormalizedAll = Func(normalizedAllWeeks),

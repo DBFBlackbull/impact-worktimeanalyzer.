@@ -62,16 +62,16 @@ namespace Impact.Business.Time
             return quarter;
         }
 
-        public IEnumerable<Week> CategorizeWeeks(Quarter quarter, List<Week> rawWeeks, SecurityToken token)
+        public IEnumerable<Week> CategorizeWeeks(Quarter quarter, List<Week> rawWeeks, decimal normalWorkDay, SecurityToken token)
         {
             HandleWeek53(quarter, rawWeeks, token);
-            _holidayService.AddHolidayHours(quarter, rawWeeks);
-            rawWeeks.FirstOrDefault()?.AddQuarterEdgeHours(quarter);
+            _holidayService.AddHolidayHours(quarter, rawWeeks, normalWorkDay);
+            rawWeeks.FirstOrDefault()?.AddQuarterEdgeHours(quarter, normalWorkDay);
 
             if (rawWeeks.Count > 1)
-                rawWeeks.LastOrDefault()?.AddQuarterEdgeHours(quarter);
+                rawWeeks.LastOrDefault()?.AddQuarterEdgeHours(quarter, normalWorkDay);
 
-            rawWeeks.ForEach(week => week.CategorizeHours());
+            rawWeeks.ForEach(week => week.CategorizeHours(normalWorkDay * 5));
             return rawWeeks;
         }
 
@@ -103,15 +103,15 @@ namespace Impact.Business.Time
                 firstWeek.TotalHours += week53.TotalHours;
         }
 
-        public IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList)
+        public IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList, decimal normalWorkWeek)
         {
             var weeks = weeksList.ConvertAll(w => w.Clone());
 
-            var lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < ApplicationConstants.NormalWorkWeek);
+            var lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < normalWorkWeek);
             var movableWeeks = weeks.Where(w => w.MovableOvertimeHours > 0).ToList();
             MoveHours(lowWeeks, movableWeeks, "MovableOvertimeHours");
             
-            lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < ApplicationConstants.NormalWorkWeek);
+            lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < normalWorkWeek);
             var interestWeeks = weeks.Where(w => w.InterestHours > 0).ToList();
             MoveHours(lowWeeks, interestWeeks, "InterestHours");
             

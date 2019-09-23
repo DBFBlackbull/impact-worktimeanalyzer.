@@ -28,11 +28,11 @@ namespace Impact.Core.Model
         public decimal LockedOvertimeHours { get; set; }
 
         // So ugly please find a better solution. Really really
-        public void CategorizeHours()
+        public void CategorizeHours(decimal normalWorkWeek)
         {
             var hours = Math.Round(Convert.ToDecimal(TotalHours), 2);
 
-            var workWeek = ApplicationConstants.NormalWorkWeek - HolidayHours - QuarterEdgeHours;
+            var workWeek = normalWorkWeek - HolidayHours - QuarterEdgeHours;
             if (hours >= workWeek)
             {
                 WorkHours = workWeek;
@@ -69,7 +69,7 @@ namespace Impact.Core.Model
             LockedOvertimeHours = hours;
         }
 
-        public void AddQuarterEdgeHours(Quarter quarter)
+        public void AddQuarterEdgeHours(Quarter quarter, decimal normalWorkDay)
         {
             foreach (var date in Dates)
             {
@@ -77,7 +77,7 @@ namespace Impact.Core.Model
                     continue;
                 
                 if (date < quarter.From || quarter.To < date)
-                    QuarterEdgeHours += ApplicationConstants.NormalWorkDay;
+                    QuarterEdgeHours += normalWorkDay;
             }
         }
         

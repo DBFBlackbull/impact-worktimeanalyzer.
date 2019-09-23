@@ -69,7 +69,7 @@ namespace Impact.Core.Model
                 case 3:
                     return $"November {From.Year}";
                 case 4:
-                    return $"Marts {From.Year + 1}";
+                    return $"Februar eller Marts {From.Year + 1}";
                 default:
                     throw new IndexOutOfRangeException("Quarter was now 1, 2, 3, or 4. Real value: " + Number);
             }

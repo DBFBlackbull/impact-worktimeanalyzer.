@@ -17,5 +17,6 @@ namespace Impact.Core.Model
         public double CostPrice { get; set; }
         public double HourlyRate { get; set; } // Transactional only
         public bool IsDeveloper { get; set; }
+        public decimal NormalWorkDay { get; set; }
     }
 }

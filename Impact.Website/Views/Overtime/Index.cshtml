@@ -76,7 +76,7 @@
                     <div class="form-group col-md-12">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend ">
-                                <span class="input-group-text danger" style="width: 130px">Flex (37,5-39)</span>
+                                <span class="input-group-text danger" style="width: 130px">@Model.SummedViewModel.FlexZero</span>
                             </div>
                             <input type="number" disabled class="form-control" id="flex0" >
                             <input type="number" disabled class="form-control" id="flex0u" >
@@ -90,7 +90,7 @@
                     <div class="form-group col-md-12">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text warning" style="width: 130px">Flex (39-44)</span>
+                                <span class="input-group-text warning" style="width: 130px">@Model.SummedViewModel.Flex100</span>
                             </div>
                             <input type="number" disabled class="form-control" id="flex1" >
                             <input type="number" disabled class="form-control" id="flex1u" >
@@ -104,7 +104,7 @@
                     <div class="form-group col-md-12">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text success" style="width: 130px">Udbetalt (44+)</span>
+                                <span class="input-group-text success" style="width: 130px">@Model.SummedViewModel.Payout</span>
                             </div>
                             <input type="number" disabled class="form-control" id="flex2" >
                             <input type="number" disabled class="form-control" id="flex2u" >
@@ -115,7 +115,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    Ovenstående bliver udbetalt på <strong>@Model.OvertimePaycheck</strong> lønsedlen
+                    Ovenstående bliver udbetalt på <strong>@Model.SummedViewModel.PayoutMonth</strong> lønsedlen
                 </div>
             </form>
         </div>

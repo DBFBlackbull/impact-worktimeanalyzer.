@@ -8,7 +8,7 @@ namespace Impact.Business.Holiday
 {
     public class HolidayService : IHolidayService
     {
-        public void AddHolidayHours(Quarter quarter, IEnumerable<Week> weeks)
+        public void AddHolidayHours(Quarter quarter, IEnumerable<Week> weeks, decimal normalWorkDay)
         {
             var holidays = GetHolidays(quarter.From, quarter.To);
             foreach (var week in weeks)
@@ -16,7 +16,7 @@ namespace Impact.Business.Holiday
                 foreach (var date in week.Dates)
                 {
                     if (holidays.ContainsKey(date))
-                        week.HolidayHours += ApplicationConstants.NormalWorkDay;
+                        week.HolidayHours += normalWorkDay;
                 }
             }
         }
