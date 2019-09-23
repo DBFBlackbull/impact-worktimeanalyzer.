@@ -92,7 +92,7 @@ namespace Impact.Website.Controllers
             options.Chart = new BarColumnOptions.MaterialOptionsViewModel.ChartViewModel
             {
                 Title = "Fed torsdags / R&D saldo",
-                Subtitle = $"Viser din Fed tordags / R&D \"time-saldo\" siden d. {hiredDate:d}. Dette er summen af alle dine Fed torsdags / R&D timer divideret med 3,75 time pr. måned"
+                Subtitle = $"Viser din Fed tordags / R&D \"time-saldo\" siden d. {hiredDate.ToString("d", ApplicationConstants.DanishCultureInfo.DateTimeFormat)}. Dette er summen af alle dine Fed torsdags / R&D timer divideret med 3,75 time pr. måned"
             };
 
             var balanceViewModel = new BarColumnChartViewModel
@@ -124,7 +124,8 @@ namespace Impact.Website.Controllers
 
             var chartViewModel = new BarColumnOptions.MaterialOptionsViewModel.ChartViewModel
             {
-                Title = $"Fed torsdage / R&D fra {firstDate:Y} til {lastDate:Y}",
+                Title = $"Fed torsdage / R&D fra {firstDate?.ToString("Y", ApplicationConstants.DanishCultureInfo.DateTimeFormat)} " +
+                        $"til {lastDate?.ToString("Y", ApplicationConstants.DanishCultureInfo.DateTimeFormat)}",
                 Subtitle = "De registrerede timer på Fed torsdag og R&D inden for perioden"
             };
 

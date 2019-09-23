@@ -20,8 +20,7 @@ namespace Impact.Core.Model
         public string GetShortDisplayString()
         {
             // Special case for mini-vacation. Remove in 5 years, when no longer relevant
-            if (StartDate.Year == ApplicationConstants.MiniVacationStart.Year && 
-                EndDate.Year == ApplicationConstants.MiniVacationEnd.Year)
+            if (StartDate == ApplicationConstants.MiniVacationStart && EndDate == ApplicationConstants.MiniVacationEnd)
                 return $"Mini-ferieår {StartDate.Year}/{EndDate.Year}";
             
             return $"Ferieår {StartDate.Year}/{EndDate.Year}";
@@ -29,13 +28,13 @@ namespace Impact.Core.Model
 
         public string GetLongDisplayString()
         {
+            var displayStartDate = StartDate.ToString("d MMMM yyyy", ApplicationConstants.DanishCultureInfo.DateTimeFormat);
+            var displayEndDate = EndDate.ToString("d MMMM yyyy", ApplicationConstants.DanishCultureInfo.DateTimeFormat);
             // Special case for mini-vacation. Remove in 5 years, when no longer relevant
-            if (StartDate.Year == 2020 && EndDate.Year == 2020)
-                return ApplicationConstants.DanishCultureInfo.TextInfo
-                    .ToTitleCase($"Mini-ferieår: {StartDate:d MMMM yyyy} - {EndDate:d MMMM yyyy}");
-            
-            return ApplicationConstants.DanishCultureInfo.TextInfo
-                .ToTitleCase($"Ferieår: {StartDate:d MMMM yyyy} - {EndDate:d MMMM yyyy}");
+            if (StartDate == ApplicationConstants.MiniVacationStart && EndDate == ApplicationConstants.MiniVacationEnd)
+                return ApplicationConstants.DanishCultureInfo.TextInfo.ToTitleCase($"Mini-ferieår: {displayStartDate} - {displayEndDate}");
+
+            return ApplicationConstants.DanishCultureInfo.TextInfo.ToTitleCase($"Ferieår: {displayStartDate} - {displayEndDate}");
         }
     }
 }
