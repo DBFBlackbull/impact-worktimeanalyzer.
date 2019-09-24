@@ -9,9 +9,9 @@
 <div class="container">
     <h2>Vælg kvartal</h2>
     <div class="row">
-        @using (Html.BeginForm("Index", "Overtime", FormMethod.Post, new {id = "quarterForm", name = "quarterForm"}))
-        { 
-            <div class="col-md-12">
+        <div class="col-md-8">
+            @using (Html.BeginForm("Index", "Overtime", FormMethod.Post, new {id = "quarterForm", name = "quarterForm"}))
+            { 
                 <div class="form-group form-inline">
                     @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control", onchange = "Submit()"})
                     @Html.CheckBoxFor(m => m.BarColumnChartViewModel.IsNormalized, new { id = "toggle-normalized", data_toggle = "toggle", data_width = "200", data_height = "38", data_off = "Registrerede timer", data_on = "Udbetale timer", style="margin-right: 5px" })
@@ -20,8 +20,11 @@
                         @Html.CheckBoxFor(m => m.IncludeAllWeeks, new { id = "toggle-allWeeks", data_toggle = "toggle", data_width = "200", data_height = "38", data_off = "Tidligere uger", data_on = "Alle uger" })
                     }
                 </div>
-            </div>
-        }
+            }
+        </div>
+        <div class="col-md-4 text-right">
+            Din normtid / normaluge er: <strong>@Model.DisplayNormalWorkWeek timer</strong>
+        </div>
     </div>
     <div class="row">
         <div class="col-md-12">

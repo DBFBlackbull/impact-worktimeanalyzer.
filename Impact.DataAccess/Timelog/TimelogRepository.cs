@@ -34,7 +34,7 @@ namespace Impact.DataAccess.Timelog
 
         public IEnumerable<VacationDay> GetVacationDays(DateTime from, DateTime to, SecurityToken token, Profile profile)
         {
-            var vacationDays = GetVacationRegistrations(@from, to, profile, new AddVacationDayStrategy());
+            var vacationDays = GetVacationRegistrations(from, to, profile, new AddVacationDayStrategy());
 //            var workUnitsData = GetWorkUnitsData<VacationDay>(@from, to, token, new AddVacationDayStrategy()).ToList();
             return vacationDays;
         }
@@ -68,7 +68,7 @@ namespace Impact.DataAccess.Timelog
                 ServiceHandler.Instance.ApiPassword,
                 profile.EmployeeId,
                 profile.DepartmentId,
-                @from,
+                from,
                 to);
 
             strategy.AddNamespace(timeOffRegistrationsRaw);

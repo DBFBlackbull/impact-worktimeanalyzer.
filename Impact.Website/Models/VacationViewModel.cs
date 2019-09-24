@@ -14,5 +14,6 @@ namespace Impact.Website.Models
         public IEnumerable<VacationDay> VacationDays { get; set; }
         public decimal SummedVacationDays { get; set; }
         public decimal SummedExtraVacationDays { get; set; }
+        public decimal NormalWorkDay { get; set; }
     }
 }

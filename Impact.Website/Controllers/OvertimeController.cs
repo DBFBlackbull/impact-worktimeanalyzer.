@@ -36,7 +36,7 @@ namespace Impact.Website.Controllers
                 return RedirectToAction("Index", "Site");
 
             var quarter = _timeService.GetQuarter(DateTime.Now);
-            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile.NormalWorkDay, token);
+            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile, token);
             quarterViewModel.Quarters = GetSelectList(quarter);
             quarterViewModel.ShowIncludeAllWeeksButton = true;
             return View(quarterViewModel);
@@ -57,7 +57,7 @@ namespace Impact.Website.Controllers
 
             var dateTime = DateTime.Parse(viewModel.SelectedQuarter);
             var quarter = _timeService.GetQuarter(dateTime);
-            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile.NormalWorkDay, token, viewModel.BarColumnChartViewModel.IsNormalized);
+            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile, token, viewModel.BarColumnChartViewModel.IsNormalized);
             quarterViewModel.Quarters = GetSelectList(quarter);
             quarterViewModel.ShowIncludeAllWeeksButton = quarterViewModel.Quarters.Last().Selected;
             return View(quarterViewModel);

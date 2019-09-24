@@ -47,7 +47,7 @@ namespace Impact.Website.Controllers
             }
             
             var quarter = _timeService.GetQuarter(new DateTime(2017, 2, 15));
-            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile.NormalWorkDay, token, rawWeeksOverride: inputWeeks);
+            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile, token, rawWeeksOverride: inputWeeks);
             quarterViewModel.Quarters = GetSelectList(quarter);
             var demoOvertimeViewModel = _mapper.Map<DemoOvertimeViewModel>(quarterViewModel);
             demoOvertimeViewModel.InputWeeks = inputWeeks;
@@ -69,7 +69,7 @@ namespace Impact.Website.Controllers
                 return View(viewModel);
             
             var quarter = _timeService.GetQuarter(new DateTime(2017, 2, 15));
-            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile.NormalWorkDay, token, viewModel.BarColumnChartViewModel.IsNormalized, viewModel.InputWeeks);
+            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile, token, viewModel.BarColumnChartViewModel.IsNormalized, viewModel.InputWeeks);
             quarterViewModel.Quarters = GetSelectList(quarter);
             var demoOvertimeViewModel = _mapper.Map<DemoOvertimeViewModel>(quarterViewModel);
             demoOvertimeViewModel.InputWeeks = viewModel.InputWeeks;

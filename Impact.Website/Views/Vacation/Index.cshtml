@@ -1,10 +1,12 @@
-﻿@using System.Globalization
-@using Impact.Core.Constants
+﻿@using Impact.Core.Constants
+@using Impact.Core.Extension
 @model Impact.Website.Models.VacationViewModel
 @{
     ViewBag.Title = "Ferieoversigt";
-     var remainingVacationDays = Model.VacationYear.TotalVacationDays - @Model.SummedVacationDays;
-     var remainingExtraVacationDays = Model.VacationYear.TotalExtraVacationDays - Model.SummedExtraVacationDays;
+    var remainingVacationDays = Model.VacationYear.TotalVacationDays - @Model.SummedVacationDays;
+    var remainingVacationHours = (remainingVacationDays * Model.NormalWorkDay).Normalize();
+    var remainingExtraVacationDays = Model.VacationYear.TotalExtraVacationDays - Model.SummedExtraVacationDays;
+    var remainingExtraVacationHour = (remainingExtraVacationDays * Model.NormalWorkDay).Normalize();
 }
 <style>
     /*Overwrite white squares to green to better highlight Holidays*/
@@ -30,8 +32,8 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <p>Feriedage tilbage: @Model.VacationYear.TotalVacationDays - @Model.SummedVacationDays = <strong>@remainingVacationDays dage</strong> / @(remainingVacationDays * ApplicationConstants.NormalWorkDay) timer *</p>
-            <p>Feriefridage tilbage: @Model.VacationYear.TotalExtraVacationDays - @Model.SummedExtraVacationDays = <strong>@remainingExtraVacationDays dage</strong> / @(remainingExtraVacationDays * ApplicationConstants.NormalWorkDay) timer *</p>
+            <p>Feriedage tilbage: @Model.VacationYear.TotalVacationDays - @Model.SummedVacationDays = <strong>@remainingVacationDays dage</strong> / @remainingVacationHours timer *</p>
+            <p>Feriefridage tilbage: @Model.VacationYear.TotalExtraVacationDays - @Model.SummedExtraVacationDays = <strong>@remainingExtraVacationDays dage</strong> / @remainingExtraVacationHour timer *</p>
             <p>
                 <svg width="16" height="16">
                     <rect width="16" height="16" style="fill:#4e7ce1;stroke-width:1;stroke:#ffffff"/>

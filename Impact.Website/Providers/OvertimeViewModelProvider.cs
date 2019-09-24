@@ -30,15 +30,14 @@ namespace Impact.Website.Providers
             _timeRepository = timeRepository;
         }
 
-        public QuarterViewModel CreateViewModels(Quarter quarter, decimal normalWorkDay, SecurityToken token, bool isNormalized = false, List<Week> rawWeeksOverride = null)
+        public QuarterViewModel CreateViewModels(Quarter quarter, Profile profile, SecurityToken token, bool isNormalized = false, List<Week> rawWeeksOverride = null)
         {
             var rawWeeks = rawWeeksOverride ?? _timeRepository.GetRawWeeksInQuarter(quarter, token).ToList();
-            rawWeeks = _timeService.CategorizeWeeks(quarter, rawWeeks, normalWorkDay, token).ToList();
+            rawWeeks = _timeService.CategorizeWeeks(quarter, rawWeeks, profile.NormalWorkDay, token).ToList();
 
-            var normalWorkWeek = normalWorkDay * 5;
-            var interestHoursLimit = (normalWorkWeek + ApplicationConstants.InterestConst).Normalize();
+            var interestHoursLimit = (profile.NormalWorkWeek + ApplicationConstants.InterestConst).Normalize();
             var movableHoursLimit = (interestHoursLimit + ApplicationConstants.MovableConst).Normalize();
-            _flexZero = $"Flex ({normalWorkWeek.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}-{interestHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)})";
+            _flexZero = $"Flex ({profile.NormalWorkWeek.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}-{interestHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)})";
             _flex100 = $"Flex ({interestHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}-{movableHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)})";
             _payout = $"Udbetalt ({movableHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}+)";
 
@@ -48,13 +47,14 @@ namespace Impact.Website.Providers
             
             var now = DateTime.Today;
             var previousWeeks = rawWeeks.Where(w => w.Dates.LastOrDefault() < now).ToList();
-            var normalizedPreviousWeek = _timeService.GetNormalizedWeeks(previousWeeks, normalWorkWeek).ToList();
-            var normalizedAllWeeks = _timeService.GetNormalizedWeeks(rawWeeks, normalWorkWeek).ToList();
+            var normalizedPreviousWeek = _timeService.GetNormalizedWeeks(previousWeeks, profile.NormalWorkWeek).ToList();
+            var normalizedAllWeeks = _timeService.GetNormalizedWeeks(rawWeeks, profile.NormalWorkWeek).ToList();
 
             var quarterViewModel = new QuarterViewModel();
             quarterViewModel.SelectedQuarter = quarter.From.ToShortDateString();
+            quarterViewModel.DisplayNormalWorkWeek = profile.NormalWorkWeek.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat);
 
-            quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks, normalWorkWeek); 
+            quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks, profile.NormalWorkWeek); 
             quarterViewModel.PieChartViewModel = CreatePieChartViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PotentialChartViewModel = CreateGaugeChartViewModel(normalizedPreviousWeek, normalizedAllWeeks);
             quarterViewModel.SummedViewModel = CreateSummedViewModel(quarter, rawWeeks, normalizedPreviousWeek, normalizedAllWeeks);
