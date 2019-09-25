@@ -47,8 +47,8 @@ namespace Impact.Website.Providers
             
             var now = DateTime.Today;
             var previousWeeks = rawWeeks.Where(w => w.Dates.LastOrDefault() < now).ToList();
-            var normalizedPreviousWeek = _timeService.GetNormalizedWeeks(previousWeeks, profile.NormalWorkWeek).ToList();
-            var normalizedAllWeeks = _timeService.GetNormalizedWeeks(rawWeeks, profile.NormalWorkWeek).ToList();
+            var normalizedPreviousWeek = _timeService.GetNormalizedWeeks(previousWeeks, profile).ToList();
+            var normalizedAllWeeks = _timeService.GetNormalizedWeeks(rawWeeks, profile).ToList();
 
             var quarterViewModel = new QuarterViewModel();
             quarterViewModel.SelectedQuarter = quarter.From.ToShortDateString();

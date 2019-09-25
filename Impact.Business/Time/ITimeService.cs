@@ -9,7 +9,7 @@ namespace Impact.Business.Time
 	{
 	    Quarter GetQuarter(DateTime dateTime);
 	    IEnumerable<Week> CategorizeWeeks(Quarter quarter, List<Week> rawWeeks, decimal normalWorkDay, SecurityToken token);
-	    IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList, decimal normalWorkWeek);
+	    IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList, Profile profile);
 	    IEnumerable<Month> GetNormalizedMonths(List<Month> monthsList);
 	    VacationYear GetVacationYear(DateTime date);
 	}

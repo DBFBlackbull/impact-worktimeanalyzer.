@@ -44,6 +44,10 @@
     <Compile Include="Holiday\IHolidayService.cs" />
     <Compile Include="Login\ILoginService.cs" />
     <Compile Include="Login\TimelogLoginService.cs" />
+    <Compile Include="Strategies\IMoveHoursStrategy.cs" />
+    <Compile Include="Strategies\MonthMoveHoursStrategy.cs" />
+    <Compile Include="Strategies\WeekMoveInterestHoursStrategy.cs" />
+    <Compile Include="Strategies\WeekMoveMovableOvertimeHoursStrategy.cs" />
     <Compile Include="Time\ITimeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Time\TimeLogService.cs" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Impact.Business.Holiday;
+using Impact.Business.Strategies;
 using Impact.Core.Constants;
 using Impact.Core.Interfaces;
 using Impact.Core.Model;
@@ -103,17 +104,17 @@ namespace Impact.Business.Time
                 firstWeek.TotalHours += week53.TotalHours;
         }
 
-        public IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList, decimal normalWorkWeek)
+        public IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList, Profile profile)
         {
             var weeks = weeksList.ConvertAll(w => w.Clone());
 
-            var lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < normalWorkWeek);
+            var lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < profile.NormalWorkWeek);
             var movableWeeks = weeks.Where(w => w.MovableOvertimeHours > 0).ToList();
-            MoveHours(lowWeeks, movableWeeks, "MovableOvertimeHours");
+            MoveHours(lowWeeks, movableWeeks, new WeekMoveMovableOvertimeHoursStrategy(profile.NormalWorkWeek));
             
-            lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < normalWorkWeek);
+            lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < profile.NormalWorkWeek);
             var interestWeeks = weeks.Where(w => w.InterestHours > 0).ToList();
-            MoveHours(lowWeeks, interestWeeks, "InterestHours");
+            MoveHours(lowWeeks, interestWeeks, new WeekMoveInterestHoursStrategy(profile.NormalWorkWeek));
             
             return weeks;
         }
@@ -130,7 +131,8 @@ namespace Impact.Business.Time
                 .Where(m => m.Date < ApplicationConstants.RAndDStartDate)
                 .Where(m => m.AwesomeThursdayHours + m.RAndDHours > ApplicationConstants.AwesomeThursdayApproximation)
                 .ToList();
-            MoveHours(lowAwesomeMonths, highAwesomeMonths, null);
+            var monthMoveHoursStrategy = new MonthMoveHoursStrategy();
+            MoveHours(lowAwesomeMonths, highAwesomeMonths, monthMoveHoursStrategy);
             
             List<Month> lowRAndDMonths = months
                 .Where(m => m.AwesomeThursdayHours + m.RAndDHours < ApplicationConstants.AwesomeThursdayApproximation)
@@ -138,7 +140,7 @@ namespace Impact.Business.Time
             List<Month> highRAndDMonths = months
                 .Where(m => m.AwesomeThursdayHours + m.RAndDHours > ApplicationConstants.AwesomeThursdayApproximation)
                 .ToList();
-            MoveHours(lowRAndDMonths, highRAndDMonths, null);
+            MoveHours(lowRAndDMonths, highRAndDMonths, monthMoveHoursStrategy);
             
             return months;
         }
@@ -179,14 +181,14 @@ namespace Impact.Business.Time
             return new VacationYear(start, end);
         }
 
-        private static void MoveHours<T>(IEnumerable<IAbsorbable<T>> lowHoursElements, List<T> movableHoursElements, string propertyName)
+        private static void MoveHours<T>(IEnumerable<T> lowHoursElements, List<T> movableHoursElements, IMoveHoursStrategy<T> strategy)
         {
             foreach (var lowHoursElement in lowHoursElements)
             {
                 var elementsAbsorbed = 0;
                 foreach (var movableHoursElement in movableHoursElements)
                 {
-                    var doneAbsorbing = lowHoursElement.AbsorbHours(movableHoursElement, propertyName);
+                    var doneAbsorbing = strategy.MoveHours(lowHoursElement, movableHoursElement);
                     if (doneAbsorbing)
                         break;
                     elementsAbsorbed++;

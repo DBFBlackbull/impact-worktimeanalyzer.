@@ -22,6 +22,7 @@ namespace Impact.Core.Constants
 
         public const decimal NormalWorkDay = 7.5m;
         public const decimal NormalWorkWeek = 37.5m;
+        public const decimal NormalWorkMonth = 162.5m;
         public const decimal InterestConst = 1.5m;
         public const decimal MovableConst = 5m;
         public const decimal AwesomeThursdayApproximation = NormalWorkDay / 2;

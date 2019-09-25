@@ -10,7 +10,7 @@ using Impact.Core.Interfaces;
 
 namespace Impact.Core.Model
 {
-    public class Week : IClonable<Week>, IAbsorbable<Week>
+    public class Week : IClonable<Week>
     {
         public Week()
         {
@@ -81,27 +81,6 @@ namespace Impact.Core.Model
             }
         }
         
-        public bool AbsorbHours(Week otherWeek, string propertyName)
-        {
-            var propertyInfo = otherWeek.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
-            if (propertyInfo == null) 
-                return false;
-            
-            var movableHours = (decimal)propertyInfo.GetValue(otherWeek);
-
-            var missingHours = ApplicationConstants.NormalWorkWeek - (WorkHours + HolidayHours + QuarterEdgeHours);
-            if (missingHours > movableHours)
-            {
-                WorkHours += movableHours;
-                propertyInfo.SetValue(otherWeek, 0m);
-                return false;
-            }
-
-            WorkHours += missingHours;
-            propertyInfo.SetValue(otherWeek, movableHours - missingHours);
-            return true;
-        }
-
         public object[] ToArray(decimal? defaultValue = 0)
         {
             return new object[]

@@ -5,7 +5,7 @@ using Impact.Core.Interfaces;
 
 namespace Impact.Core.Model
 {
-    public class Month : IClonable<Month>, IAbsorbable<Month>
+    public class Month : IClonable<Month>
     {
         private Month()
         {
@@ -26,40 +26,6 @@ namespace Impact.Core.Model
         {
             AwesomeThursdayHours = Math.Round(Convert.ToDecimal(AwesomeThursdayRawHours), 2);
             RAndDHours = Math.Round(Convert.ToDecimal(RAndDRawHours), 2);
-        }
-        
-        public bool AbsorbHours(Month otherMonth, string propertyName)
-        {
-            if (Date < ApplicationConstants.RAndDStartDate)
-            {
-                var movableAwesomeHours = otherMonth.AwesomeThursdayHours - ApplicationConstants.AwesomeThursdayApproximation;
-                var missingAwesomeHours = ApplicationConstants.AwesomeThursdayApproximation - AwesomeThursdayHours;
-                
-                if (missingAwesomeHours > movableAwesomeHours)
-                {
-                    AwesomeThursdayHours += movableAwesomeHours;
-                    otherMonth.AwesomeThursdayHours -= movableAwesomeHours;
-                    return false;
-                }
-                
-                AwesomeThursdayHours += missingAwesomeHours;
-                otherMonth.AwesomeThursdayHours -= missingAwesomeHours;
-                return true;
-            }
-            
-            var movableHours = (otherMonth.AwesomeThursdayHours + otherMonth.RAndDHours) - ApplicationConstants.AwesomeThursdayApproximation;
-            var missingHours = ApplicationConstants.AwesomeThursdayApproximation - (AwesomeThursdayHours + RAndDHours);
-            
-            if (missingHours > movableHours)
-            {
-                RAndDHours += movableHours;
-                otherMonth.RAndDHours -= movableHours;
-                return false;
-            }
-
-            RAndDHours += missingHours;
-            otherMonth.RAndDHours -= missingHours;
-            return true;
         }
         
         public object[] ToArray()
