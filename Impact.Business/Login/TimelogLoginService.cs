@@ -31,28 +31,13 @@ namespace Impact.Business.Login
             if (!SecurityHandler.Instance.TryAuthenticate(username, password, out var messages))
                 return false;
 
-            var employee = GetTransactionalEmployee(username);
-            if (employee == null)
+            profile = GetReportingProfile(username);
+            if (profile == null)
                 throw new NullReferenceException("GetEmployee failed. This should NEVER happen. How can you even be logged in if you do not exists in timelog. It makes no sense\n" +
                                                  "Please screenshot this error page and send it to PBM");
 
-            profile.FirstName = employee.FirstName;
-            profile.LastName = employee.LastName;
-            profile.FullName = employee.Fullname;
-            profile.Initials = employee.Initials;
-            profile.EmployeeId = employee.EmployeeID;
-            profile.Title = employee.Title;
-            profile.Department = employee.DepartmentName;
-            profile.CostPrice = employee.CostPrice;
-            profile.HourlyRate = employee.HourlyRate;
-            profile.HiredDate = employee.HiredDate;
-            profile.IsDeveloper = IsDeveloper(employee);
-            
-            var reportingEmployee = GetReportingEmployee(employee.EmployeeID, employee.Initials);
-            profile.Email = reportingEmployee.Email;
-            profile.DepartmentId = reportingEmployee.DepartmentId;
-
-            profile.NormalWorkDay = GetReportingNormalWorkDay(employee.EmployeeID, reportingEmployee.DepartmentId);
+            profile.IsDeveloper = IsDeveloper(profile.Title, profile.DepartmentName);
+            profile.NormalWorkDay = GetReportingNormalWorkDay(profile.EmployeeId, profile.DepartmentId);
 
             securityToken = ProjectManagementHandler.Instance.Token;
 
@@ -82,7 +67,7 @@ namespace Impact.Business.Login
             return null;
         }
 
-        private static Profile GetReportingEmployee(int employeeId, string initials)
+        private static Profile GetReportingProfile(string initials, int employeeId = 0)
         {
             XmlNode employeeRaw = ReportingClient.GetEmployeesRaw(
                 ReportingHandler.SiteCode,
@@ -96,7 +81,7 @@ namespace Impact.Business.Login
             var xnsm = new XmlNamespaceManager(employeeRaw.OwnerDocument.NameTable);
             xnsm.AddNamespace(employeeRaw.Prefix, employeeRaw.NamespaceURI);
 
-            return new Profile
+            var reportingProfile = new Profile
             {
                 EmployeeId = int.Parse(employeeRaw.Attributes?["ID"].Value ?? "-1"),
                 FirstName = employeeRaw.SelectSingleNode("tlp:FirstName", xnsm)?.InnerText ?? "",
@@ -105,11 +90,12 @@ namespace Impact.Business.Login
                 Initials = employeeRaw.SelectSingleNode("tlp:Initials", xnsm)?.InnerText ?? "",
                 Title = employeeRaw.SelectSingleNode("tlp:Title", xnsm)?.InnerText ?? "",
                 Email = employeeRaw.SelectSingleNode("tlp:Email", xnsm)?.InnerText ?? "",
-                Department = employeeRaw.SelectSingleNode("tlp:DepartmentName", xnsm)?.InnerText ?? "",
+                DepartmentName = employeeRaw.SelectSingleNode("tlp:DepartmentName", xnsm)?.InnerText ?? "",
                 DepartmentId = int.Parse(employeeRaw.SelectSingleNode("tlp:DepartmentNameID", xnsm)?.InnerText ?? "-1"),
                 HiredDate = DateTime.Parse(employeeRaw.SelectSingleNode("tlp:HiredDate", xnsm)?.InnerText),
                 CostPrice = double.Parse(employeeRaw.SelectSingleNode("tlp:CostPrice", xnsm)?.InnerText ?? "0", CultureInfo.InvariantCulture)
             };
+            return reportingProfile;
         }
 
         private static decimal GetReportingNormalWorkDay(int employeeId, int departmentId)
@@ -121,6 +107,9 @@ namespace Impact.Business.Login
                 employeeId,
                 departmentId,
                 TimeLog.ReportingApi.SDK.EmployeeStatus.Active);
+
+            if (normalWorkingHoursRaw.OwnerDocument == null) 
+                return ApplicationConstants.NormalWorkDay;
             
             var xnsm = new XmlNamespaceManager(normalWorkingHoursRaw.OwnerDocument.NameTable);
             xnsm.AddNamespace(normalWorkingHoursRaw.Prefix, normalWorkingHoursRaw.NamespaceURI);
@@ -138,13 +127,10 @@ namespace Impact.Business.Login
             return ApplicationConstants.NormalWorkDay;
         }
 
-        private static bool IsDeveloper(Employee employee)
+        private static bool IsDeveloper(string title, string departmentName)
         {
-            if (!employee.IsHired)
-                return false;
-
-            var containsDeveloper = employee.Title.IndexOf("developer", StringComparison.InvariantCultureIgnoreCase) >= 0;
-            var unitDeveloper = UnitDeveloper.IsMatch(employee.DepartmentName);
+            var containsDeveloper = title.IndexOf("developer", StringComparison.InvariantCultureIgnoreCase) >= 0;
+            var unitDeveloper = UnitDeveloper.IsMatch(departmentName);
 
             return containsDeveloper || unitDeveloper;
         }

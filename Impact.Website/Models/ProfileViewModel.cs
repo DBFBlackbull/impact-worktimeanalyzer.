@@ -20,8 +20,8 @@ namespace Impact.Website.Models
         public string Department { get; set; }
         [DisplayName("Ansættelsesdato")]
         public DateTime HireDate { get; set; }
-        [DisplayName("Standard timepris til kunder")]
-        public double HourlyRate { get; set; }
+//        [DisplayName("Standard timepris til kunder")]
+//        public double HourlyRate { get; set; }
         [DisplayName("Intern kostpris")]
         public double CostPrice { get; set; }
         [DisplayName("Er udvikler")]
@@ -34,9 +34,9 @@ namespace Impact.Website.Models
             FullName = profile.FullName;
             Initials = profile.Initials;
             Title = profile.Title;
-            Department = profile.Department;
+            Department = profile.DepartmentName;
             HireDate = profile.HiredDate;
-            HourlyRate = profile.HourlyRate;
+//            HourlyRate = profile.HourlyRate;
             CostPrice = profile.CostPrice;
             IsDeveloper = profile.IsDeveloper;
         }

@@ -27,10 +27,10 @@
         <div class="col-md-3 text-right">@Html.LabelFor(m => m.HireDate)</div>
         <div class="col-md-9">@Model.HireDate.ToShortDateString()</div>
     </div>
-    <div class="row">
-        <div class="col-md-3 text-right">@Html.LabelFor(m => m.HourlyRate)</div>
-        <div class="col-md-9">@Model.HourlyRate.ToString("C2", ApplicationConstants.DanishCultureInfo)</div>
-    </div>
+    @* <div class="row"> *@
+    @*     <div class="col-md-3 text-right">@Html.LabelFor(m => m.HourlyRate)</div> *@
+    @*     <div class="col-md-9">@Model.HourlyRate.ToString("C2", ApplicationConstants.DanishCultureInfo)</div> *@
+    @* </div> *@
     <div class="row">
         <div class="col-md-3 text-right">@Html.LabelFor(m => m.CostPrice)</div>
         <div class="col-md-9">@Model.CostPrice.ToString("C2", ApplicationConstants.DanishCultureInfo)</div>

@@ -41,9 +41,9 @@ namespace Impact.Website.Providers
             _flex100 = $"Flex ({interestHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}-{movableHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)})";
             _payout = $"Udbetalt ({movableHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}+)";
 
-            _flexZeroPercent = $"{_flexZero}: 0%";
-            _flex100Percent = $"{_flex100}: 100%";
-            _payoutPercent = $"{_payout}: 150%";
+            _flexZeroPercent = $"{_flexZero}: 0% løn";
+            _flex100Percent = $"{_flex100}: 100% løn";
+            _payoutPercent = $"{_payout}: 150% løn";
             
             var now = DateTime.Today;
             var previousWeeks = rawWeeks.Where(w => w.Dates.LastOrDefault() < now).ToList();
@@ -57,7 +57,7 @@ namespace Impact.Website.Providers
             quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks, profile.NormalWorkWeek); 
             quarterViewModel.PieChartViewModel = CreatePieChartViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PotentialChartViewModel = CreateGaugeChartViewModel(normalizedPreviousWeek, normalizedAllWeeks);
-            quarterViewModel.SummedViewModel = CreateSummedViewModel(quarter, rawWeeks, normalizedPreviousWeek, normalizedAllWeeks);
+            quarterViewModel.SummedViewModel = CreateSummedViewModel(quarter, rawWeeks, normalizedPreviousWeek, normalizedAllWeeks, profile.NormalWorkMonth);
 
             if (normalizedPreviousWeek.Count < rawWeeks.Count)
             {
@@ -178,8 +178,14 @@ namespace Impact.Website.Providers
 
             var optionViewModel = new PieChartViewModel.OptionViewModel
             {
-                Title = "0% løn vs 100% løn",
-                Colors = new List<string> {ApplicationConstants.Color.Red, ApplicationConstants.Color.Orange}
+                Title = $"{_flexZeroPercent} vs {_flex100Percent}",
+                Colors = new List<string> {ApplicationConstants.Color.Red, ApplicationConstants.Color.Orange},
+                ChartArea = new PieChartViewModel.OptionViewModel.ChartAreaViewModel
+                {
+                    Left = "0",
+                    Width = "90%",
+                    Height = "70%"
+                }
             };
 
             var pieChartViewModel = new PieChartViewModel();
@@ -274,7 +280,7 @@ namespace Impact.Website.Providers
 
             var options = new BarColumnOptions.MaterialOptionsViewModel()
             {
-                Height = 170,
+                Height = 195,
                 Colors = new List<string> {color},
                 Bars = BarOrientation.Horizontal,
                 HAxis = new BarColumnOptions.AxisViewModel
@@ -288,8 +294,9 @@ namespace Impact.Website.Providers
                 Chart = new BarColumnOptions.MaterialOptionsViewModel.ChartViewModel
                 {
                     Title = "Flex saldo",
-                    Subtitle = $"Viser dine Flex-timer for dette kvartal. Dette er summen af dine Flex-timer ({_flexZero} + {_flex100}) minus dine manglende timer (hvis du er gået tidligt hjem en uge)" +
-                               "\nKort sagt: Er grafen i minus skal du arbejde længere en uge. Er grafen i plus kan du gå tidligt hjem en uge"
+                    Subtitle = $"Viser summen af dine Flex-timer [{_flexZero} + {_flex100}], minus dine manglende timer, hvis du er gået tidligt hjem en uge." +
+                               $"\nHvis du vælger af afspadsere dine Flex-timer, vil du ALTID først blive trukket i dine \"gule timer\" [{_flex100Percent}]." +
+                               $"\nEr der ikke nok \"gule timer\" vil du blive trukket i dine \"røde timer\" [{_flexZeroPercent}]"
                 }
             };
 
@@ -303,7 +310,7 @@ namespace Impact.Website.Providers
             return balanceViewModel;
         }
 
-        private SummedViewModel CreateSummedViewModel(Quarter quarter, List<Week> rawWeeks, List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
+        private SummedViewModel CreateSummedViewModel(Quarter quarter, List<Week> rawWeeks, List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks, decimal normalWorkMonth)
         {
             SummedViewModel.Data Func(List<Week> weeks) => new SummedViewModel.Data
             {
@@ -318,6 +325,7 @@ namespace Impact.Website.Providers
                 Flex100 = _flex100,
                 Payout = _payout,
                 PayoutMonth = quarter.GetDisplayOvertimePayoutMonth(),
+                NormalWorkMonth = normalWorkMonth,
                 RawAll = Func(rawWeeks),
                 NormalizedPrevious = Func(normalizedPreviousWeek),
                 NormalizedAll = Func(normalizedAllWeeks),

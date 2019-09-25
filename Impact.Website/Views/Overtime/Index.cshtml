@@ -40,24 +40,11 @@
     </div>
 </div>
 <div class="container">
+    <hr/>
     <div class="row">
-        <div class="col-md-4">
-            <div id="@Model.PieChartViewModel.DivId"></div>
-        </div>
-        <div class="col-md-3">
-            <div id="@Model.PotentialChartViewModel.DivId"></div>
-            @if (Session.Get<Profile>(ApplicationConstants.SessionName.Profile).Initials == "MAS")
-            {
-                <button id="racer" value="0" onclick="racerUnlock()">Click me</button>
-                <div>
-                    @Html.ActionLink("Thank you", "Racer", "Site", null, new {id = "racerLink", style = "display:none"})
-                </div>
-            }
-        </div>
         <div class="col-md-5">
             <form>
                 <div class="form-group">
-                    @* <input type="number" class="form-control" id="monthlyPay" placeholder="Månedsløn"> *@
                     <label for="monthlyPay">Månedsløn</label>
                     <div class="input-group mb-3">
                         <input id="monthlyPay" type="number" class="form-control" placeholder="20,000" aria-label="20,000">
@@ -66,12 +53,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="hourlyPay">Timeløn</label>
-                    <div class="input-group mb-3">
-                        <input id="hourlyPay" disabled type="number" class="form-control" placeholder="200" aria-label="200" >
-                        <div class="input-group-append">
-                            <span class="input-group-text">kr</span>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="hourlyPay">Timeløn</label>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend ">
+                                <span class="input-group-text" style="width: 130px">@Model.SummedViewModel.NormalWorkMonth.ToString(ApplicationConstants.EnglishCultureInfo.NumberFormat) / måned</span>
+                            </div>
+                            <input id="hourlyPay" disabled type="number" class="form-control" placeholder="200" aria-label="200">
+                            <div class="input-group-append">
+                                <span class="input-group-text">kr</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -81,8 +73,8 @@
                             <div class="input-group-prepend ">
                                 <span class="input-group-text danger" style="width: 130px">@Model.SummedViewModel.FlexZero</span>
                             </div>
-                            <input type="number" disabled class="form-control" id="flex0" >
-                            <input type="number" disabled class="form-control" id="flex0u" >
+                            <input type="number" disabled class="form-control" id="flex0">
+                            <input type="number" disabled class="form-control" id="flex0u">
                             <div class="input-group-append">
                                 <span class="input-group-text">kr</span>
                             </div>
@@ -95,8 +87,8 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text warning" style="width: 130px">@Model.SummedViewModel.Flex100</span>
                             </div>
-                            <input type="number" disabled class="form-control" id="flex1" >
-                            <input type="number" disabled class="form-control" id="flex1u" >
+                            <input type="number" disabled class="form-control" id="flex1">
+                            <input type="number" disabled class="form-control" id="flex1u">
                             <div class="input-group-append">
                                 <span class="input-group-text">kr</span>
                             </div>
@@ -109,8 +101,8 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text success" style="width: 130px">@Model.SummedViewModel.Payout</span>
                             </div>
-                            <input type="number" disabled class="form-control" id="flex2" >
-                            <input type="number" disabled class="form-control" id="flex2u" >
+                            <input type="number" disabled class="form-control" id="flex2">
+                            <input type="number" disabled class="form-control" id="flex2u">
                             <div class="input-group-append">
                                 <span class="input-group-text">kr</span>
                             </div>
@@ -121,6 +113,50 @@
                     Ovenstående bliver udbetalt på <strong>@Model.SummedViewModel.PayoutMonth</strong> lønsedlen
                 </div>
             </form>
+        </div>
+        <div class="col-md-7">
+            <p><strong>Forklaring af udbetalings udregneren.</strong></p>
+            <p>Har du overarbejde som står til at blive udbetalt? Så prøv at indtaste din månedsløn og se hvor meget du ca. kan forvente at se på din næste lønseddel.*</p>
+            <p>* Disse beregninger er ikke tjekket af regnskab og giver kun en approximation af det forventede beløb. <strong>Tallet er vejledende</strong></p>
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col-md-5">
+            <div id="@Model.PieChartViewModel.DivId" style="height: 250px"></div>
+        </div>
+        <div class="col-md-7">
+            <p><strong>Forklaring af grafen</strong></p>
+            <p>Denne graf viser forholdet mellem flex 1 og flex 2.</p>
+            <p>
+                Dette er for at få en bedre fornemmelse af hvor meget ens flex 2 er værd.
+                Flex 2 bliver selvfølgelig udbetalt til 100% løn, men da det er umuligt at optjene flex 2 uden først at obtjene 1,5 timer flex 1, så er der en tabt fortjeneste.
+            </p>
+            <p>
+                Hvis forholdet mellem flex 1 og flex 2 er 50/50 så betyder det reelt set at man kun får 50% udbetaling af sin flex 2, da man har arbejdet lige så mange flex 1 timer gratis,
+                som man har arbejdet flex 2 timer der bliver udbetalt.
+            </p>
+            <p>
+                Det maksimale antal flex 2 timer man kan optjene, i en uge, er 5 timer, efter man har optjent 1,5 timers flex 1. Dermed bliver det maksimale procentvise forhold mellem flex 1 og flex 2
+                flex 1: 23,08% og flex 2: 76,92%
+            </p>
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col-md-5">
+            <p>Overarbejdspotentiale</p>
+            <div id="@Model.PotentialChartViewModel.DivId"></div>
+            @if (Session.Get<Profile>(ApplicationConstants.SessionName.Profile).Initials == "MAS")
+            {
+                <button id="racer" value="0" onclick="racerUnlock()">Click me</button>
+                <div>
+                    @Html.ActionLink("Thank you", "Racer", "Site", null, new {id = "racerLink", style = "display:none"})
+                </div>
+            }
+        </div>
+        <div class="col-md-7">
+            <p><strong>Forklaring af potentiale</strong></p>
         </div>
     </div>
 </div>
@@ -154,7 +190,7 @@
         });
         
         $('#monthlyPay').change(function () {
-            var hourly = this.value / 162.5;
+            var hourly = this.value / @Model.SummedViewModel.NormalWorkMonth.ToString(ApplicationConstants.EnglishCultureInfo.NumberFormat);
             var hourlyRounded = round2D(hourly);
             if (hourlyRounded === 0)
                 $('#hourlyPay').val("");
