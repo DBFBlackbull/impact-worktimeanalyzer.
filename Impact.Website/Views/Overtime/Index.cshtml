@@ -135,7 +135,7 @@
             <p>Denne graf viser forholdet mellem @Model.DisplayFlexZero og @Model.DisplayFlex100.</p>
             <p>
                 Dette er for at få en bedre fornemmelse af hvor meget ens @Model.DisplayFlex100 er værd.
-                @Model.DisplayFlex100 bliver selvfølgelig udbetalt til 100% løn, men da det er umuligt at optjene @Model.DisplayFlex100 uden først at obtjene 1,5 timer @Model.DisplayFlexZero, 
+                @Model.DisplayFlex100 bliver selvfølgelig udbetalt til 100% løn, men da det er umuligt at optjene @Model.DisplayFlex100 uden først at optjene 1,5 timer @Model.DisplayFlexZero, 
                 så er der et tab.
             </p>
             <p>
@@ -143,8 +143,12 @@
                 da man har arbejdet lige så mange @Model.DisplayFlexZero timer gratis, som man har arbejdet @Model.DisplayFlex100 timer der bliver udbetalt.
             </p>
             <p>
-                Det maksimale antal @Model.DisplayFlex100 timer man kan optjene, i en uge, er 5 timer, efter man har optjent 1,5 timers @Model.DisplayFlexZero. 
-                Dermed bliver det maksimale procentvise forhold @Model.DisplayFlexZero: 23,1% og @Model.DisplayFlex100: 76,9%.
+                <strong>Fun fact</strong>: Det maksimale antal @Model.DisplayFlex100 timer man kan optjene, i en uge, er 5 timer, efter man har optjent 1,5 timers @Model.DisplayFlexZero. 
+                Dermed bliver det maksimale procentvise forhold:
+                <br/>
+                @Model.DisplayFlex100: 76,9%.
+                <br/>
+                @Model.DisplayFlexZero: 23,1%
             </p>
         </div>
     </div>
@@ -223,10 +227,8 @@
         //All data sets defined
         if (showNormalized && showAllWeeks) {
             data = @JavaScriptConvert.SerializeObject(Model.SummedViewModel.NormalizedAll);
-        } else if (showNormalized) {
-            data = @JavaScriptConvert.SerializeObject(Model.SummedViewModel.NormalizedPrevious);
         } else {
-            data = @JavaScriptConvert.SerializeObject(Model.SummedViewModel.RawAll);
+            data = @JavaScriptConvert.SerializeObject(Model.SummedViewModel.NormalizedPrevious);
         }
             
         $('#flex0').val(data.flex0);

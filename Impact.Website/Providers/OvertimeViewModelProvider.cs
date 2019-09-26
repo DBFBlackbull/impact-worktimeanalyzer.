@@ -61,7 +61,7 @@ namespace Impact.Website.Providers
             quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks, profile.NormalWorkWeek); 
             quarterViewModel.PieChartViewModel = CreatePieChartViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PotentialChartViewModel = CreateGaugeChartViewModel(normalizedPreviousWeek, normalizedAllWeeks);
-            quarterViewModel.SummedViewModel = CreateSummedViewModel(quarter, rawWeeks, normalizedPreviousWeek, normalizedAllWeeks, profile.NormalWorkMonth);
+            quarterViewModel.SummedViewModel = CreateSummedViewModel(quarter, normalizedPreviousWeek, normalizedAllWeeks, profile.NormalWorkMonth);
 
             if (normalizedPreviousWeek.Count < rawWeeks.Count)
             {
@@ -314,7 +314,7 @@ namespace Impact.Website.Providers
             return balanceViewModel;
         }
 
-        private SummedViewModel CreateSummedViewModel(Quarter quarter, List<Week> rawWeeks, List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks, decimal normalWorkMonth)
+        private SummedViewModel CreateSummedViewModel(Quarter quarter, List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks, decimal normalWorkMonth)
         {
             SummedViewModel.Data Func(List<Week> weeks) => new SummedViewModel.Data
             {
@@ -326,7 +326,6 @@ namespace Impact.Website.Providers
             return new SummedViewModel
             {
                 PayoutMonth = quarter.GetDisplayOvertimePayoutMonth(),
-                RawAll = Func(rawWeeks),
                 NormalizedPrevious = Func(normalizedPreviousWeek),
                 NormalizedAll = Func(normalizedAllWeeks),
             };
