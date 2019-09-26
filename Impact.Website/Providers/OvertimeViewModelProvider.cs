@@ -52,7 +52,11 @@ namespace Impact.Website.Providers
 
             var quarterViewModel = new QuarterViewModel();
             quarterViewModel.SelectedQuarter = quarter.From.ToShortDateString();
+            quarterViewModel.NormalWorkMonth = profile.NormalWorkMonth;
             quarterViewModel.DisplayNormalWorkWeek = profile.NormalWorkWeek.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat);
+            quarterViewModel.DisplayFlexZero = _flexZero;
+            quarterViewModel.DisplayFlex100 = _flex100;
+            quarterViewModel.DisplayPayout = _payout;
 
             quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks, profile.NormalWorkWeek); 
             quarterViewModel.PieChartViewModel = CreatePieChartViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
@@ -178,7 +182,7 @@ namespace Impact.Website.Providers
 
             var optionViewModel = new PieChartViewModel.OptionViewModel
             {
-                Title = $"{_flexZeroPercent} vs {_flex100Percent}",
+                Title = $"{_flexZeroPercent} VS {_flex100Percent}",
                 Colors = new List<string> {ApplicationConstants.Color.Red, ApplicationConstants.Color.Orange},
                 ChartArea = new PieChartViewModel.OptionViewModel.ChartAreaViewModel
                 {
@@ -321,11 +325,7 @@ namespace Impact.Website.Providers
 
             return new SummedViewModel
             {
-                FlexZero = _flexZero,
-                Flex100 = _flex100,
-                Payout = _payout,
                 PayoutMonth = quarter.GetDisplayOvertimePayoutMonth(),
-                NormalWorkMonth = normalWorkMonth,
                 RawAll = Func(rawWeeks),
                 NormalizedPrevious = Func(normalizedPreviousWeek),
                 NormalizedAll = Func(normalizedAllWeeks),

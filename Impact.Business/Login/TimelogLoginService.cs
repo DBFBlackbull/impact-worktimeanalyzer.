@@ -38,6 +38,8 @@ namespace Impact.Business.Login
 
             profile.IsDeveloper = IsDeveloper(profile.Title, profile.DepartmentName);
             profile.NormalWorkDay = GetReportingNormalWorkDay(profile.EmployeeId, profile.DepartmentId);
+            profile.NormalWorkWeek = (profile.NormalWorkDay * 5).Normalize();
+            profile.NormalWorkMonth = Math.Round(profile.NormalWorkWeek * 52m / 12m, 2, MidpointRounding.AwayFromZero).Normalize(); 
 
             securityToken = ProjectManagementHandler.Instance.Token;
 
