@@ -1,5 +1,4 @@
 using System;
-using Impact.Core.Extension;
 
 namespace Impact.Core.Model
 {
@@ -20,6 +19,16 @@ namespace Impact.Core.Model
         public bool IsDeveloper { get; set; }
         public decimal NormalWorkDay { get; set; }
         public decimal NormalWorkWeek { get; set; }
+        /// <summary>
+        /// <p>Gets the average amount of hours in a month. The follow relations are validated by asking people</p>
+        /// <p>37,5 -> 162,5</p>
+        /// <p>37 -> 160,33</p>
+        /// <p>35 -> 151,67</p>
+        /// <p>33 -> 142,9</p>
+        /// <p>30 -> 130</p>
+        /// <p>19 -> 82,33</p>
+        /// <p>OBS: 33 -> 142,9 is being rounded to 143</p>
+        /// </summary>
         public decimal NormalWorkMonth { get; set; }
     }
 }
