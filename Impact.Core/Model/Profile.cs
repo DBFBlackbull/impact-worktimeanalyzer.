@@ -24,10 +24,11 @@ namespace Impact.Core.Model
         /// <p>37,5 -> 162,5</p>
         /// <p>37 -> 160,33</p>
         /// <p>35 -> 151,67</p>
+        /// <p>34 -> 147,33</p>
         /// <p>33 -> 142,9</p>
         /// <p>30 -> 130</p>
         /// <p>19 -> 82,33</p>
-        /// <p>OBS: 33 -> 142,9 is being rounded to 143</p>
+        /// <p>OBS: 33 returns 143 even though people have reported it to be 142,9 on their paycheck</p>
         /// </summary>
         public decimal NormalWorkMonth { get; set; }
     }
