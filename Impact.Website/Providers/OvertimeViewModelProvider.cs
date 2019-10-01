@@ -46,7 +46,7 @@ namespace Impact.Website.Providers
             _payoutPercent = $"{_payout}: 150% løn";
             
             var now = DateTime.Today;
-            var previousWeeks = rawWeeks.Where(w => w.Dates.LastOrDefault() < now).ToList();
+            var previousWeeks = rawWeeks.Where(w => w.Dates.LastOrDefault(d => d <= quarter.To) < now).ToList();
             var normalizedPreviousWeek = _timeService.GetNormalizedWeeks(previousWeeks, profile).ToList();
             var normalizedAllWeeks = _timeService.GetNormalizedWeeks(rawWeeks, profile).ToList();
 
