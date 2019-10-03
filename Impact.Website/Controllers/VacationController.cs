@@ -32,24 +32,7 @@ namespace Impact.Website.Controllers
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
 
-            var vacationYear = _timeService.GetVacationYear(DateTime.Now);
-            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
-            List<VacationDay> vacationDays = _timeRepository.GetVacationDays(vacationYear.StartDate, vacationYear.EndDate, token, profile).ToList();
-            vacationDays.AddRange(_holidayService.GetHolidays(vacationYear));
-
-            var vacationViewModel = new VacationViewModel
-            {
-                DivId = "calendar_chart",
-                VacationYears = GetSelectList(vacationYear),
-                SelectedVacationYear = vacationYear.StartDate.ToString("s"),
-                VacationYear = vacationYear,
-                VacationDays = vacationDays,
-                SummedVacationDays = Math.Round(Convert.ToDecimal(vacationDays.Sum(v => v.VacationHours) / 7.5), 2),
-                SummedExtraVacationDays = Math.Round(Convert.ToDecimal(vacationDays.Sum(v => v.ExtraVacationHours) / 7.5), 2),
-                NormalWorkDay = profile.NormalWorkDay
-            };
-
-            return View(vacationViewModel);
+            return View(GetVacationViewModel(DateTime.Now, token));
         }
 
         [HttpPost]
@@ -62,11 +45,17 @@ namespace Impact.Website.Controllers
                 return View(viewModel);
             
             var dateTime = DateTime.Parse(viewModel.SelectedVacationYear);
-            var vacationYear = _timeService.GetVacationYear(dateTime);
+
+            return View(GetVacationViewModel(dateTime, token));
+        }
+        
+        private VacationViewModel GetVacationViewModel(DateTime datetime, SecurityToken token)
+        {
+            var vacationYear = _timeService.GetVacationYear(datetime);
             var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
             var vacationDays = _timeRepository.GetVacationDays(vacationYear.StartDate, vacationYear.EndDate, token, profile).ToList();
             vacationDays.AddRange(_holidayService.GetHolidays(vacationYear));
-            
+
             var vacationViewModel = new VacationViewModel
             {
                 DivId = "calendar_chart",
@@ -74,11 +63,11 @@ namespace Impact.Website.Controllers
                 SelectedVacationYear = vacationYear.StartDate.ToString("s"),
                 VacationYear = vacationYear,
                 VacationDays = vacationDays,
-                SummedVacationDays = Math.Round(Convert.ToDecimal(vacationDays.Sum(v => v.VacationHours) / 7.5), 2),
-                SummedExtraVacationDays = Math.Round(Convert.ToDecimal(vacationDays.Sum(v => v.ExtraVacationHours) / 7.5), 2)
+                SummedVacationDays = Math.Round(vacationDays.Sum(v => v.VacationHours / v.NormalWorkDay), 2).Normalize(),
+                SummedExtraVacationDays = Math.Round(vacationDays.Sum(v => v.ExtraVacationHours / v.NormalWorkDay), 2).Normalize(),
+                NormalWorkDay = profile.NormalWorkDay
             };
-
-            return View(vacationViewModel);
+            return vacationViewModel;
         }
         
         private IEnumerable<SelectListItem> GetSelectList(VacationYear selectedYear)

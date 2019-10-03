@@ -7,8 +7,6 @@ using Impact.Core.Constants;
 using Impact.Core.Extension;
 using Impact.Core.Model;
 using Impact.Website.Models;
-using Impact.Website.Models.Charts;
-using Impact.Website.Models.Options;
 using Impact.Website.Providers;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
 
@@ -37,7 +35,6 @@ namespace Impact.Website.Controllers
 
             var quarter = _timeService.GetQuarter(DateTime.Now);
             var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile, token);
-            quarterViewModel.Quarters = GetSelectList(quarter);
             quarterViewModel.ShowIncludeAllWeeksButton = true;
             return View(quarterViewModel);
         }
@@ -58,42 +55,8 @@ namespace Impact.Website.Controllers
             var dateTime = DateTime.Parse(viewModel.SelectedQuarter);
             var quarter = _timeService.GetQuarter(dateTime);
             var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile, token, viewModel.BarColumnChartViewModel.IsNormalized);
-            quarterViewModel.Quarters = GetSelectList(quarter);
             quarterViewModel.ShowIncludeAllWeeksButton = quarterViewModel.Quarters.Last().Selected;
             return View(quarterViewModel);
-        }
-        
-        private IEnumerable<SelectListItem> GetSelectList(Quarter quarter)
-        {
-            var hiredDate = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile).HiredDate;
-            var start = _timeService.GetQuarter(hiredDate).From;
-            var selectListItems = new List<SelectListItem>();
-            var groupsMap = new Dictionary<int, SelectListGroup>();
-
-            var now = DateTime.Now;
-            while (start < now)
-            {
-                var selectQuarter = _timeService.GetQuarter(start);
-                var currentDate = selectQuarter.From;
-                var currentYear = currentDate.Year;
-
-                if (!groupsMap.TryGetValue(currentYear, out var group))
-                    group = groupsMap[currentYear] = new SelectListGroup { Name = currentYear.ToString() };
-
-                selectListItems.Add(new SelectListItem
-                {
-                    Group = group,
-                    Selected = quarter.From == currentDate,
-                    Value = currentDate.ToShortDateString(),
-                    Text = selectQuarter.GetDisplayTitle() + " " + currentYear
-                });
-                
-                start = start.AddMonths(3);
-            }
-            
-            
-
-            return selectListItems;
         }
     }
 }

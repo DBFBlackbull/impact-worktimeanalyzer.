@@ -8,15 +8,15 @@ namespace Impact.Business.Holiday
 {
     public class HolidayService : IHolidayService
     {
-        public void AddHolidayHours(Quarter quarter, IEnumerable<Week> weeks, decimal normalWorkDay)
+        public void AddHolidayHours(Quarter quarter, IEnumerable<Week> weeks)
         {
             var holidays = GetHolidays(quarter.From, quarter.To);
             foreach (var week in weeks)
             {
                 foreach (var date in week.Dates)
                 {
-                    if (holidays.ContainsKey(date))
-                        week.HolidayHours += normalWorkDay;
+                    if (holidays.ContainsKey(date.Key))
+                        week.HolidayHours += date.Value;
                 }
             }
         }
@@ -24,7 +24,7 @@ namespace Impact.Business.Holiday
         public IEnumerable<VacationDay> GetHolidays(VacationYear vacationYear)
         {
             var dateTimes = GetHolidays(vacationYear.StartDate, vacationYear.EndDate);
-            return dateTimes.Select(kv => new VacationDay(kv.Key, kv.Value));
+            return dateTimes.Select(kv => new VacationDay(kv.Key, 1, kv.Value));
         }
 
         private static Dictionary<DateTime, string> GetHolidays(DateTime from, DateTime to)

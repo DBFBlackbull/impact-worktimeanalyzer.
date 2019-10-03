@@ -6,6 +6,7 @@ using System.Xml;
 using Impact.Core.Constants;
 using Impact.Core.Extension;
 using Impact.Core.Model;
+using Impact.DataAccess.Timelog;
 using TimeLog.ReportingApi.SDK;
 using TimeLog.ReportingApi.SDK.ReportingService;
 using TimeLog.TransactionalApi.SDK;
@@ -94,7 +95,7 @@ namespace Impact.Business.Login
                 Email = employeeRaw.SelectSingleNode("tlp:Email", xnsm)?.InnerText ?? "",
                 DepartmentName = employeeRaw.SelectSingleNode("tlp:DepartmentName", xnsm)?.InnerText ?? "",
                 DepartmentId = int.Parse(employeeRaw.SelectSingleNode("tlp:DepartmentNameID", xnsm)?.InnerText ?? "-1"),
-                HiredDate = DateTime.Parse(employeeRaw.SelectSingleNode("tlp:HiredDate", xnsm)?.InnerText),
+                HiredDate = TimeLogRepository.GetReportingDateTime(employeeRaw.SelectSingleNode("tlp:HiredDate", xnsm)?.InnerText),
                 CostPrice = double.Parse(employeeRaw.SelectSingleNode("tlp:CostPrice", xnsm)?.InnerText ?? "0", CultureInfo.InvariantCulture)
             };
             return reportingProfile;
@@ -119,10 +120,8 @@ namespace Impact.Business.Login
             foreach (XmlNode workingHoursXml in normalWorkingHoursRaw.ChildNodes)
             {
                 var workingHoursString = workingHoursXml.SelectSingleNode("tlp:WorkingHours", xnsm)?.InnerText;
-                var tryParse = decimal.TryParse(workingHoursString,
-                    NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint,
-                    ApplicationConstants.EnglishCultureInfo.NumberFormat, out var workingHours);
-                if (tryParse && workingHours > 0)
+                var isParsed = TimeLogRepository.TryGetReportingDecimal(workingHoursString, out var workingHours);
+                if (isParsed && workingHours > 0)
                     return workingHours.Normalize();
             }
 

@@ -17,6 +17,7 @@ namespace Impact.Website.Models.Options
             public string Title { get; set; }
             public BarViewModel Bar { get; set; }
             public AnimationViewModel Animation { get; set; }
+            public SeriesViewModel Series { get; set; }
 
             public class BarViewModel
             {
@@ -27,6 +28,16 @@ namespace Impact.Website.Models.Options
             {
                 public int Duration { get; set; }
                 public AnimationEasing Easing { get; set; }
+            }
+            
+            public class SeriesViewModel
+            {
+                public ZeroViewModel Zero { get; set; }
+                
+                public class ZeroViewModel
+                {
+                    public string Type { get; set; }
+                }
             }
         }
         

@@ -14,12 +14,13 @@ namespace Impact.Core.Model
     {
         public Week()
         {
-            Dates = new SortedSet<DateTime>();
+            Dates = new SortedDictionary<DateTime, decimal>();
         }
 
         public int Number { get; set; }
-        public ISet<DateTime> Dates { get; set; }
-        public double TotalHours { get; set; }
+        public SortedDictionary<DateTime, decimal> Dates { get; set; }
+        public decimal TotalHours { get; set; }
+        public decimal NormalWorkWeek { get; set; }
         public decimal QuarterEdgeHours { get; set; }
         public decimal HolidayHours { get; set; }
         public decimal WorkHours { get; set; }
@@ -28,11 +29,11 @@ namespace Impact.Core.Model
         public decimal LockedOvertimeHours { get; set; }
 
         // So ugly please find a better solution. Really really
-        public void CategorizeHours(decimal normalWorkWeek)
+        public void CategorizeHours()
         {
-            var hours = Math.Round(Convert.ToDecimal(TotalHours), 2);
+            var hours = Math.Round(TotalHours, 2);
 
-            var workWeek = normalWorkWeek - HolidayHours - QuarterEdgeHours;
+            var workWeek = NormalWorkWeek - HolidayHours - QuarterEdgeHours;
             if (hours >= workWeek)
             {
                 WorkHours = workWeek;
@@ -69,21 +70,22 @@ namespace Impact.Core.Model
             LockedOvertimeHours = hours;
         }
 
-        public void AddQuarterEdgeHours(Quarter quarter, decimal normalWorkDay)
+        public void AddQuarterEdgeHours(Quarter quarter)
         {
-            foreach (var date in Dates)
+            foreach (var kvp in Dates)
             {
+                var date = kvp.Key;
                 if (ApplicationConstants.GetWeekNumber(date) == 53)
                     continue;
                 
                 if (date < quarter.From || quarter.To < date)
-                    QuarterEdgeHours += normalWorkDay;
+                    QuarterEdgeHours += kvp.Value;
             }
         }
         
-        public object[] ToArray(decimal? defaultValue = 0)
+        public object[] ToArray(bool manyWorkWeeks, decimal? defaultValue = 0)
         {
-            return new object[]
+            var objects = new List<object>
             {
                 GetDisplayNumber(),
                 QuarterEdgeHours == 0 ? (decimal?)null : QuarterEdgeHours, "fill-color: #EFEFEF; opacity: 0.5",
@@ -93,6 +95,10 @@ namespace Impact.Core.Model
                 MovableOvertimeHours == 0 ? defaultValue : MovableOvertimeHours, // This needs to be animated, therefore must not be null
                 LockedOvertimeHours == 0 ? (decimal?)null : LockedOvertimeHours
             };
+            if (manyWorkWeeks)
+                objects.Insert(1, NormalWorkWeek);
+            
+            return objects.ToArray();
         }
 
         public string GetDisplayNumber()

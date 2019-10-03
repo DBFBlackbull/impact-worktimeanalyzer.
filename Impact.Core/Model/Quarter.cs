@@ -74,5 +74,29 @@ namespace Impact.Core.Model
                     throw new IndexOutOfRangeException("Quarter was now 1, 2, 3, or 4. Real value: " + Number);
             }
         }
+
+        private bool Equals(Quarter other)
+        {
+            return Number == other.Number && From.Equals(other.From) && To.Equals(other.To);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Quarter) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Number;
+                hashCode = (hashCode * 397) ^ From.GetHashCode();
+                hashCode = (hashCode * 397) ^ To.GetHashCode();
+                return hashCode;
+            }
+        }
     }
 }

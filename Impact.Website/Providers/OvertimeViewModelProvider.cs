@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 using Impact.Business.Time;
 using Impact.Core.Constants;
 using Impact.Core.Extension;
@@ -30,10 +31,17 @@ namespace Impact.Website.Providers
             _timeRepository = timeRepository;
         }
 
-        public QuarterViewModel CreateViewModels(Quarter quarter, Profile profile, SecurityToken token, bool isNormalized = false, List<Week> rawWeeksOverride = null)
+        public QuarterViewModel CreateViewModels(Quarter quarter, Profile profile, SecurityToken token, 
+            bool isNormalized = false)
         {
-            var rawWeeks = rawWeeksOverride ?? _timeRepository.GetRawWeeksInQuarter(quarter, token).ToList();
-            rawWeeks = _timeService.CategorizeWeeks(quarter, rawWeeks, profile.NormalWorkDay, token).ToList();
+            return CreateViewModels(quarter, profile, token, isNormalized, out var rawWeeks);
+        }
+        
+        public QuarterViewModel CreateViewModels(Quarter quarter, Profile profile, SecurityToken token, bool isNormalized, 
+            out List<Week> rawWeeks, List<Week> rawWeeksOverride = null)
+        {
+            rawWeeks = rawWeeksOverride ?? _timeRepository.GetRawWeeksInQuarter(quarter, profile, token).ToList();
+            rawWeeks = _timeService.CategorizeWeeks(quarter, profile, rawWeeks, token).ToList();
 
             var interestHoursLimit = (profile.NormalWorkWeek + ApplicationConstants.InterestConst).Normalize();
             var movableHoursLimit = (interestHoursLimit + ApplicationConstants.MovableConst).Normalize();
@@ -46,19 +54,39 @@ namespace Impact.Website.Providers
             _payoutPercent = $"{_payout}: 150% løn";
             
             var now = DateTime.Today;
-            var previousWeeks = rawWeeks.Where(w => w.Dates.LastOrDefault(d => d <= quarter.To) < now).ToList();
-            var normalizedPreviousWeek = _timeService.GetNormalizedWeeks(previousWeeks, profile).ToList();
-            var normalizedAllWeeks = _timeService.GetNormalizedWeeks(rawWeeks, profile).ToList();
+            var previousWeeks = rawWeeks.Where(w => w.Dates.Keys.LastOrDefault(d => d <= quarter.To) < now).ToList();
+            var normalizedPreviousWeek = _timeService.GetNormalizedWeeks(previousWeeks).ToList();
+            var normalizedAllWeeks = _timeService.GetNormalizedWeeks(rawWeeks).ToList();
+
+            var distinctWorkWeeks = rawWeeks.Select(w => w.NormalWorkWeek).Distinct().ToList();
+            var normalWorkWeekStrings = new List<Tuple<string, string>>();
+            var manyWorkWeeks = distinctWorkWeeks.Count > 1;
+            if (!manyWorkWeeks)
+            {
+                normalWorkWeekStrings.Add(new Tuple<string, string>("", distinctWorkWeeks.First().ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)));
+            }
+            else
+            {
+                foreach (var districtWorkWeek in distinctWorkWeeks)
+                {
+                    var firstWeek = rawWeeks.First(w => w.NormalWorkWeek == districtWorkWeek);
+                    var lastWeek = rawWeeks.Last(w => w.NormalWorkWeek == districtWorkWeek);
+                    
+                    normalWorkWeekStrings.Add(new Tuple<string, string>(
+                        $"Uge {firstWeek.Number} - {lastWeek.Number}:", 
+                        firstWeek.NormalWorkWeek.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)));
+                }
+            }
 
             var quarterViewModel = new QuarterViewModel();
+            quarterViewModel.Quarters = GetSelectList(quarter, profile);
             quarterViewModel.SelectedQuarter = quarter.From.ToShortDateString();
-            quarterViewModel.NormalWorkMonth = profile.NormalWorkMonth;
-            quarterViewModel.DisplayNormalWorkWeek = profile.NormalWorkWeek.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat);
+            quarterViewModel.DisplayNormalWorkWeeks = normalWorkWeekStrings;
             quarterViewModel.DisplayFlexZero = _flexZero;
             quarterViewModel.DisplayFlex100 = _flex100;
             quarterViewModel.DisplayPayout = _payout;
 
-            quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks, profile.NormalWorkWeek); 
+            quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PieChartViewModel = CreatePieChartViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PotentialChartViewModel = CreateGaugeChartViewModel(normalizedPreviousWeek, normalizedAllWeeks);
             quarterViewModel.SummedViewModel = CreateSummedViewModel(quarter, normalizedPreviousWeek, normalizedAllWeeks, profile.NormalWorkMonth);
@@ -69,19 +97,19 @@ namespace Impact.Website.Providers
                 normalizedPreviousWeek.AddRange(rawWeeks.GetRange(normalizedPreviousWeek.Count, count));
             }
             
-            quarterViewModel.BarColumnChartViewModel = CreateWeeksViewModel(quarter, rawWeeks, normalizedPreviousWeek, normalizedAllWeeks, isNormalized);
+            quarterViewModel.BarColumnChartViewModel = CreateWeeksViewModel(quarter, rawWeeks, normalizedPreviousWeek, normalizedAllWeeks, isNormalized, manyWorkWeeks);
             
             return quarterViewModel;
         }
 
-        private BarColumnChartViewModel CreateWeeksViewModel(Quarter quarter, List<Week> weeksList,
-            List<Week> normalizedPreviousWeek, List<Week> normalizedWeeks, bool isNormalized)
+        private BarColumnChartViewModel CreateWeeksViewModel(Quarter quarter, List<Week> rawWeeks,
+            List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks, bool isNormalized, bool manyWorkWeeks)
         {
             List<object[]> GetDataArray(IEnumerable<Week> weeks, decimal? defaultValue)
             {
-                List<object[]> googleFormattedWeeks = new List<object[]>
+                List<List<object>> googleFormattedWeeksList = new List<List<object>>
                 {
-                    new object[]
+                    new List<object>
                     {
                         new Column {Label = "Uge nummer", Type = "string"},
                         new Column {Label = "Timer uden for kvartalet", Type = "number"}, new Column {Role = "style"},
@@ -89,21 +117,25 @@ namespace Impact.Website.Providers
                         new Column {Label = "Arbejde, ferie, sygdom", Type = "number"},
                         new Column {Label = _flexZeroPercent, Type = "number"},
                         new Column {Label = _flex100Percent, Type = "number"},
-                        new Column {Label = _payoutPercent, Type = "number"}
+                        new Column {Label = _payoutPercent, Type = "number"},
                     }
                 };
-                googleFormattedWeeks.AddRange(weeks.Select(week => week.ToArray(defaultValue)));
+                if (manyWorkWeeks)
+                    googleFormattedWeeksList.First().Insert(1, new Column {Label = "Normaluge", Type = "number"});
+
+                var googleFormattedWeeks = new List<object[]> { googleFormattedWeeksList.First().ToArray() };
+                googleFormattedWeeks.AddRange(weeks.Select(week => week.ToArray(manyWorkWeeks, defaultValue)));
                 return googleFormattedWeeks;
             }
 
             var weeksViewModel = new BarColumnChartViewModel();
             weeksViewModel.DivId = "weeks_chart";
             weeksViewModel.IsNormalized = isNormalized;
-            weeksViewModel.RawData = GetDataArray(weeksList, null);
+            weeksViewModel.RawData = GetDataArray(rawWeeks, null);
             weeksViewModel.NormalizedPreviousData = GetDataArray(normalizedPreviousWeek, 0);
-            weeksViewModel.NormalizedAllData = GetDataArray(normalizedWeeks, 0);
+            weeksViewModel.NormalizedAllData = GetDataArray(normalizedAllWeeks, 0);
             
-            var max = weeksList.Count == 0 ? 0 : weeksList.Max(w => w.TotalHours);
+            var max = rawWeeks.Count == 0 ? 0 : rawWeeks.Max(w => w.TotalHours + w.QuarterEdgeHours);
             var yAxisMax = Math.Max(50, (int)Math.Ceiling(max / 5) * 5);
 
             var vAxisViewModel = new BarColumnOptions.AxisViewModel
@@ -123,6 +155,7 @@ namespace Impact.Website.Providers
                 Height = 800,
                 IsStacked = true,
                 Title = $"{quarter.GetDisplayTitle()}: {quarter.GetDisplayMonths()}",
+                VAxis = vAxisViewModel,
                 Colors = new List<string> 
                 {
                     ApplicationConstants.Color.White, 
@@ -141,8 +174,18 @@ namespace Impact.Website.Providers
                 {
                     GroupWidth = 50
                 },
-                VAxis = vAxisViewModel,
             };
+            if (manyWorkWeeks)
+            {
+                optionsViewModel.Colors.Insert(0, ApplicationConstants.Color.Black);
+                optionsViewModel.Series = new BarColumnOptions.OptionsViewModel.SeriesViewModel
+                {
+                    Zero = new BarColumnOptions.OptionsViewModel.SeriesViewModel.ZeroViewModel
+                    {
+                        Type = "line"
+                    }
+                };
+            }
 
             weeksViewModel.Options = optionsViewModel;
             return weeksViewModel;
@@ -244,14 +287,14 @@ namespace Impact.Website.Providers
             return potentialChartViewModel;
         }
 
-        private BarColumnChartViewModel CreateBalanceViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks, decimal normalWorkWeek)
+        private BarColumnChartViewModel CreateBalanceViewModel(List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks)
         {
             var overHoursPrevious = normalizedPreviousWeek.Sum(w => w.InterestHours + w.MovableOvertimeHours);
-            var missingHoursPrevious = normalizedPreviousWeek.Sum(w => normalWorkWeek - (w.WorkHours + w.HolidayHours + w.QuarterEdgeHours));
+            var missingHoursPrevious = normalizedPreviousWeek.Sum(w => w.NormalWorkWeek - (w.WorkHours + w.HolidayHours + w.QuarterEdgeHours));
             var balanceHoursPrevious = overHoursPrevious - missingHoursPrevious;
 
             var overHoursAll = normalizedAllWeeks.Sum(w => w.InterestHours + w.MovableOvertimeHours);
-            var missingHoursAll = normalizedAllWeeks.Sum(w => normalWorkWeek - (w.WorkHours + w.HolidayHours + w.QuarterEdgeHours));
+            var missingHoursAll = normalizedAllWeeks.Sum(w => w.NormalWorkWeek - (w.WorkHours + w.HolidayHours + w.QuarterEdgeHours));
             var balanceHoursAll = overHoursAll - missingHoursAll;
 
             var maxBalance = Math.Max(Math.Abs(balanceHoursPrevious), Math.Abs(balanceHoursAll));
@@ -328,7 +371,38 @@ namespace Impact.Website.Providers
                 PayoutMonth = quarter.GetDisplayOvertimePayoutMonth(),
                 NormalizedPrevious = Func(normalizedPreviousWeek),
                 NormalizedAll = Func(normalizedAllWeeks),
+                NormalWorkMonth = normalWorkMonth
             };
+        }
+        
+        private IEnumerable<SelectListItem> GetSelectList(Quarter quarter, Profile profile)
+        {
+            var start = _timeService.GetQuarter(profile.HiredDate).From;
+            var selectListItems = new List<SelectListItem>();
+            var groupsMap = new Dictionary<int, SelectListGroup>();
+
+            var now = DateTime.Now;
+            while (start < now)
+            {
+                var selectQuarter = _timeService.GetQuarter(start);
+                var currentDate = selectQuarter.From;
+                var currentYear = currentDate.Year;
+
+                if (!groupsMap.TryGetValue(currentYear, out var group))
+                    group = groupsMap[currentYear] = new SelectListGroup { Name = currentYear.ToString() };
+
+                selectListItems.Add(new SelectListItem
+                {
+                    Group = group,
+                    Selected = quarter.From == currentDate,
+                    Value = currentDate.ToShortDateString(),
+                    Text = selectQuarter.GetDisplayTitle() + " " + currentYear
+                });
+                
+                start = start.AddMonths(3);
+            }
+
+            return selectListItems;
         }
     }
 }

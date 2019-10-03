@@ -7,6 +7,7 @@ namespace Impact.Website.Models
         public Data RawAll { get; set; }
         public Data NormalizedPrevious { get; set; }
         public Data NormalizedAll { get; set; }
+        public decimal NormalWorkMonth { get; set; }
         
         public class Data
         {

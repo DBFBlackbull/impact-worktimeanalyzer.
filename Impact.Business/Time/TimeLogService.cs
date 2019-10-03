@@ -4,7 +4,6 @@ using System.Linq;
 using Impact.Business.Holiday;
 using Impact.Business.Strategies;
 using Impact.Core.Constants;
-using Impact.Core.Interfaces;
 using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
@@ -63,16 +62,16 @@ namespace Impact.Business.Time
             return quarter;
         }
 
-        public IEnumerable<Week> CategorizeWeeks(Quarter quarter, List<Week> rawWeeks, decimal normalWorkDay, SecurityToken token)
+        public IEnumerable<Week> CategorizeWeeks(Quarter quarter, Profile profile, List<Week> rawWeeks, SecurityToken token)
         {
-            HandleWeek53(quarter, rawWeeks, token);
-            _holidayService.AddHolidayHours(quarter, rawWeeks, normalWorkDay);
-            rawWeeks.FirstOrDefault()?.AddQuarterEdgeHours(quarter, normalWorkDay);
+            HandleWeek53(quarter, profile, rawWeeks, token);
+            _holidayService.AddHolidayHours(quarter, rawWeeks);
+            rawWeeks.FirstOrDefault()?.AddQuarterEdgeHours(quarter);
 
             if (rawWeeks.Count > 1)
-                rawWeeks.LastOrDefault()?.AddQuarterEdgeHours(quarter, normalWorkDay);
+                rawWeeks.LastOrDefault()?.AddQuarterEdgeHours(quarter);
 
-            rawWeeks.ForEach(week => week.CategorizeHours(normalWorkDay * 5));
+            rawWeeks.ForEach(week => week.CategorizeHours());
             return rawWeeks;
         }
 
@@ -80,9 +79,10 @@ namespace Impact.Business.Time
         /// Fix for week 53. It is ignored at the end of the year, and added to beginning of the next year.
         /// </summary>
         /// <param name="quarter"></param>
+        /// <param name="profile"></param>
         /// <param name="rawWeeks"></param>
         /// <param name="token"></param>
-        private void HandleWeek53(Quarter quarter, List<Week> rawWeeks, SecurityToken token)
+        private void HandleWeek53(Quarter quarter, Profile profile, List<Week> rawWeeks, SecurityToken token)
         {
             rawWeeks.RemoveAll(w => w.Number == 53);
 
@@ -90,7 +90,7 @@ namespace Impact.Business.Time
             if (quarter.Number != 1 || firstWeek == null)
                 return;
             
-            var firstDate = firstWeek.Dates.FirstOrDefault();
+            var firstDate = firstWeek.Dates.FirstOrDefault().Key;
             if (ApplicationConstants.GetWeekNumber(firstDate) != 53)
                 return;
             
@@ -99,22 +99,22 @@ namespace Impact.Business.Time
                 From = firstDate,
                 To = new DateTime(firstDate.Year, 12, 31)
             };
-            var week53 = _timeRepository.GetRawWeeksInQuarter(week53Quarter, token).FirstOrDefault();
+            var week53 = _timeRepository.GetRawWeeksInQuarter(week53Quarter, profile, token).FirstOrDefault();
             if (week53 != null)
                 firstWeek.TotalHours += week53.TotalHours;
         }
 
-        public IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList, Profile profile)
+        public IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList)
         {
             var weeks = weeksList.ConvertAll(w => w.Clone());
 
-            var lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < profile.NormalWorkWeek);
+            var lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < w.NormalWorkWeek);
             var movableWeeks = weeks.Where(w => w.MovableOvertimeHours > 0).ToList();
-            MoveHours(lowWeeks, movableWeeks, new WeekMoveMovableOvertimeHoursStrategy(profile.NormalWorkWeek));
+            MoveHours(lowWeeks, movableWeeks, new WeekMoveMovableOvertimeHoursStrategy());
             
-            lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < profile.NormalWorkWeek);
+            lowWeeks = weeks.Where(w => w.WorkHours + w.HolidayHours + w.QuarterEdgeHours < w.NormalWorkWeek);
             var interestWeeks = weeks.Where(w => w.InterestHours > 0).ToList();
-            MoveHours(lowWeeks, interestWeeks, new WeekMoveInterestHoursStrategy(profile.NormalWorkWeek));
+            MoveHours(lowWeeks, interestWeeks, new WeekMoveInterestHoursStrategy());
             
             return weeks;
         }

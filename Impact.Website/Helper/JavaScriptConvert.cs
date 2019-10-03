@@ -21,8 +21,11 @@ namespace Impact.Website.Helper
                 jsonWriter.QuoteName = false;
                 serializer.Serialize(jsonWriter, value);
                 jsonWriter.Flush();
-                
-                return new HtmlString(stringWriter.ToString());
+
+                var htmlString = stringWriter.ToString();
+                htmlString = htmlString.Replace("zero", "0");
+
+                return new HtmlString(htmlString);
             }
         }
     }

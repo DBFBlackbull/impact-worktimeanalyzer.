@@ -8,8 +8,8 @@ namespace Impact.Business.Time
 	public interface ITimeService
 	{
 	    Quarter GetQuarter(DateTime dateTime);
-	    IEnumerable<Week> CategorizeWeeks(Quarter quarter, List<Week> rawWeeks, decimal normalWorkDay, SecurityToken token);
-	    IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList, Profile profile);
+	    IEnumerable<Week> CategorizeWeeks(Quarter quarter, Profile profile, List<Week> rawWeeks, SecurityToken token);
+	    IEnumerable<Week> GetNormalizedWeeks(List<Week> weeksList);
 	    IEnumerable<Month> GetNormalizedMonths(List<Month> monthsList);
 	    VacationYear GetVacationYear(DateTime date);
 	}

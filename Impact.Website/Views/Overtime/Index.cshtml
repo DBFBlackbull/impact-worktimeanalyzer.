@@ -14,7 +14,7 @@
             { 
                 <div class="form-group form-inline">
                     @Html.DropDownListFor(m => m.SelectedQuarter, Model.Quarters, new {@class = "form-control", onchange = "Submit()"})
-                    @Html.CheckBoxFor(m => m.BarColumnChartViewModel.IsNormalized, new { id = "toggle-normalized", data_toggle = "toggle", data_width = "200", data_height = "38", data_off = "Registrerede timer", data_on = "Udbetale timer", style="margin-right: 5px" })
+                    @Html.CheckBoxFor(m => m.BarColumnChartViewModel.IsNormalized, new { id = "toggle-normalized", data_toggle = "toggle", data_width = "200", data_height = "38", data_off = "Registrerede timer", data_on = "Udbetale timer", style="margin-right: 5px;" })
                     @if (Model.ShowIncludeAllWeeksButton)
                     {
                         @Html.CheckBoxFor(m => m.IncludeAllWeeks, new { id = "toggle-allWeeks", data_toggle = "toggle", data_width = "200", data_height = "38", data_off = "Tidligere uger", data_on = "Alle uger" })
@@ -23,7 +23,25 @@
             }
         </div>
         <div class="col-md-4 text-right">
-            Din normtid / normaluge er: <strong>@Model.DisplayNormalWorkWeek timer</strong>
+            @if (Model.DisplayNormalWorkWeeks.Count < 2)
+            {
+                <text>Din normtid / normaluge er: <strong>@Model.DisplayNormalWorkWeeks.First().Item2 timer</strong></text>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        Din normtid / normaluge er i perioderne:
+                    </div>
+                </div>
+                foreach (var displayNormalWorkWeek in Model.DisplayNormalWorkWeeks)
+                {
+                    <div class="row">
+                        <div class="col-md-8 text-right">@Html.Raw(displayNormalWorkWeek.Item1)</div>
+                        <div class="col-md-4"><strong>@Html.Raw(displayNormalWorkWeek.Item2) timer</strong></div>
+                    </div>
+                }
+            }
         </div>
     </div>
     <div class="row">
@@ -58,7 +76,7 @@
                         <label for="hourlyPay">Timeløn</label>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend ">
-                                <span class="input-group-text" style="width: 130px">@Model.NormalWorkMonth.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat) / måned</span>
+                                <span class="input-group-text" style="width: 130px">@Model.SummedViewModel.NormalWorkMonth.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat) / måned</span>
                             </div>
                             <input id="hourlyPay" disabled type="number" class="form-control" placeholder="200" aria-label="200">
                             <div class="input-group-append">
@@ -120,7 +138,7 @@
             <p>
                 Dine månedstimer er udregnet efter følgende beregning:
                 <br/>
-                @Model.DisplayNormalWorkWeek timer pr. uge * 52 uger / 12 måneder ≈ @Model.NormalWorkMonth.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat) timer pr. måned
+                @Model.DisplayNormalWorkWeeks.Last().Item2 timer pr. uge * 52 uger / 12 måneder ≈ @Model.SummedViewModel.NormalWorkMonth.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat) timer pr. måned
             </p>
             <p>* Disse beregninger er ikke tjekket af regnskab og giver kun en approximation af de forventede beløb. <strong>Tallene er vejledende</strong></p>
         </div>
@@ -187,7 +205,7 @@
         var weeks = @JavaScriptConvert.SerializeObject(Model.BarColumnChartViewModel);
         var pie = @JavaScriptConvert.SerializeObject(Model.PieChartViewModel);
         var potential = @JavaScriptConvert.SerializeObject(Model.PotentialChartViewModel);
-
+        
         google.charts.load('current', { packages: ['corechart', 'bar', 'gauge'] });
         google.charts.setOnLoadCallback(function() {
             drawMaterialBarOrColumnChart(balance); 
@@ -206,7 +224,7 @@
         });
         
         $('#monthlyPay').change(function () {
-            var hourly = this.value / @Model.NormalWorkMonth.ToString(ApplicationConstants.EnglishCultureInfo.NumberFormat);
+            var hourly = this.value / @Model.SummedViewModel.NormalWorkMonth.ToString(ApplicationConstants.EnglishCultureInfo.NumberFormat);
             var hourlyRounded = round2D(hourly);
             if (hourlyRounded === 0)
                 $('#hourlyPay').val("");

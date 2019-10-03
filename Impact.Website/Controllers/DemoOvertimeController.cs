@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using AutoMapper;
 using Impact.Business.Time;
 using Impact.Core.Constants;
 using Impact.Core.Extension;
 using Impact.Core.Model;
+using Impact.DataAccess.Timelog;
 using Impact.Website.Models;
 using Impact.Website.Providers;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
@@ -36,21 +38,13 @@ namespace Impact.Website.Controllers
             if (!profile.IsDeveloper)
                 return RedirectToAction("Index", "Site");
 
-            List<Week> inputWeeks = new List<Week>();
-            for (var i = 1; i < 14; i++)
-            {
-                inputWeeks.Add(new Week
-                {
-                    Number = i,
-                    TotalHours = 37.5 
-                });
-            }
+            var quarter = _timeService.GetQuarter(DateTime.Now);
+            HttpContext.Session[ApplicationConstants.SessionName.SelectedQuarter] = quarter;
             
-            var quarter = _timeService.GetQuarter(new DateTime(2017, 2, 15));
-            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile, token, rawWeeksOverride: inputWeeks);
-            quarterViewModel.Quarters = GetSelectList(quarter);
+            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile, token, false, out var rawWeeks);
+            quarterViewModel.ShowIncludeAllWeeksButton = true;
             var demoOvertimeViewModel = _mapper.Map<DemoOvertimeViewModel>(quarterViewModel);
-            demoOvertimeViewModel.InputWeeks = inputWeeks;
+            demoOvertimeViewModel.InputWeeks = rawWeeks;
 
             return View(demoOvertimeViewModel);
         }
@@ -67,27 +61,28 @@ namespace Impact.Website.Controllers
             
             if (!ModelState.IsValid)
                 return View(viewModel);
+
+            ModelState.Clear();
+            QuarterViewModel quarterViewModel;
+            List<Week> rawWeeks;
             
-            var quarter = _timeService.GetQuarter(new DateTime(2017, 2, 15));
-            var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile, token, viewModel.BarColumnChartViewModel.IsNormalized, viewModel.InputWeeks);
-            quarterViewModel.Quarters = GetSelectList(quarter);
+            var oldQuarter = HttpContext.Session.Get<Quarter>(ApplicationConstants.SessionName.SelectedQuarter);
+            var newQuarter = _timeService.GetQuarter(DateTime.Parse(viewModel.SelectedQuarter));
+            if (oldQuarter.Equals(newQuarter))
+            {
+                quarterViewModel = _viewModelProvider.CreateViewModels(oldQuarter, profile, token, viewModel.BarColumnChartViewModel.IsNormalized, out rawWeeks,viewModel.InputWeeks);
+            }
+            else
+            {
+                HttpContext.Session[ApplicationConstants.SessionName.SelectedQuarter] = newQuarter;
+                quarterViewModel = _viewModelProvider.CreateViewModels(newQuarter, profile, token, viewModel.BarColumnChartViewModel.IsNormalized, out rawWeeks);
+            }
+
+            quarterViewModel.ShowIncludeAllWeeksButton = quarterViewModel.Quarters.Last().Selected;
             var demoOvertimeViewModel = _mapper.Map<DemoOvertimeViewModel>(quarterViewModel);
-            demoOvertimeViewModel.InputWeeks = viewModel.InputWeeks;
+            demoOvertimeViewModel.InputWeeks = rawWeeks;
 
             return View(demoOvertimeViewModel);
-        }
-
-        private static IEnumerable<SelectListItem> GetSelectList(Quarter quarter)
-        {
-            return new List<SelectListItem>
-            {
-                new SelectListItem
-                {
-                    Selected = true,
-                    Value = quarter.From.ToShortDateString(),
-                    Text = quarter.GetDisplayTitle() + " " + quarter.From.Year
-                }
-            };
         }
     }
 }

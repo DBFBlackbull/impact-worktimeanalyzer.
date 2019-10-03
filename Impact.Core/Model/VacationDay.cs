@@ -1,21 +1,24 @@
 using System;
 using System.Globalization;
+using Impact.Core.Extension;
 
 namespace Impact.Core.Model
 {
     public class VacationDay
     {
-        public DateTime Date { get; set; }
-        public string Comment { get; set; }
-        public double VacationHours { get; set; }
-        public double ExtraVacationHours { get; set; }
+        public DateTime Date { get; }
+        public string Comment { get; }
+        public decimal NormalWorkDay { get; }
+        public decimal VacationHours { get; set; }
+        public decimal ExtraVacationHours { get; set; }
 
-        public VacationDay(DateTime date)
+        public VacationDay(DateTime date, decimal normalWorkDay)
         {
             Date = date;
+            NormalWorkDay = normalWorkDay;
         }
         
-        public VacationDay(DateTime date, string comment) : this(date)
+        public VacationDay(DateTime date, decimal normalWorkDay, string comment) : this(date, normalWorkDay)
         {
             Comment = comment;
         }
@@ -31,7 +34,7 @@ namespace Impact.Core.Model
             else
                 result = Math.Round(Convert.ToDecimal(ExtraVacationHours), 2) * -1;
 
-            return result;
+            return result.Normalize();
         }
         
         public string GetStringHours()

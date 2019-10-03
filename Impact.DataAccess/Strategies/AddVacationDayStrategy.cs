@@ -11,13 +11,15 @@ namespace Impact.DataAccess.Strategies
 {
     public class AddVacationDayStrategy : IAddRegistrationStrategy<VacationDay>
     {
+        private readonly Dictionary<DateTime, decimal> _workingHours;
         private const string VacationId = "20"; 
         private const string ExtraVacationId = "60";
         private XmlNamespaceManager _xnsm;
         private Dictionary<DateTime, VacationDay> VacationDays { get; }
 
-        public AddVacationDayStrategy()
+        public AddVacationDayStrategy(Dictionary<DateTime, decimal> workingHours)
         {
+            _workingHours = workingHours;
             VacationDays = new Dictionary<DateTime, VacationDay>();
         }
 
@@ -28,15 +30,15 @@ namespace Impact.DataAccess.Strategies
             
             var date = registration.Date;
             if (!VacationDays.TryGetValue(date, out var vacationDay))
-                VacationDays[date] = vacationDay = new VacationDay(date);
+                VacationDays[date] = vacationDay = new VacationDay(date, _workingHours[date]);
 
             switch (registration.SalaryCode)
             {
                 case VacationId:
-                    vacationDay.VacationHours = registration.Hours;
+                    vacationDay.VacationHours = Convert.ToDecimal(registration.Hours);
                     return;
                 case ExtraVacationId:
-                    vacationDay.ExtraVacationHours = registration.Hours;
+                    vacationDay.ExtraVacationHours = Convert.ToDecimal(registration.Hours);
                     return;
             }
         }
@@ -59,11 +61,11 @@ namespace Impact.DataAccess.Strategies
                 return;
             
             var date = DateTime.Parse(registration.SelectSingleNode("tlp:Date", _xnsm)?.InnerText);
-            var hours = double.Parse(registration.SelectSingleNode("tlp:RegHours", _xnsm)?.InnerText ?? "0", CultureInfo.InvariantCulture);
+            var hours = decimal.Parse(registration.SelectSingleNode("tlp:RegHours", _xnsm)?.InnerText ?? "0", CultureInfo.InvariantCulture);
             var note = registration.SelectSingleNode("tlp:Note", _xnsm)?.InnerText ?? "";
 
             if (!VacationDays.TryGetValue(date, out var vacationDay))
-                VacationDays[date] = vacationDay = new VacationDay(date, note);
+                VacationDays[date] = vacationDay = new VacationDay(date, _workingHours[date], note);
             
             switch (timeOffCode)
             {

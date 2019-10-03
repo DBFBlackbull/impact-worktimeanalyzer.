@@ -2,63 +2,50 @@
 @{
     ViewBag.Title = "Demo Overarbejde";
 }
-@using (Html.BeginForm("Index", "DemoOvertime", FormMethod.Post, new {id = "demoQuarterForm", name = "demoQuarterForm"}))
+@using (Html.BeginForm("Index", "DemoOvertime", FormMethod.Post, new {id = "quarterForm", name = "quarterForm"}))
 {
     <div class="container">
         <h2>Demo kvartal</h2>
-            <div class="row">
-                <div class="col-md-4">
-
-                    
-                    @for (int i = 0; i < 5; i++)
-                    {
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <div class="input-group mb-1">
-                                    <div class="input-group-prepend ">
-                                        <span class="input-group-text" style="width: 70px">@Model.InputWeeks[i].GetDisplayNumber()</span>
+        <p>Ændringer bliver <strong>ikke</strong> gemt i Timelog. Alle ændringer er kun visuelt representeret her.</p>
+        <div class="row">
+            @{
+                var kLimit = Convert.ToInt32(Math.Ceiling(Model.InputWeeks.Count / 5m));
+            }
+            @for (var k = 0; k < kLimit; k++)
+            {
+                <div class="col-md-3">
+                    @{
+                        var iStart = k * 5;
+                        var iEnd = Math.Min(Model.InputWeeks.Count, (k + 1) * 5);
+                        for (var i = iStart; i < iEnd; i++)
+                        {
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <div class="input-group mb-1">
+                                        <div class="input-group-prepend ">
+                                            <span class="input-group-text" style="width: 70px">@Model.InputWeeks[i].GetDisplayNumber()</span>
+                                        </div>
+                                        @Html.EditorFor(m => Model.InputWeeks[i].TotalHours, new {htmlAttributes = new {@class = "form-control", placeholder = "37,5"}})
                                     </div>
-                                    @Html.EditorFor(m => m.InputWeeks[i].TotalHours, new {htmlAttributes = new {@class = "form-control", placeholder = "37,5"}})
                                 </div>
                             </div>
-                        </div>
-                        @Html.HiddenFor(m => m.InputWeeks[i].Number)
+                            @Html.HiddenFor(m => Model.InputWeeks[i].Number)
+                            @Html.HiddenFor(m => Model.InputWeeks[i].NormalWorkWeek)
+                            var j = 0;
+                            foreach (var kvp in Model.InputWeeks[i].Dates)
+                            {
+                                <input type="hidden" name="@("InputWeeks[" + i + "].Dates[" + j + "].Key")" value="@kvp.Key"/>
+                                <input type="hidden" name="@("InputWeeks[" + i + "].Dates[" + j + "].Value")" value="@kvp.Value"/>
+                                j++;
+                            }
+                        }
                     }
                 </div>
-                <div class="col-md-4">
-                    @for (int i = 5; i < 10; i++)
-                    {
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <div class="input-group mb-1">
-                                    <div class="input-group-prepend ">
-                                        <span class="input-group-text" style="width: 70px">@Model.InputWeeks[i].GetDisplayNumber()</span>
-                                    </div>
-                                    @Html.EditorFor(m => m.InputWeeks[i].TotalHours, new {htmlAttributes = new {@class = "form-control", placeholder = "37,5"}})
-                                </div>
-                            </div>
-                        </div>
-                        @Html.HiddenFor(m => m.InputWeeks[i].Number)
-                    }
-                </div>
-                <div class="col-md-4">
-                    @for (int i = 10; i < Model.InputWeeks.Count; i++)
-                    {
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <div class="input-group mb-1">
-                                    <div class="input-group-prepend ">
-                                        <span class="input-group-text" style="width: 70px">@Model.InputWeeks[i].GetDisplayNumber()</span>
-                                    </div>
-                                    @Html.EditorFor(m => m.InputWeeks[i].TotalHours, new {htmlAttributes = new {@class = "form-control", placeholder = "37,5"}})
-                                </div>
-                            </div>
-                        </div>
-                        @Html.HiddenFor(m => m.InputWeeks[i].Number)
-                    }
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
+            }
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary">Opdater</button>
             </div>
+        </div>
     </div>
     @RenderPage("~/Views/Overtime/Index.cshtml")
 }

@@ -8,7 +8,7 @@ namespace Impact.Core.Constants
         public static readonly CultureInfo EnglishCultureInfo = new CultureInfo("en-US");
         public static readonly CultureInfo DanishCultureInfo = new CultureInfo("da-DK");
         private static readonly Calendar DanishCalendar = DanishCultureInfo.Calendar;
-        public static readonly DayOfWeek DanishFirstDayOfWeek = DanishCultureInfo.DateTimeFormat.FirstDayOfWeek;
+        private static readonly DayOfWeek DanishFirstDayOfWeek = DanishCultureInfo.DateTimeFormat.FirstDayOfWeek;
         private static readonly CalendarWeekRule DanishCalendarWeekRule = DanishCultureInfo.DateTimeFormat.CalendarWeekRule;
         public static int GetWeekNumber(DateTime date)
         {
@@ -31,6 +31,7 @@ namespace Impact.Core.Constants
         {
             public const string Token = "token";
             public const string Profile = "profile";
+            public const string SelectedQuarter = "quarter";
         }
         
         public static class Color

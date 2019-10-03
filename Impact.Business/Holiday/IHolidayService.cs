@@ -5,7 +5,7 @@ namespace Impact.Business.Holiday
 {
     public interface IHolidayService
     {
-        void AddHolidayHours(Quarter quarter, IEnumerable<Week> weeks, decimal normalWorkDay);
+        void AddHolidayHours(Quarter quarter, IEnumerable<Week> weeks);
         IEnumerable<VacationDay> GetHolidays(VacationYear vacationYear);
     }
 }

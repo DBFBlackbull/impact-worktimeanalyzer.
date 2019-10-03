@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Impact.Core.Constants;
+using Impact.Core.Extension;
 using Impact.Core.Model;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
 
@@ -10,10 +11,12 @@ namespace Impact.DataAccess.Strategies
 {
     public class AddWeekStrategy : IAddRegistrationStrategy<Week>
     {
+        private readonly Dictionary<DateTime, decimal> _workingHours;
         private Dictionary<int, Week> Weeks { get; }
         
-        public AddWeekStrategy()
+        public AddWeekStrategy(Dictionary<DateTime, decimal> workingHours)
         {
+            _workingHours = workingHours;
             Weeks = new Dictionary<int, Week>();
         }
 
@@ -25,7 +28,7 @@ namespace Impact.DataAccess.Strategies
             if (!Weeks.TryGetValue(weekNumber, out var week))
                 Weeks[weekNumber] = week = CreateWeek(weekNumber, dateTime);
 
-            week.TotalHours += registration.Hours;
+            week.TotalHours += Convert.ToDecimal(registration.Hours);
         }
 
         public IEnumerable<Week> GetList()
@@ -33,19 +36,22 @@ namespace Impact.DataAccess.Strategies
             return Weeks.Values.OrderBy(w => w.Number).ToList();
         }
         
-        private static Week CreateWeek(int weekNumber, DateTime dateTime)
+        private Week CreateWeek(int weekNumber, DateTime dateTime)
         {
             var day = dateTime;
-            while (day.DayOfWeek != ApplicationConstants.DanishFirstDayOfWeek)
+            while (day.DayOfWeek != DayOfWeek.Monday)
             {
                 day = day.AddDays(-1);
             }
             var week = new Week { Number = weekNumber };
-            week.Dates.Add(day);                  //Monday
-            week.Dates.Add(day.AddDays(1)); //Tuesday
-            week.Dates.Add(day.AddDays(2)); //Wednesday
-            week.Dates.Add(day.AddDays(3)); //Thursday
-            week.Dates.Add(day.AddDays(4)); //Friday
+            while (day.DayOfWeek < DayOfWeek.Saturday)
+            {
+                week.Dates.Add(day, _workingHours[day]);
+                day = day.AddDays(1);
+            }
+            
+            week.NormalWorkWeek = week.Dates.Values.Sum(d => d).Normalize();
+            
             return week;
         }
     }
