@@ -43,16 +43,6 @@ namespace Impact.Website.Providers
             rawWeeks = rawWeeksOverride ?? _timeRepository.GetRawWeeksInQuarter(quarter, profile, token).ToList();
             rawWeeks = _timeService.CategorizeWeeks(quarter, profile, rawWeeks, token).ToList();
 
-            var interestHoursLimit = (profile.NormalWorkWeek + ApplicationConstants.InterestConst).Normalize();
-            var movableHoursLimit = (interestHoursLimit + ApplicationConstants.MovableConst).Normalize();
-            _flexZero = $"Flex ({profile.NormalWorkWeek.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}-{interestHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)})";
-            _flex100 = $"Flex ({interestHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}-{movableHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)})";
-            _payout = $"Udbetalt ({movableHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}+)";
-
-            _flexZeroPercent = $"{_flexZero}: 0% løn";
-            _flex100Percent = $"{_flex100}: 100% løn";
-            _payoutPercent = $"{_payout}: 150% løn";
-            
             var now = DateTime.Today;
             var previousWeeks = rawWeeks.Where(w => w.Dates.Keys.LastOrDefault(d => d <= quarter.To) < now).ToList();
             var normalizedPreviousWeek = _timeService.GetNormalizedWeeks(previousWeeks).ToList();
@@ -78,8 +68,19 @@ namespace Impact.Website.Providers
                 }
             }
 
+            var normalWorkWeek = distinctWorkWeeks.Last();
+            var interestHoursLimit = (normalWorkWeek + ApplicationConstants.InterestConst).Normalize();
+            var movableHoursLimit = (interestHoursLimit + ApplicationConstants.MovableConst).Normalize();
+            _flexZero = $"Flex ({normalWorkWeek.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}-{interestHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)})";
+            _flex100 = $"Flex ({interestHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}-{movableHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)})";
+            _payout = $"Udbetalt ({movableHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}+)";
+
+            _flexZeroPercent = $"{_flexZero}: 0% løn";
+            _flex100Percent = $"{_flex100}: 100% løn";
+            _payoutPercent = $"{_payout}: 150% løn";
+
             var quarterViewModel = new QuarterViewModel();
-            quarterViewModel.Quarters = GetSelectList(quarter, profile);
+            quarterViewModel.Quarters = GetSelectList(quarter, profile.HiredDate);
             quarterViewModel.SelectedQuarter = quarter.From.ToShortDateString();
             quarterViewModel.DisplayNormalWorkWeeks = normalWorkWeekStrings;
             quarterViewModel.DisplayFlexZero = _flexZero;
@@ -89,7 +90,7 @@ namespace Impact.Website.Providers
             quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PieChartViewModel = CreatePieChartViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PotentialChartViewModel = CreateGaugeChartViewModel(normalizedPreviousWeek, normalizedAllWeeks);
-            quarterViewModel.SummedViewModel = CreateSummedViewModel(quarter, normalizedPreviousWeek, normalizedAllWeeks, TimeLogService.GetNormalWorkMonth(distinctWorkWeeks.Last()));
+            quarterViewModel.SummedViewModel = CreateSummedViewModel(quarter, normalizedPreviousWeek, normalizedAllWeeks, TimeLogService.GetNormalWorkMonth(normalWorkWeek));
 
             if (normalizedPreviousWeek.Count < rawWeeks.Count)
             {
@@ -375,9 +376,9 @@ namespace Impact.Website.Providers
             };
         }
         
-        private IEnumerable<SelectListItem> GetSelectList(Quarter quarter, Profile profile)
+        private IEnumerable<SelectListItem> GetSelectList(Quarter quarter, DateTime hiredDate)
         {
-            var start = _timeService.GetQuarter(profile.HiredDate).From;
+            var start = _timeService.GetQuarter(hiredDate).From;
             var selectListItems = new List<SelectListItem>();
             var groupsMap = new Dictionary<int, SelectListGroup>();
 

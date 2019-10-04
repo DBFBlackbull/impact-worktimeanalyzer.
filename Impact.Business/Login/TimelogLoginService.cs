@@ -39,9 +39,9 @@ namespace Impact.Business.Login
                                                  "Please screenshot this error page and send it to PBM");
 
             profile.IsDeveloper = IsDeveloper(profile.Title, profile.DepartmentName);
-            profile.NormalWorkDay = GetReportingNormalWorkDay(profile.EmployeeId, profile.DepartmentId);
-            profile.NormalWorkWeek = (profile.NormalWorkDay * 5).Normalize();
-            profile.NormalWorkMonth = TimeLogService.GetNormalWorkMonth(profile.NormalWorkWeek); 
+            var normalWorkDay  = profile.NormalWorkDay = GetReportingNormalWorkDay(profile.EmployeeId, profile.DepartmentId);;
+            var normalWorkWeek = profile.NormalWorkWeek = (normalWorkDay * 5).Normalize();
+            profile.NormalWorkMonth = TimeLogService.GetNormalWorkMonth(normalWorkWeek); 
 
             securityToken = ProjectManagementHandler.Instance.Token;
 
