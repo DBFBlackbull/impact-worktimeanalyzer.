@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Impact.Business.Time;
 using Impact.Core.Constants;
 using Impact.Core.Extension;
 using Impact.Core.Model;
@@ -40,7 +41,7 @@ namespace Impact.Business.Login
             profile.IsDeveloper = IsDeveloper(profile.Title, profile.DepartmentName);
             profile.NormalWorkDay = GetReportingNormalWorkDay(profile.EmployeeId, profile.DepartmentId);
             profile.NormalWorkWeek = (profile.NormalWorkDay * 5).Normalize();
-            profile.NormalWorkMonth = Math.Round(profile.NormalWorkWeek * 52m / 12m, 2, MidpointRounding.AwayFromZero).Normalize(); 
+            profile.NormalWorkMonth = TimeLogService.GetNormalWorkMonth(profile.NormalWorkWeek); 
 
             securityToken = ProjectManagementHandler.Instance.Token;
 

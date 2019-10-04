@@ -89,7 +89,7 @@ namespace Impact.Website.Providers
             quarterViewModel.BalanceChartViewModel = CreateBalanceViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PieChartViewModel = CreatePieChartViewModel(normalizedPreviousWeek, normalizedAllWeeks); 
             quarterViewModel.PotentialChartViewModel = CreateGaugeChartViewModel(normalizedPreviousWeek, normalizedAllWeeks);
-            quarterViewModel.SummedViewModel = CreateSummedViewModel(quarter, normalizedPreviousWeek, normalizedAllWeeks, profile.NormalWorkMonth);
+            quarterViewModel.SummedViewModel = CreateSummedViewModel(quarter, normalizedPreviousWeek, normalizedAllWeeks, TimeLogService.GetNormalWorkMonth(distinctWorkWeeks.Last()));
 
             if (normalizedPreviousWeek.Count < rawWeeks.Count)
             {

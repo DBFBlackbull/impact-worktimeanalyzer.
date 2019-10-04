@@ -4,6 +4,7 @@ using System.Linq;
 using Impact.Business.Holiday;
 using Impact.Business.Strategies;
 using Impact.Core.Constants;
+using Impact.Core.Extension;
 using Impact.Core.Model;
 using Impact.DataAccess.Timelog;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
@@ -179,6 +180,11 @@ namespace Impact.Business.Time
             }
 
             return new VacationYear(start, end);
+        }
+
+        public static decimal GetNormalWorkMonth(decimal normalWorkWeek)
+        {
+            return Math.Round(normalWorkWeek * 52m / 12m, 2, MidpointRounding.AwayFromZero).Normalize();
         }
 
         private static void MoveHours<T>(IEnumerable<T> lowHoursElements, List<T> movableHoursElements, IMoveHoursStrategy<T> strategy)
