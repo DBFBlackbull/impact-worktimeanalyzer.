@@ -59,7 +59,7 @@ namespace Impact.Website.Controllers
             var vacationViewModel = new VacationViewModel
             {
                 DivId = "calendar_chart",
-                VacationYears = GetSelectList(vacationYear),
+                VacationYears = GetSelectList(vacationYear, profile.HiredDate),
                 SelectedVacationYear = vacationYear.StartDate.ToString("s"),
                 VacationYear = vacationYear,
                 VacationDays = vacationDays,
@@ -70,26 +70,29 @@ namespace Impact.Website.Controllers
             return vacationViewModel;
         }
         
-        private IEnumerable<SelectListItem> GetSelectList(VacationYear selectedYear)
+        private IEnumerable<SelectListItem> GetSelectList(VacationYear selectedYear, DateTime hiredDate)
         {
             var selectListItems = new List<SelectListItem>();
 
-            var startDate = DateTime.Now.AddYears(1);
+            var currentDate = _timeService.GetVacationYear(hiredDate).StartDate;
 
-            for (int i = 0; i < 6; i++)
+            var nowInOneYear = DateTime.Now.AddYears(1);
+            while (currentDate < nowInOneYear)
             {
-                var vacationYear = _timeService.GetVacationYear(startDate.AddYears(i * -1));
+                var currentYear = _timeService.GetVacationYear(currentDate);
                 selectListItems.Add(new SelectListItem
                 {
-                    Selected = vacationYear.StartDate == selectedYear.StartDate,
-                    Value = vacationYear.StartDate.ToString("s"),
-                    Text = vacationYear.GetShortDisplayString()
+                    Selected = currentYear.StartDate == selectedYear.StartDate,
+                    Value = currentYear.StartDate.ToString("s"),
+                    Text = currentYear.GetShortDisplayString()
                 });
+
+                currentDate = currentDate.AddYears(1);
             }
             
             // Special case for mini-vacation period
             // TODO Delete in 5 years when no longer relevant. Lolol like I'm gonna remember this xD
-            if (selectListItems.All(v => v.Value != ApplicationConstants.MiniVacationStart.ToShortDateString()))
+            if (selectListItems.All(v => v.Value != ApplicationConstants.MiniVacationStart.ToString("s")))
             {
                 var vacationYear = _timeService.GetVacationYear(new DateTime(2020, 5, 1));
                 selectListItems.Add(new SelectListItem

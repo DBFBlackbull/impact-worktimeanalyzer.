@@ -20,24 +20,29 @@ namespace Impact.DataAccess.Timelog
     {
         private static readonly ProjectManagementServiceClient TransactionalClient = ProjectManagementHandler.Instance.ProjectManagementClient;
         private static readonly ServiceSoapClient ReportingClient = ServiceHandler.Instance.Client;
+        private static readonly Dictionary<string, Dictionary<DateTime, decimal>> WorkingHours = new Dictionary<string, Dictionary<DateTime, decimal>>();
 
         private const int PageSize = 500;
 
         public IEnumerable<Week> GetRawWeeksInQuarter(Quarter quarter, Profile profile, SecurityToken token)
         {
             var from = quarter.From;
-            while (from.DayOfWeek != DayOfWeek.Monday)
+            while (from.DayOfWeek != DayOfWeek.Monday && 
+                   from.DayOfWeek != DayOfWeek.Saturday && 
+                   from.DayOfWeek != DayOfWeek.Sunday)
             {
                 from = from.AddDays(-1);
             }
             var to = quarter.To;
-            while (to.DayOfWeek != DayOfWeek.Friday)
+            while (to.DayOfWeek != DayOfWeek.Friday &&
+                   to.DayOfWeek != DayOfWeek.Saturday && 
+                   to.DayOfWeek != DayOfWeek.Sunday)
             {
                 to = to.AddDays(1);
             }
             
-            var workingHours = GetWorkingHours(from, to, profile);
-            var weeks = GetWorkUnitsData<Week>(quarter.From, quarter.To, token, new AddWeekStrategy(workingHours)).ToList();
+            ValidateWorkingHours(from, to, profile);
+            var weeks = GetWorkUnitsData<Week>(quarter.From, quarter.To, token, new AddWeekStrategy(WorkingHours[profile.Initials])).ToList();
 
             return weeks;
         }
@@ -49,8 +54,8 @@ namespace Impact.DataAccess.Timelog
 
         public IEnumerable<VacationDay> GetVacationDays(DateTime from, DateTime to, SecurityToken token, Profile profile)
         {
-            var workingHours = GetWorkingHours(from, to, profile);
-            var vacationDays = GetVacationRegistrations(from, to, profile, new AddVacationDayStrategy(workingHours));
+            ValidateWorkingHours(from, to, profile);
+            var vacationDays = GetVacationRegistrations(from, to, profile, new AddVacationDayStrategy(WorkingHours[profile.Initials]));
 //            var workUnitsData = GetWorkUnitsData<VacationDay>(@from, to, token, new AddVacationDayStrategy()).ToList();
             return vacationDays;
         }
@@ -95,7 +100,52 @@ namespace Impact.DataAccess.Timelog
             return strategy.GetList();
         }
 
-        private static Dictionary<DateTime, decimal> GetWorkingHours(DateTime from, DateTime to, Profile profile)
+        private static void ValidateWorkingHours(DateTime from, DateTime to, Profile profile)
+        {
+            if (!WorkingHours.TryGetValue(profile.Initials, out var dictionary))
+                WorkingHours[profile.Initials] = dictionary = new Dictionary<DateTime, decimal>();
+            
+            var current = from;
+            var neededDates = new SortedSet<DateTime>();
+            while (current <= to)
+            {
+                neededDates.Add(current);
+                current = current.AddDays(1);
+            }
+
+            neededDates.ExceptWith(dictionary.Keys);
+            var valid = !neededDates.Any();
+            if (valid)
+                return;
+
+            UpdateWorkingHoursDictionary(neededDates, profile);
+        }
+
+        private static void UpdateWorkingHoursDictionary(ISet<DateTime> neededDates, Profile profile)
+        {
+            var start = neededDates.First();
+            var end = neededDates.Last();
+
+            var dictionary = GetWorkingHoursDictionary(start, end, profile);
+            while (!dictionary.Any())
+            {
+                var timeSpan = end - start;
+                start = start.Add(timeSpan);
+                end = end.Add(timeSpan);
+                dictionary = GetWorkingHoursDictionary(start, end, profile);
+            }
+            
+            var missingDates = neededDates.Except(dictionary.Keys).ToDictionary(kv => kv, kv => 0m);
+            dictionary = dictionary.Union(missingDates).ToDictionary(kv => kv.Key, kv => kv.Value);
+
+            HandleZeroDays(dictionary);
+            foreach (var neededDate in neededDates)
+            {
+                WorkingHours[profile.Initials][neededDate] = dictionary[neededDate];
+            }
+        }
+
+        private static IDictionary<DateTime, decimal> GetWorkingHoursDictionary(DateTime start, DateTime end, Profile profile)
         {
             var workingHours = ReportingClient.GetWorkingHoursRaw(
                 ServiceHandler.Instance.SiteCode,
@@ -103,13 +153,13 @@ namespace Impact.DataAccess.Timelog
                 ServiceHandler.Instance.ApiPassword,
                 profile.EmployeeId,
                 profile.DepartmentId,
-                EmployeeStatus.Active,
-                GetReportingDateString(@from),
-                GetReportingDateString(to));
+                EmployeeStatus.All,
+                GetReportingDateString(start),
+                GetReportingDateString(end));
 
             var xnsm = new XmlNamespaceManager(workingHours.OwnerDocument.NameTable);
             xnsm.AddNamespace(workingHours.Prefix, workingHours.NamespaceURI);
-            
+
             var dictionary = new Dictionary<DateTime, decimal>();
             foreach (XmlNode workingHour in workingHours)
             {
@@ -117,45 +167,47 @@ namespace Impact.DataAccess.Timelog
                 var isParsed = TryGetReportingDecimal(workHoursString, out var workHours);
                 if (!isParsed)
                     workHours = profile.NormalWorkDay;
-                
+
                 var date = GetReportingDateTime(workingHour.SelectSingleNode("tlp:Date", xnsm)?.InnerText);
                 dictionary.Add(date, workHours);
-            }
-
-            var zeroDays = dictionary
-                .Where(kv => kv.Value == 0)
-                .Where(kv => kv.Key.DayOfWeek != DayOfWeek.Saturday)
-                .Where(kv => kv.Key.DayOfWeek != DayOfWeek.Sunday)
-                .ToList();
-            foreach (var kvp in zeroDays)
-            {
-                var lookupDate = kvp.Key;
-                
-                var workHours = dictionary[kvp.Key];
-                while (workHours == 0)
-                {
-                    if (lookupDate.Day != 1)
-                    {
-                        lookupDate = lookupDate.AddDays(-1);
-                        workHours = dictionary[lookupDate];
-                    }
-                    else
-                    {
-                        while (workHours == 0)
-                        {
-                            lookupDate = lookupDate.AddDays(1);
-                            workHours = dictionary[lookupDate];
-                        }
-                    }
-                }
-                
-                dictionary[kvp.Key] = workHours;
             }
 
             return dictionary;
         }
 
-        public static string GetReportingDateString(DateTime dateTime)
+        private static void HandleZeroDays(IDictionary<DateTime, decimal> dictionary)
+        {
+            var zeroDays = dictionary
+                .Where(kv => kv.Value == 0)
+                .Where(kv => kv.Key.DayOfWeek != DayOfWeek.Saturday)
+                .Where(kv => kv.Key.DayOfWeek != DayOfWeek.Sunday)
+                .ToList();
+            
+            foreach (var kvp in zeroDays)
+            {
+                var lookupDate = kvp.Key;
+
+                var successLookup = lookupDate.Day > 1;
+                var workHours = dictionary[kvp.Key];
+                while (workHours == 0 && successLookup)
+                {
+                    lookupDate = lookupDate.AddDays(-1);
+                    successLookup = dictionary.TryGetValue(lookupDate, out workHours) 
+                                    && lookupDate.Day < 1;
+                }
+
+                lookupDate = kvp.Key;
+                while (workHours == 0)
+                {
+                    lookupDate = lookupDate.AddDays(1);
+                    dictionary.TryGetValue(lookupDate, out workHours);
+                }
+                
+                dictionary[kvp.Key] = workHours;
+            }
+        }
+
+        private static string GetReportingDateString(DateTime dateTime)
         {
             return dateTime.ToString("s");
         }

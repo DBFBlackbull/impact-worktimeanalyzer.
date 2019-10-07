@@ -376,17 +376,16 @@ namespace Impact.Website.Providers
             };
         }
         
-        private IEnumerable<SelectListItem> GetSelectList(Quarter quarter, DateTime hiredDate)
+        private IEnumerable<SelectListItem> GetSelectList(Quarter selectedQuarter, DateTime hiredDate)
         {
-            var start = _timeService.GetQuarter(hiredDate).From;
             var selectListItems = new List<SelectListItem>();
             var groupsMap = new Dictionary<int, SelectListGroup>();
-
+            
+            var currentDate = _timeService.GetQuarter(hiredDate).From;
             var now = DateTime.Now;
-            while (start < now)
+            while (currentDate < now)
             {
-                var selectQuarter = _timeService.GetQuarter(start);
-                var currentDate = selectQuarter.From;
+                var currentQuarter = _timeService.GetQuarter(currentDate);
                 var currentYear = currentDate.Year;
 
                 if (!groupsMap.TryGetValue(currentYear, out var group))
@@ -395,12 +394,12 @@ namespace Impact.Website.Providers
                 selectListItems.Add(new SelectListItem
                 {
                     Group = group,
-                    Selected = quarter.From == currentDate,
+                    Selected = currentDate == selectedQuarter.From,
                     Value = currentDate.ToShortDateString(),
-                    Text = selectQuarter.GetDisplayTitle() + " " + currentYear
+                    Text = currentQuarter.GetDisplayTitle() + " " + currentYear
                 });
                 
-                start = start.AddMonths(3);
+                currentDate = currentDate.AddMonths(3);
             }
 
             return selectListItems;
