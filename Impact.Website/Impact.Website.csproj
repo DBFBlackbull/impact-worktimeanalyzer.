@@ -191,7 +191,6 @@
     </Compile>
     <Compile Include="Helper\JavaScriptConvert.cs" />
     <Compile Include="Models\AwesomeThursdayViewModel.cs" />
-    <Compile Include="Models\Charts\CalendarChartViewModel.cs" />
     <Compile Include="Models\Charts\GaugeChartViewModel.cs" />
     <Compile Include="Models\Charts\IChart.cs" />
     <Compile Include="Models\Charts\BarColumnChartViewModel.cs" />
