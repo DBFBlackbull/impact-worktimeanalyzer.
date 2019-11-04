@@ -53,7 +53,7 @@ namespace Impact.Website.Controllers
         {
             var vacationYear = _timeService.GetVacationYear(datetime);
             var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
-            var vacationDays = _timeRepository.GetVacationDays(vacationYear.StartDate, vacationYear.EndDate, token, profile).ToList();
+            var vacationDays = _timeRepository.GetVacationDays(vacationYear.StartDate, vacationYear.EndDate, profile, token).ToList();
             vacationDays.AddRange(_holidayService.GetHolidays(vacationYear));
 
             var vacationViewModel = new VacationViewModel

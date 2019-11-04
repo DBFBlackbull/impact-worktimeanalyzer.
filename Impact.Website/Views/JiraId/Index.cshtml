@@ -1,0 +1,78 @@
+﻿@using Impact.Core.Constants
+@model Impact.Website.Models.JiraIdViewModel
+@{
+    ViewBag.Title = "Jira ID Opslag";
+}
+<div class="container">
+    <h2>Jira ID opslag</h2>
+    <p>Find alle registreringer på en enkelt Jira ID</p>
+    <div class="row">
+        <div class="col-md-6">
+            @using (Html.BeginForm("Index", "JiraId", FormMethod.Post, new {@class = "form-horizontal"}))
+            { 
+                <div class="form-group">
+                    @Html.LabelFor(u => u.JiraId)
+                    @Html.EditorFor(u => u.JiraId, new {htmlAttributes = new {@class = "form-control", placeholder = "PWT-123. OBS: Case Sensitivt!"}})
+                    @Html.ValidationMessageFor(u => u.JiraId)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(u => u.From)
+                    @Html.EditorFor(u => u.From, new {htmlAttributes = new {@class = "form-control"}})
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(u => u.To)
+                    @Html.EditorFor(u => u.To, new {htmlAttributes = new {@class = "form-control"}})
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            }
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        @* <div class="col-md-1"></div> *@
+        <div class="col-md-12">
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <strong>@Model.Message</strong>
+            }
+            @if (Model.TimeRegistrations.Any())
+            {
+                <table class="table table-sm table-hover">
+                    <thread>
+                        <tr>
+                            <th scope="col">Dato</th>
+                            <th scope="col">Projekt</th>
+                            <th scope="col">Task</th>
+                            <th scope="col">Kommentar</th>
+                            <th scope="col" class="text-right">Decimal</th>
+                            <th scope="col" class="text-right">Minut</th>
+                        </tr>
+                    </thread>
+                    <tbody>
+                    @foreach (var timeRegistration in Model.TimeRegistrations)
+                    {
+                        <tr>
+                            <th scope="row">@timeRegistration.Date.ToString("d", ApplicationConstants.DanishCultureInfo.DateTimeFormat)</th>
+                            <td>@timeRegistration.Project</td>
+                            <td>@timeRegistration.Task</td>
+                            <td>@timeRegistration.Comment</td>
+                            <td class="text-right">@Math.Round(timeRegistration.RawHours, 2, MidpointRounding.AwayFromZero).ToString("F2", ApplicationConstants.DanishCultureInfo.NumberFormat)</td>
+                            <td class="text-right">@timeRegistration.DisplayHours</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <th scope="row" class="text-right">Total:</th>
+                        <th scope="row" class="text-right">@Math.Round(Model.SummedRawHours, 2, MidpointRounding.AwayFromZero).ToString("F2", ApplicationConstants.DanishCultureInfo.NumberFormat)</th>
+                        <th scope="row" class="text-right">@Model.SummedDisplayHours</th>
+                    </tr>
+                    </tbody>
+                </table>
+            }
+        </div>
+        @* <div class="col-md-1"></div> *@
+    </div>
+</div>

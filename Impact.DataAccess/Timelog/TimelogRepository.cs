@@ -11,8 +11,12 @@ using TimeLog.ReportingApi.SDK;
 using TimeLog.ReportingApi.SDK.ReportingService;
 using TimeLog.TransactionalApi.SDK;
 using TimeLog.TransactionalApi.SDK.ProjectManagementService;
+using Allocation = TimeLog.ReportingApi.SDK.Allocation;
 using ExecutionStatus = TimeLog.TransactionalApi.SDK.ProjectManagementService.ExecutionStatus;
+using Project = Impact.Core.Model.Project;
 using SecurityToken = TimeLog.TransactionalApi.SDK.ProjectManagementService.SecurityToken;
+using Task = Impact.Core.Model.Task;
+using WorkUnit = TimeLog.ReportingApi.SDK.WorkUnit;
 
 namespace Impact.DataAccess.Timelog
 {
@@ -40,7 +44,7 @@ namespace Impact.DataAccess.Timelog
             {
                 to = to.AddDays(1);
             }
-            
+
             ValidateWorkingHours(from, to, profile);
             var weeks = GetWorkUnitsData<Week>(quarter.From, quarter.To, token, new AddWeekStrategy(WorkingHours[profile.Initials])).ToList();
 
@@ -52,12 +56,74 @@ namespace Impact.DataAccess.Timelog
             return GetWorkUnitsData<Month>(hiredDate, DateTime.Now, token, new AddMonthStrategy(hiredDate));
         }
 
-        public IEnumerable<VacationDay> GetVacationDays(DateTime from, DateTime to, SecurityToken token, Profile profile)
+        public IEnumerable<VacationDay> GetVacationDays(DateTime from, DateTime to, Profile profile, SecurityToken token)
         {
             ValidateWorkingHours(from, to, profile);
             var vacationDays = GetVacationRegistrations(from, to, profile, new AddVacationDayStrategy(WorkingHours[profile.Initials]));
 //            var workUnitsData = GetWorkUnitsData<VacationDay>(@from, to, token, new AddVacationDayStrategy()).ToList();
             return vacationDays;
+        }
+
+        public IEnumerable<TimeRegistration> GetRegistrationsWithJiraId(string jiraId, DateTime from, DateTime to, Profile profile, SecurityToken token)
+        {
+            var workUnitsRaw = ReportingClient.GetWorkUnitsRaw(
+                ServiceHandler.Instance.SiteCode,
+                ServiceHandler.Instance.ApiId,
+                ServiceHandler.Instance.ApiPassword,
+                WorkUnit.All,
+                profile.EmployeeId,
+                Allocation.All,
+                TimeLog.ReportingApi.SDK.Task.All,
+                TimeLog.ReportingApi.SDK.Project.All,
+                profile.DepartmentId,
+                GetReportingDateString(from),
+                GetReportingDateString(to)
+            );
+
+            var xnsm = new XmlNamespaceManager(workUnitsRaw.OwnerDocument.NameTable);
+            xnsm.AddNamespace(workUnitsRaw.Prefix, workUnitsRaw.NamespaceURI);
+
+            var xmlNodeList = workUnitsRaw.SelectNodes($"//tlp:WorkUnit[tlp:AdditionalTextField='{jiraId}']", xnsm);
+            var registrationsWithJiraId = new List<TimeRegistration>();
+            if (xmlNodeList == null)
+                return registrationsWithJiraId;
+
+            foreach (XmlNode xmlNode in xmlNodeList)
+            {
+                var workUnit = new WorkUnit(xmlNode, xnsm);
+                var timeRegistration = new TimeRegistration
+                (
+                    workUnit.AdditionalTextField,
+                    workUnit.TaskName,
+                    workUnit.ProjectName,
+                    workUnit.Date,
+                    workUnit.Note,
+                    Convert.ToDecimal(workUnit.RegHours).Normalize()
+                );
+                registrationsWithJiraId.Add(timeRegistration);
+            }
+
+            registrationsWithJiraId = registrationsWithJiraId.OrderBy(r => r.Date).ToList();
+
+            return registrationsWithJiraId;
+        }
+
+        public IEnumerable<Project> GetTasks(string initials, SecurityToken token)
+        {
+            var projects = new Dictionary<int, Project>();
+
+            var timelogTasks = TransactionalClient.GetTasksAllocatedToEmployee(initials, token).Return;
+            foreach (var timelogTask in timelogTasks)
+            {
+                var projectId = timelogTask.Details.ProjectHeader.ID;
+                var projectName = timelogTask.Details.ProjectHeader.Name;
+                if (!projects.TryGetValue(projectId, out var project))
+                    projects[projectId] = project = new Project(projectId, projectName);
+                
+                project.Tasks.Add(new Task(timelogTask.TaskID, timelogTask.Name));
+            }
+
+            return projects.Values.ToList();
         }
 
         private static IEnumerable<T> GetWorkUnitsData<T>(DateTime from, DateTime to, SecurityToken token, IAddRegistrationStrategy<T> strategy)

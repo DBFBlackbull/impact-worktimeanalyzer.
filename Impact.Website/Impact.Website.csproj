@@ -181,6 +181,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AwesomeThursdayController.cs" />
     <Compile Include="Controllers\DemoOvertimeController.cs" />
+    <Compile Include="Controllers\JiraIdController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\OvertimeController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
@@ -198,6 +199,7 @@
     <Compile Include="Models\Column.cs" />
     <Compile Include="Models\DemoOvertimeViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\JiraIdViewModel.cs" />
     <Compile Include="Models\Options\AnimationEasing.cs" />
     <Compile Include="Models\Options\BarColumnOptions.cs" />
     <Compile Include="Models\Options\BarOrientation.cs" />
@@ -296,6 +298,7 @@
     <Content Include="Scripts\_references.js" />
     <Content Include="Views\AwesomeThursday\Index.cshtml" />
     <Content Include="Views\DemoOvertime\Index.cshtml" />
+    <Content Include="Views\JiraId\Index.cshtml" />
     <Content Include="Views\Overtime\Index.cshtml" />
     <Content Include="Views\Profile\Index.cshtml" />
     <Content Include="Views\Site\About.cshtml" />
