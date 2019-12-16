@@ -65,7 +65,7 @@ namespace Impact.Website.Controllers
                 VacationDays = vacationDays,
                 SummedVacationDays = Math.Round(vacationDays.Sum(v => v.VacationHours / v.NormalWorkDay), 2).Normalize(),
                 SummedExtraVacationDays = Math.Round(vacationDays.Sum(v => v.ExtraVacationHours / v.NormalWorkDay), 2).Normalize(),
-                NormalWorkDay = vacationDays.Last().NormalWorkDay
+                NormalWorkDay = vacationDays.Last(d => d.NormalWorkDay != 1).NormalWorkDay
             };
             return vacationViewModel;
         }
