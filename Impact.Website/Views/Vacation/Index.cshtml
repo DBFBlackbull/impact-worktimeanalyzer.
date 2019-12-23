@@ -20,13 +20,11 @@
         <div class="col-md-12">
             @using (Html.BeginForm("Index", "Vacation", FormMethod.Post, new {id = "vacationForm", name = "vacationForm"}))
             {
-                <div class="col-md-12">
-                    <form>
-                        <div class="form-group form-inline">
-                            @Html.DropDownListFor(m => m.SelectedVacationYear, Model.VacationYears, new {@class = "form-control", onchange = "Submit()"})
-                        </div>
-                    </form>
-                </div>
+                <form>
+                    <div class="form-group form-inline">
+                        @Html.DropDownListFor(m => m.SelectedVacationYear, Model.VacationYears, new {@class = "form-control", onchange = "Submit()"})
+                    </div>
+                </form>
             }
         </div>
     </div>

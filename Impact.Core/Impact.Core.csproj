@@ -48,7 +48,6 @@
     <Compile Include="Extension\SessionExtensions.cs" />
     <Compile Include="Interfaces\Cloneable.cs" />
     <Compile Include="Model\Profile.cs" />
-    <Compile Include="Model\Project.cs" />
     <Compile Include="Model\TimeRegistration.cs" />
     <Compile Include="Model\VacationDay.cs" />
     <Compile Include="Model\Month.cs" />

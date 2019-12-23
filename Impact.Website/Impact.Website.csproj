@@ -345,6 +345,10 @@
       <Project>{70c6e5a5-4b58-45d6-92c1-65373b94ac01}</Project>
       <Name>Impact.DataAccess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TimeLog.ReportingApi.SDK\TimeLog.ReportingApi.SDK.csproj">
+      <Project>{bb65da9a-999b-4eeb-b236-3cb45140c7b7}</Project>
+      <Name>TimeLog.ReportingApi.SDK</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TimeLog.TransactionalApi.SDK\TimeLog.TransactionalApi.SDK.csproj">
       <Project>{A1D54CAF-4BCB-43FB-917C-4F392C76A0E4}</Project>
       <Name>TimeLog.TransactionalApi.SDK</Name>

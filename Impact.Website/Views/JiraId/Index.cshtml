@@ -7,21 +7,29 @@
     <h2>Jira ID opslag</h2>
     <p>Find alle registreringer på en enkelt Jira ID</p>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
             @using (Html.BeginForm("Index", "JiraId", FormMethod.Post, new {@class = "form-horizontal"}))
             { 
-                <div class="form-group">
-                    @Html.LabelFor(u => u.JiraId)
-                    @Html.EditorFor(u => u.JiraId, new {htmlAttributes = new {@class = "form-control", placeholder = "PWT-123. OBS: Case Sensitivt!"}})
-                    @Html.ValidationMessageFor(u => u.JiraId)
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        @Html.LabelFor(m => m.JiraId)
+                        @Html.EditorFor(m => m.JiraId, new {htmlAttributes = new {@class = "form-control", placeholder = "PWT-123. OBS: Case Sensitivt!"}})
+                        @Html.ValidationMessageFor(m => m.JiraId)
+                    </div>                    
                 </div>
-                <div class="form-group">
-                    @Html.LabelFor(u => u.From)
-                    @Html.EditorFor(u => u.From, new {htmlAttributes = new {@class = "form-control"}})
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(u => u.To)
-                    @Html.EditorFor(u => u.To, new {htmlAttributes = new {@class = "form-control"}})
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        @Html.LabelFor(m => m.Projects)
+                        @Html.DropDownListFor(m => m.SelectedProject, Model.Projects, new {@class = "form-control"})
+                    </div>
+                    <div class="form-group col-md-3">
+                        @Html.LabelFor(m => m.From)
+                        @Html.EditorFor(m => m.From, new {htmlAttributes = new {@class = "form-control"}})
+                    </div>
+                    <div class="form-group col-md-3">
+                        @Html.LabelFor(m => m.To)
+                        @Html.EditorFor(m => m.To, new {htmlAttributes = new {@class = "form-control"}})
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             }

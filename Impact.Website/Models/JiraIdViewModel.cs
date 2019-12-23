@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Web.Mvc;
 using Impact.Core.Extension;
 using Impact.Core.Model;
 
@@ -24,6 +25,10 @@ namespace Impact.Website.Models
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime To { get; set; }
+
+        [DisplayName("Projekt")]
+        public IEnumerable<SelectListItem> Projects { get; set; }
+        public string SelectedProject { get; set; }
 
         public string Message { get; set; }
         public IEnumerable<TimeRegistration> TimeRegistrations { get; set; }
