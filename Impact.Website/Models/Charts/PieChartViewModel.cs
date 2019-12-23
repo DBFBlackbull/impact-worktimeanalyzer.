@@ -2,10 +2,9 @@
 
 namespace Impact.Website.Models.Charts
 {
-    public class PieChartViewModel : IChart
+    public class PieChartViewModel : INormalizableChart
     {
         public string DivId { get; set; }
-        public bool IsNormalized { get; set; }
         
         public List<object[]> RawData { get; set; }
         public List<object[]> NormalizedPreviousData { get; set; }

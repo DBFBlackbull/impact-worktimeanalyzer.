@@ -55,7 +55,7 @@ namespace Impact.Website.Controllers
                 
                 return View(viewModel);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 viewModel.Message = "Kunne ikke hente Timelog data da søgningen var for stor. Vælg to datoer tættere på hinanden";
                 return View(viewModel);

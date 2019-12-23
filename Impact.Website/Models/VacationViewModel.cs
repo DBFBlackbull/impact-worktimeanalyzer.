@@ -5,7 +5,7 @@ using Impact.Website.Models.Charts;
 
 namespace Impact.Website.Models
 {
-    public class VacationViewModel
+    public class VacationViewModel : IChartId
     {
         public string DivId { get; set; }
         public IEnumerable<SelectListItem> VacationYears { get; set; }

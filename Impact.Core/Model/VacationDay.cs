@@ -16,6 +16,7 @@ namespace Impact.Core.Model
         {
             Date = date;
             NormalWorkDay = normalWorkDay;
+            Comment = string.Empty;
         }
         
         public VacationDay(DateTime date, decimal normalWorkDay, string comment) : this(date, normalWorkDay)

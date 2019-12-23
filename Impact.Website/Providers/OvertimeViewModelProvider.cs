@@ -18,12 +18,12 @@ namespace Impact.Website.Providers
     {
         private readonly ITimeService _timeService;
         private readonly ITimeRepository _timeRepository;
-        private string _flexZero;
-        private string _flex100;
-        private string _payout;
-        private string _flexZeroPercent;
-        private string _flex100Percent;
-        private string _payoutPercent;
+        private string _flexZero = string.Empty;
+        private string _flex100 = string.Empty;
+        private string _payout = string.Empty;
+        private string _flexZeroPercent = string.Empty;
+        private string _flex100Percent = string.Empty;
+        private string _payoutPercent = string.Empty;
 
         public OvertimeViewModelProvider(ITimeService timeService, ITimeRepository timeRepository)
         {

@@ -22,6 +22,8 @@
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
     <Use64BitIISExpress />
+    <LangVersion>8</LangVersion>
+    <Nullable>annotations</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,8 +48,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SimpleInjector, Version=3.3.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
@@ -193,8 +195,9 @@
     <Compile Include="Helper\JavaScriptConvert.cs" />
     <Compile Include="Models\AwesomeThursdayViewModel.cs" />
     <Compile Include="Models\Charts\GaugeChartViewModel.cs" />
-    <Compile Include="Models\Charts\IChart.cs" />
+    <Compile Include="Models\Charts\INormalizableChart.cs" />
     <Compile Include="Models\Charts\BarColumnChartViewModel.cs" />
+    <Compile Include="Models\Charts\IChartId.cs" />
     <Compile Include="Models\Charts\PieChartViewModel.cs" />
     <Compile Include="Models\Column.cs" />
     <Compile Include="Models\DemoOvertimeViewModel.cs" />

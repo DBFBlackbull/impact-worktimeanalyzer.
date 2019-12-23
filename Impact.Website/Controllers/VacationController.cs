@@ -31,8 +31,12 @@ namespace Impact.Website.Controllers
         {
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
-
-            return View(GetVacationViewModel(DateTime.Now, token));
+            
+            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
+            if (!profile.IsDeveloper)
+                return RedirectToAction("Index", "Site");
+            
+            return View(GetVacationViewModel(DateTime.Now, profile, token));
         }
 
         [HttpPost]
@@ -41,18 +45,21 @@ namespace Impact.Website.Controllers
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
             
+            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
+            if (!profile.IsDeveloper)
+                return RedirectToAction("Index", "Site");
+            
             if (!ModelState.IsValid)
                 return View(viewModel);
             
             var dateTime = DateTime.Parse(viewModel.SelectedVacationYear);
 
-            return View(GetVacationViewModel(dateTime, token));
+            return View(GetVacationViewModel(dateTime, profile, token));
         }
         
-        private VacationViewModel GetVacationViewModel(DateTime datetime, SecurityToken token)
+        private VacationViewModel GetVacationViewModel(DateTime datetime, Profile profile, SecurityToken token)
         {
             var vacationYear = _timeService.GetVacationYear(datetime);
-            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
             var vacationDays = _timeRepository.GetVacationDays(vacationYear.StartDate, vacationYear.EndDate, profile, token).ToList();
             vacationDays.AddRange(_holidayService.GetHolidays(vacationYear));
 
@@ -65,7 +72,7 @@ namespace Impact.Website.Controllers
                 VacationDays = vacationDays,
                 SummedVacationDays = Math.Round(vacationDays.Sum(v => v.VacationHours / v.NormalWorkDay), 2).Normalize(),
                 SummedExtraVacationDays = Math.Round(vacationDays.Sum(v => v.ExtraVacationHours / v.NormalWorkDay), 2).Normalize(),
-                NormalWorkDay = vacationDays.Last(d => d.NormalWorkDay != 1).NormalWorkDay
+                NormalWorkDay = vacationDays.LastOrDefault(d => d.NormalWorkDay != 1)?.NormalWorkDay ?? profile.NormalWorkDay 
             };
             return vacationViewModel;
         }
@@ -103,7 +110,7 @@ namespace Impact.Website.Controllers
                 });
             } 
 
-            return selectListItems.OrderBy(v => v.Value).ToList();;
+            return selectListItems.OrderBy(v => v.Value).ToList();
         }
     }
 }

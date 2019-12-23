@@ -4,17 +4,17 @@ namespace Impact.Core.Model
 {
     public class Profile
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string FullName { get; set; }
-        public string Initials { get; set; }
-        public int EmployeeId { get; set; }
-        public string Title { get; set; }
-        public string Email { get; set; } // Reporting only
-        public string DepartmentName { get; set; }
-        public int DepartmentId { get; set; } // Reporting only
-        public DateTime HiredDate { get; set; }
-        public double CostPrice { get; set; }
+        public string FirstName { get; }
+        public string LastName { get; }
+        public string FullName { get; }
+        public string Initials { get; }
+        public int EmployeeId { get; }
+        public string Title { get; }
+        public string Email { get; } // Reporting only
+        public string DepartmentName { get; }
+        public int DepartmentId { get; } // Reporting only
+        public DateTime HiredDate { get; }
+        public double CostPrice { get; }
 //        public double HourlyRate { get; set; } // Transactional only
         public bool IsDeveloper { get; set; }
         public decimal NormalWorkDay { get; set; }
@@ -31,5 +31,20 @@ namespace Impact.Core.Model
         /// <p>OBS: 33 returns 143 even though people have reported it to be 142,9 on their paycheck</p>
         /// </summary>
         public decimal NormalWorkMonth { get; set; }
+
+        public Profile(int employeeId, string firstName, string lastName, string fullName, string initials, string title, string email, string departmentName, int departmentId, DateTime hiredDate, double costPrice)
+        {
+            EmployeeId = employeeId;
+            FirstName = firstName;
+            LastName = lastName;
+            FullName = fullName;
+            Initials = initials;
+            Title = title;
+            Email = email;
+            DepartmentName = departmentName;
+            DepartmentId = departmentId;
+            HiredDate = hiredDate;
+            CostPrice = costPrice;
+        }
     }
 }

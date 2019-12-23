@@ -28,7 +28,7 @@ namespace Impact.Business.Login
 
         public bool IsAuthorized(string username, string password, out SecurityToken securityToken, out Profile profile)
         {
-            profile = new Profile();
+            profile = null;
             securityToken = null;
             if (!SecurityHandler.Instance.TryAuthenticate(username, password, out var messages))
                 return false;
@@ -86,19 +86,19 @@ namespace Impact.Business.Login
             xnsm.AddNamespace(employeeRaw.Prefix, employeeRaw.NamespaceURI);
 
             var reportingProfile = new Profile
-            {
-                EmployeeId = int.Parse(employeeRaw.Attributes?["ID"].Value ?? "-1"),
-                FirstName = employeeRaw.SelectSingleNode("tlp:FirstName", xnsm)?.InnerText ?? "",
-                LastName = employeeRaw.SelectSingleNode("tlp:LastName", xnsm)?.InnerText ?? "",
-                FullName = employeeRaw.SelectSingleNode("tlp:FullName", xnsm)?.InnerText ?? "",
-                Initials = employeeRaw.SelectSingleNode("tlp:Initials", xnsm)?.InnerText ?? "",
-                Title = employeeRaw.SelectSingleNode("tlp:Title", xnsm)?.InnerText ?? "",
-                Email = employeeRaw.SelectSingleNode("tlp:Email", xnsm)?.InnerText ?? "",
-                DepartmentName = employeeRaw.SelectSingleNode("tlp:DepartmentName", xnsm)?.InnerText ?? "",
-                DepartmentId = int.Parse(employeeRaw.SelectSingleNode("tlp:DepartmentNameID", xnsm)?.InnerText ?? "-1"),
-                HiredDate = TimeLogRepository.GetReportingDateTime(employeeRaw.SelectSingleNode("tlp:HiredDate", xnsm)?.InnerText),
-                CostPrice = double.Parse(employeeRaw.SelectSingleNode("tlp:CostPrice", xnsm)?.InnerText ?? "0", CultureInfo.InvariantCulture)
-            };
+            (
+                employeeId: int.Parse(employeeRaw.Attributes?["ID"].Value ?? "-1"),
+                firstName: employeeRaw.SelectSingleNode("tlp:FirstName", xnsm)?.InnerText ?? "",
+                lastName: employeeRaw.SelectSingleNode("tlp:LastName", xnsm)?.InnerText ?? "",
+                fullName: employeeRaw.SelectSingleNode("tlp:FullName", xnsm)?.InnerText ?? "",
+                initials: employeeRaw.SelectSingleNode("tlp:Initials", xnsm)?.InnerText ?? "",
+                title: employeeRaw.SelectSingleNode("tlp:Title", xnsm)?.InnerText ?? "",
+                email: employeeRaw.SelectSingleNode("tlp:Email", xnsm)?.InnerText ?? "",
+                departmentName: employeeRaw.SelectSingleNode("tlp:DepartmentName", xnsm)?.InnerText ?? "",
+                departmentId: int.Parse(employeeRaw.SelectSingleNode("tlp:DepartmentNameID", xnsm)?.InnerText ?? "-1"),
+                hiredDate: TimeLogRepository.GetReportingDateTime(employeeRaw.SelectSingleNode("tlp:HiredDate", xnsm)?.InnerText),
+                costPrice: double.Parse(employeeRaw.SelectSingleNode("tlp:CostPrice", xnsm)?.InnerText ?? "0", CultureInfo.InvariantCulture)
+            );
             return reportingProfile;
         }
 

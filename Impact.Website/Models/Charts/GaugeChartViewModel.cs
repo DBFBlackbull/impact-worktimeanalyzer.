@@ -2,14 +2,13 @@
 
 namespace Impact.Website.Models.Charts
 {
-    public class GaugeChartViewModel : IChart
+    public class GaugeChartViewModel : INormalizableChart
     {
         public string DivId { get; set; }
-        public bool IsNormalized { get; set; }
         
-        public List<object[]> RawData { get; set; }
-        public List<object[]> NormalizedPreviousData { get; set; }
-        public List<object[]> NormalizedAllData { get; set; }
+        public List<object[]>? RawData { get; set; }
+        public List<object[]>? NormalizedPreviousData { get; set; }
+        public List<object[]>? NormalizedAllData { get; set; }
         
         public OptionsViewModel Options { get; set; }
         

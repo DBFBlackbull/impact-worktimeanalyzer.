@@ -23,8 +23,8 @@ namespace Impact.Business.Holiday
 
         public IEnumerable<VacationDay> GetHolidays(VacationYear vacationYear)
         {
-            var dateTimes = GetHolidays(vacationYear.StartDate, vacationYear.EndDate);
-            return dateTimes.Select(kv => new VacationDay(kv.Key, 1, kv.Value));
+            var holidays = GetHolidays(vacationYear.StartDate, vacationYear.EndDate);
+            return holidays.Select(kv => new VacationDay(kv.Key, 1, kv.Value));
         }
 
         private static Dictionary<DateTime, string> GetHolidays(DateTime from, DateTime to)

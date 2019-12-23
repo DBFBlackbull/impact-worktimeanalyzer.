@@ -59,7 +59,7 @@ namespace Impact.DataAccess.Timelog
         public IEnumerable<VacationDay> GetVacationDays(DateTime from, DateTime to, Profile profile, SecurityToken token)
         {
             ValidateWorkingHours(from, to, profile);
-            var vacationDays = GetVacationRegistrations(from, to, profile, new AddVacationDayStrategy(WorkingHours[profile.Initials]));
+            var vacationDays = GetVacationRegistrations(from, to, profile);
 //            var workUnitsData = GetWorkUnitsData<VacationDay>(@from, to, token, new AddVacationDayStrategy()).ToList();
             return vacationDays;
         }
@@ -80,17 +80,21 @@ namespace Impact.DataAccess.Timelog
                 GetReportingDateString(to)
             );
 
-            var xnsm = new XmlNamespaceManager(workUnitsRaw.OwnerDocument.NameTable);
-            xnsm.AddNamespace(workUnitsRaw.Prefix, workUnitsRaw.NamespaceURI);
+            var ownerDocument = workUnitsRaw.OwnerDocument;
+            if (ownerDocument == null)
+                return new List<TimeRegistration>();
+            
+            var xmlNamespaceManager = new XmlNamespaceManager(ownerDocument.NameTable);
+            xmlNamespaceManager.AddNamespace(workUnitsRaw.Prefix, workUnitsRaw.NamespaceURI);
 
-            var xmlNodeList = workUnitsRaw.SelectNodes($"//tlp:WorkUnit[tlp:AdditionalTextField='{jiraId}']", xnsm);
+            var xmlNodeList = workUnitsRaw.SelectNodes($"//tlp:WorkUnit[tlp:AdditionalTextField='{jiraId}']", xmlNamespaceManager);
             var registrationsWithJiraId = new List<TimeRegistration>();
             if (xmlNodeList == null)
                 return registrationsWithJiraId;
 
             foreach (XmlNode xmlNode in xmlNodeList)
             {
-                var workUnit = new WorkUnit(xmlNode, xnsm);
+                var workUnit = new WorkUnit(xmlNode, xmlNamespaceManager);
                 var timeRegistration = new TimeRegistration
                 (
                     workUnit.AdditionalTextField,
@@ -147,7 +151,7 @@ namespace Impact.DataAccess.Timelog
             return strategy.GetList();
         }
 
-        private static IEnumerable<VacationDay> GetVacationRegistrations(DateTime from, DateTime to, Profile profile, AddVacationDayStrategy strategy)
+        private static IEnumerable<VacationDay> GetVacationRegistrations(DateTime from, DateTime to, Profile profile)
         {
             var timeOffRegistrationsRaw = ReportingClient.GetTimeOffRegistrationsRaw(
                 ServiceHandler.Instance.SiteCode,
@@ -158,7 +162,14 @@ namespace Impact.DataAccess.Timelog
                 from,
                 to);
 
-            strategy.AddNamespace(timeOffRegistrationsRaw);
+            var ownerDocument = timeOffRegistrationsRaw.OwnerDocument;
+            if (ownerDocument == null)
+                return new List<VacationDay>();
+            
+            var xmlNamespaceManager = new XmlNamespaceManager(ownerDocument.NameTable);
+            xmlNamespaceManager.AddNamespace(timeOffRegistrationsRaw.Prefix, timeOffRegistrationsRaw.NamespaceURI);
+            
+            var strategy = new AddVacationDayStrategy(WorkingHours[profile.Initials], xmlNamespaceManager);
             
             foreach (XmlNode registration in timeOffRegistrationsRaw.ChildNodes)
                 strategy.AddRegistration(registration);
@@ -223,18 +234,23 @@ namespace Impact.DataAccess.Timelog
                 GetReportingDateString(start),
                 GetReportingDateString(end));
 
-            var xnsm = new XmlNamespaceManager(workingHours.OwnerDocument.NameTable);
-            xnsm.AddNamespace(workingHours.Prefix, workingHours.NamespaceURI);
+            var ownerDocument = workingHours.OwnerDocument;
+            if (ownerDocument == null)
+                return new Dictionary<DateTime, decimal>();
+            
+            var xmlNamespaceManager = new XmlNamespaceManager(ownerDocument.NameTable);
+            xmlNamespaceManager.AddNamespace(workingHours.Prefix, workingHours.NamespaceURI);
 
             var dictionary = new Dictionary<DateTime, decimal>();
             foreach (XmlNode workingHour in workingHours)
             {
-                var workHoursString = workingHour.SelectSingleNode("tlp:Hours", xnsm)?.InnerText;
+                var workHoursString = workingHour.SelectSingleNode("tlp:Hours", xmlNamespaceManager)?.InnerText ?? "";
                 var isParsed = TryGetReportingDecimal(workHoursString, out var workHours);
                 if (!isParsed)
                     workHours = profile.NormalWorkDay;
 
-                var date = GetReportingDateTime(workingHour.SelectSingleNode("tlp:Date", xnsm)?.InnerText);
+                var dateString = workingHour.SelectSingleNode("tlp:Date", xmlNamespaceManager)?.InnerText ?? "";
+                var date = GetReportingDateTime(dateString);
                 dictionary.Add(date, workHours);
             }
 

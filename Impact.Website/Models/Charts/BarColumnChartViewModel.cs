@@ -3,7 +3,7 @@ using Impact.Website.Models.Options;
 
 namespace Impact.Website.Models.Charts
 {
-    public class BarColumnChartViewModel : IChart
+    public class BarColumnChartViewModel : INormalizableChart
     {
         public string DivId { get; set; }
         public bool IsNormalized { get; set; }

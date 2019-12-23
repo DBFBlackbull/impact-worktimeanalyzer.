@@ -83,9 +83,9 @@ namespace Impact.Core.Model
             }
         }
         
-        public object[] ToArray(bool manyWorkWeeks, decimal? defaultValue = 0)
+        public object?[] ToArray(bool manyWorkWeeks, decimal? defaultValue = 0)
         {
-            var objects = new List<object>
+            var objects = new List<object?>
             {
                 GetDisplayNumber(),
                 QuarterEdgeHours == 0 ? (decimal?)null : QuarterEdgeHours, "fill-color: #EFEFEF; opacity: 0.5",
