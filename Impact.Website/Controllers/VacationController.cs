@@ -32,11 +32,7 @@ namespace Impact.Website.Controllers
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
             
-            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
-            if (!profile.IsDeveloper)
-                return RedirectToAction("Index", "Site");
-            
-            return View(GetVacationViewModel(DateTime.Now, profile, token));
+            return View(GetVacationViewModel(DateTime.Now, token));
         }
 
         [HttpPost]
@@ -45,20 +41,18 @@ namespace Impact.Website.Controllers
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
             
-            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
-            if (!profile.IsDeveloper)
-                return RedirectToAction("Index", "Site");
-            
             if (!ModelState.IsValid)
                 return View(viewModel);
             
             var dateTime = DateTime.Parse(viewModel.SelectedVacationYear);
 
-            return View(GetVacationViewModel(dateTime, profile, token));
+            return View(GetVacationViewModel(dateTime, token));
         }
         
-        private VacationViewModel GetVacationViewModel(DateTime datetime, Profile profile, SecurityToken token)
+        private VacationViewModel GetVacationViewModel(DateTime datetime, SecurityToken token)
         {
+            var profile = HttpContext.Session.Get<Profile>(ApplicationConstants.SessionName.Profile);
+
             var vacationYear = _timeService.GetVacationYear(datetime);
             var vacationDays = _timeRepository.GetVacationDays(vacationYear.StartDate, vacationYear.EndDate, profile, token).ToList();
             vacationDays.AddRange(_holidayService.GetHolidays(vacationYear));
