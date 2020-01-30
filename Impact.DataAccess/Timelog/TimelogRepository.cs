@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using Impact.Core.Constants;
 using Impact.Core.Extension;
@@ -14,6 +17,7 @@ using TimeLog.TransactionalApi.SDK.ProjectManagementService;
 using Allocation = TimeLog.ReportingApi.SDK.Allocation;
 using ExecutionStatus = TimeLog.TransactionalApi.SDK.ProjectManagementService.ExecutionStatus;
 using SecurityToken = TimeLog.TransactionalApi.SDK.ProjectManagementService.SecurityToken;
+using Task = System.Threading.Tasks.Task;
 using WorkUnit = TimeLog.ReportingApi.SDK.WorkUnit;
 
 namespace Impact.DataAccess.Timelog
@@ -62,48 +66,71 @@ namespace Impact.DataAccess.Timelog
             return vacationDays;
         }
 
+        // Refactor this method to be even more threaded
         public IEnumerable<TimeRegistration> GetRegistrationsWithJiraId(string jiraId, int projectId, DateTime from, DateTime to, Profile profile, SecurityToken token)
         {
-            var workUnitsRaw = ReportingClient.GetWorkUnitsRaw(
-                ServiceHandler.Instance.SiteCode,
-                ServiceHandler.Instance.ApiId,
-                ServiceHandler.Instance.ApiPassword,
-                WorkUnit.All,
-                profile.EmployeeId,
-                Allocation.All,
-                TimeLog.ReportingApi.SDK.Task.All,
-                projectId,
-                profile.DepartmentId,
-                GetReportingDateString(from),
-                GetReportingDateString(to)
-            );
+            var tasks = new List<Task<XmlNode>>();
             
+            var start = from;
+            while (start < to)
+            {
+                var nextDate = start.AddYears(1);
+                if (to < nextDate)
+                    nextDate = to;
+
+                var workUnitsRawTask = ReportingClient.GetWorkUnitsRawAsync(
+                    ServiceHandler.Instance.SiteCode,
+                    ServiceHandler.Instance.ApiId,
+                    ServiceHandler.Instance.ApiPassword,
+                    WorkUnit.All,
+                    profile.EmployeeId,
+                    Allocation.All,
+                    TimeLog.ReportingApi.SDK.Task.All,
+                    projectId,
+                    Department.All,
+                    GetReportingDateString(start),
+                    GetReportingDateString(nextDate)
+                );
+                tasks.Add(workUnitsRawTask);
+                start = nextDate.AddDays(1);
+            }
+
+            Task.WaitAll(tasks.ToArray());
+
             var registrationsWithJiraId = new List<TimeRegistration>();
+
+            var first = tasks.FirstOrDefault();
+            if (first == null)
+                return registrationsWithJiraId;
             
-            var ownerDocument = workUnitsRaw.OwnerDocument;
+            var workUnitsRaw = first.Result;
+            XmlDocument ownerDocument = workUnitsRaw.OwnerDocument;
             if (ownerDocument == null)
                 return registrationsWithJiraId;
             
             var xmlNamespaceManager = new XmlNamespaceManager(ownerDocument.NameTable);
             xmlNamespaceManager.AddNamespace(workUnitsRaw.Prefix, workUnitsRaw.NamespaceURI);
 
-            var xmlNodeList = workUnitsRaw.SelectNodes($"//tlp:WorkUnit[tlp:AdditionalTextField='{jiraId}']", xmlNamespaceManager);
-            if (xmlNodeList == null)
-                return registrationsWithJiraId;
-
-            foreach (XmlNode xmlNode in xmlNodeList)
+            foreach (var task in tasks)
             {
-                var workUnit = new WorkUnit(xmlNode, xmlNamespaceManager);
-                var timeRegistration = new TimeRegistration
-                (
-                    workUnit.AdditionalTextField,
-                    workUnit.TaskName,
-                    workUnit.ProjectName,
-                    workUnit.Date,
-                    workUnit.Note,
-                    Convert.ToDecimal(workUnit.RegHours).Normalize()
-                );
-                registrationsWithJiraId.Add(timeRegistration);
+                var xmlNodeList = task.Result.SelectNodes($"//tlp:WorkUnit[tlp:AdditionalTextField='{jiraId}']", xmlNamespaceManager);
+                if (xmlNodeList == null)
+                    continue;
+
+                foreach (XmlNode xmlNode in xmlNodeList)
+                {
+                    var workUnit = new WorkUnit(xmlNode, xmlNamespaceManager);
+                    var timeRegistration = new TimeRegistration
+                    (
+                        workUnit.AdditionalTextField,
+                        workUnit.TaskName,
+                        workUnit.ProjectName,
+                        workUnit.Date,
+                        workUnit.Note,
+                        Convert.ToDecimal(workUnit.RegHours).Normalize()
+                    );
+                    registrationsWithJiraId.Add(timeRegistration);
+                }
             }
 
             registrationsWithJiraId = registrationsWithJiraId.OrderBy(r => r.Date).ToList();
