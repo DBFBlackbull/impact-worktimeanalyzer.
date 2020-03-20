@@ -7,6 +7,8 @@ namespace Impact.Core.Model
         public string JiraId { get; }
         public string Task { get; }
         public string Project { get; }
+        public int CustomerId { get; set; }
+        public string CustomerName { get; set; }
         public DateTime Date { get; }
         public string Comment { get; }
         public decimal RawHours { get; }
@@ -20,11 +22,13 @@ namespace Impact.Core.Model
             }
         }
 
-        public TimeRegistration(string jiraId, string task, string project, DateTime date, string comment, decimal rawHours)
+        public TimeRegistration(string jiraId, string task, string project, int customerId, string customerName, DateTime date, string comment, decimal rawHours)
         {
             JiraId = jiraId;
             Task = task;
             Project = project;
+            CustomerId = customerId;
+            CustomerName = customerName;
             Date = date;
             Comment = comment;
             RawHours = rawHours;

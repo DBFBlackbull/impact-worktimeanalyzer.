@@ -11,6 +11,6 @@ namespace Impact.DataAccess.Timelog
         IEnumerable<Month> GetAwesomeThursdays(DateTime hiredDate, SecurityToken token);
         IEnumerable<VacationDay> GetVacationDays(DateTime from, DateTime to, Profile profile, SecurityToken token);
         IEnumerable<TimeRegistration> GetRegistrationsWithJiraId(string jiraId, int projectId, DateTime from, DateTime to, Profile profile, SecurityToken token);
-        IDictionary<int, string> GetProject(string initials, SecurityToken token);
+        IDictionary<int, string> GetProjects(string initials, SecurityToken token);
     }
 }

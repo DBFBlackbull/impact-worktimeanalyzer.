@@ -45,6 +45,8 @@
     <Compile Include="Constants\ApplicationConstants.cs" />
     <Compile Include="Extension\DateTimeExtensions.cs" />
     <Compile Include="Extension\DecimalExtensions.cs" />
+    <Compile Include="Extension\DictionaryExtensions.cs" />
+    <Compile Include="Extension\KeyValuePairExtensions.cs" />
     <Compile Include="Extension\SessionExtensions.cs" />
     <Compile Include="Interfaces\Cloneable.cs" />
     <Compile Include="Model\Profile.cs" />

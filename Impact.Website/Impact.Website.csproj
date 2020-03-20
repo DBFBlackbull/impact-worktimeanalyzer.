@@ -186,12 +186,14 @@
     <Compile Include="Controllers\JiraIdController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\OvertimeController.cs" />
+    <Compile Include="Controllers\PlanningController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
     <Compile Include="Controllers\VacationController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Comparers\CustomerNameComparer.cs" />
     <Compile Include="Helper\JavaScriptConvert.cs" />
     <Compile Include="Models\AwesomeThursdayViewModel.cs" />
     <Compile Include="Models\Charts\GaugeChartViewModel.cs" />
@@ -206,6 +208,7 @@
     <Compile Include="Models\Options\AnimationEasing.cs" />
     <Compile Include="Models\Options\BarColumnOptions.cs" />
     <Compile Include="Models\Options\BarOrientation.cs" />
+    <Compile Include="Models\PlanningViewModel.cs" />
     <Compile Include="Models\ProfileViewModel.cs" />
     <Compile Include="Models\QuarterViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
@@ -301,6 +304,7 @@
     <Content Include="Scripts\_references.js" />
     <Content Include="Views\AwesomeThursday\Index.cshtml" />
     <Content Include="Views\DemoOvertime\Index.cshtml" />
+    <Content Include="Views\Planning\Index.cshtml" />
     <Content Include="Views\JiraId\Index.cshtml" />
     <Content Include="Views\Overtime\Index.cshtml" />
     <Content Include="Views\Profile\Index.cshtml" />

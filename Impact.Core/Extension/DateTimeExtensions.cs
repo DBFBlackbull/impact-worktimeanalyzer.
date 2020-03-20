@@ -8,9 +8,26 @@ namespace Impact.Core.Extension
 {
     public static class DateTimeExtensions
     {
-        public static DateTime LastDayInMonth(this DateTime dateTime)
+        public static DateTime BackTo(this DateTime dateTime, DayOfWeek dayOfWeek)
         {
-            return new DateTime(dateTime.Year, dateTime.Month, DateTime.DaysInMonth(dateTime.Year, dateTime.Month));
+            var newDateTime = dateTime;
+            while (newDateTime.DayOfWeek != dayOfWeek)
+            {
+                newDateTime = newDateTime.AddDays(-1);
+            }
+
+            return newDateTime;
+        }
+
+        public static DateTime ForwardTo(this DateTime dateTime, DayOfWeek dayOfWeek)
+        {
+            var newDateTime = dateTime;
+            while (newDateTime.DayOfWeek != dayOfWeek)
+            {
+                newDateTime = newDateTime.AddDays(1);
+            }
+
+            return newDateTime;
         }
     }
 }

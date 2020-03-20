@@ -38,12 +38,10 @@ namespace Impact.DataAccess.Strategies
         
         private Week CreateWeek(int weekNumber, DateTime dateTime)
         {
-            var day = dateTime;
-            while (day.DayOfWeek != DayOfWeek.Monday)
-            {
-                day = day.AddDays(-1);
-            }
+            var day = dateTime.BackTo(DayOfWeek.Monday);
+            
             var week = new Week { Number = weekNumber };
+            // Runs through the interval [Monday;Friday]
             while (day.DayOfWeek < DayOfWeek.Saturday)
             {
                 week.Dates.Add(day, _workingHours[day]);

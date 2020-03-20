@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace Impact.Core.Constants
@@ -44,5 +45,14 @@ namespace Impact.Core.Constants
             public const string Green = "green";
             public const string Black = "black";
         }
+        
+        public static string ImpactName = "Impact";
+        // ReSharper disable StringLiteralTypo
+        public static Dictionary<string, string> CustomerColors { get; } = new Dictionary<string, string>
+        {
+            {"nemlig.com", "#D4793A"},
+            {"Helsam A/S", "#00AD4D"},
+            {"Impact", "#FEFF00"},
+        };
     }
 }

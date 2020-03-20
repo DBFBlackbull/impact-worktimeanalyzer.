@@ -69,12 +69,39 @@ namespace Impact.DataAccess.Timelog
         // Refactor this method to be even more threaded
         public IEnumerable<TimeRegistration> GetRegistrationsWithJiraId(string jiraId, int projectId, DateTime from, DateTime to, Profile profile, SecurityToken token)
         {
-            var tasks = new List<Task<XmlNode>>();
+            var registrationsWithJiraId = new ConcurrentBag<TimeRegistration>();
+
+            var future = DateTime.Now.Date.AddDays(1);
+            // Get empty document just to get XmlNamespaceManager
+            var emptyXmlNode = ReportingClient.GetWorkUnitsRaw(
+                ServiceHandler.Instance.SiteCode,
+                ServiceHandler.Instance.ApiId,
+                ServiceHandler.Instance.ApiPassword,
+                WorkUnit.All,
+                profile.EmployeeId,
+                Allocation.All,
+                TimeLog.ReportingApi.SDK.Task.All,
+                projectId,
+                Department.All,
+                GetReportingDateString(future),
+                GetReportingDateString(future)
+            );
+            
+            var ownerDocument = emptyXmlNode.OwnerDocument;
+            if (ownerDocument == null)
+                return registrationsWithJiraId.ToList();
+            
+            var xmlNamespaceManager = new XmlNamespaceManager(ownerDocument.NameTable);
+            xmlNamespaceManager.AddNamespace(emptyXmlNode.Prefix, emptyXmlNode.NamespaceURI);
+
+            var allChildren = string.IsNullOrEmpty(jiraId);
+            
+            var tasks = new List<Task>();
             
             var start = from;
             while (start < to)
             {
-                var nextDate = start.AddYears(1);
+                var nextDate = start.AddMonths(3);
                 if (to < nextDate)
                     nextDate = to;
 
@@ -91,54 +118,45 @@ namespace Impact.DataAccess.Timelog
                     GetReportingDateString(start),
                     GetReportingDateString(nextDate)
                 );
-                tasks.Add(workUnitsRawTask);
+
+                var continueWith = workUnitsRawTask.ContinueWith(task =>
+                {
+                    var xmlNodeList = allChildren 
+                        ? task.Result.ChildNodes 
+                        : task.Result.SelectNodes($"//tlp:WorkUnit[tlp:AdditionalTextField='{jiraId}']", xmlNamespaceManager);
+
+                    if (xmlNodeList == null)
+                        return;
+                    
+                    foreach (XmlNode xmlNode in xmlNodeList)
+                    {
+                        var workUnit = new WorkUnit(xmlNode, xmlNamespaceManager);
+                        var timeRegistration = new TimeRegistration
+                        (
+                            workUnit.AdditionalTextField,
+                            workUnit.TaskName,
+                            workUnit.ProjectName,
+                            workUnit.CustomerID,
+                            workUnit.CustomerName,
+                            workUnit.Date,
+                            workUnit.Note,
+                            Convert.ToDecimal(workUnit.RegHours).Normalize()
+                        );
+                        registrationsWithJiraId.Add(timeRegistration);
+                    }
+                });
+                tasks.Add(continueWith);
                 start = nextDate.AddDays(1);
             }
 
             Task.WaitAll(tasks.ToArray());
 
-            var registrationsWithJiraId = new List<TimeRegistration>();
+            var timeRegistrations = registrationsWithJiraId.OrderBy(r => r.Date).ToList();
 
-            var first = tasks.FirstOrDefault();
-            if (first == null)
-                return registrationsWithJiraId;
-            
-            var workUnitsRaw = first.Result;
-            XmlDocument ownerDocument = workUnitsRaw.OwnerDocument;
-            if (ownerDocument == null)
-                return registrationsWithJiraId;
-            
-            var xmlNamespaceManager = new XmlNamespaceManager(ownerDocument.NameTable);
-            xmlNamespaceManager.AddNamespace(workUnitsRaw.Prefix, workUnitsRaw.NamespaceURI);
-
-            foreach (var task in tasks)
-            {
-                var xmlNodeList = task.Result.SelectNodes($"//tlp:WorkUnit[tlp:AdditionalTextField='{jiraId}']", xmlNamespaceManager);
-                if (xmlNodeList == null)
-                    continue;
-
-                foreach (XmlNode xmlNode in xmlNodeList)
-                {
-                    var workUnit = new WorkUnit(xmlNode, xmlNamespaceManager);
-                    var timeRegistration = new TimeRegistration
-                    (
-                        workUnit.AdditionalTextField,
-                        workUnit.TaskName,
-                        workUnit.ProjectName,
-                        workUnit.Date,
-                        workUnit.Note,
-                        Convert.ToDecimal(workUnit.RegHours).Normalize()
-                    );
-                    registrationsWithJiraId.Add(timeRegistration);
-                }
-            }
-
-            registrationsWithJiraId = registrationsWithJiraId.OrderBy(r => r.Date).ToList();
-
-            return registrationsWithJiraId;
+            return timeRegistrations;
         }
 
-        public IDictionary<int, string> GetProject(string initials, SecurityToken token)
+        public IDictionary<int, string> GetProjects(string initials, SecurityToken token)
         {
             var projects = new Dictionary<int, string>();
 

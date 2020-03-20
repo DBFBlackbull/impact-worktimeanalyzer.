@@ -78,7 +78,7 @@ namespace Impact.Website.Controllers
                 Text = "Alle Projekter"
             });
 
-            var projects = _timeRepository.GetProject(initials, token).ToList();
+            var projects = _timeRepository.GetProjects(initials, token).ToList();
             foreach (var project in projects)
             {
                 var projectId = project.Key.ToString();
