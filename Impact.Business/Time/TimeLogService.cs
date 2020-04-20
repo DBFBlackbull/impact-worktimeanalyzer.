@@ -158,8 +158,9 @@ namespace Impact.Business.Time
             {
                 return new VacationYear(ApplicationConstants.MiniVacationStart, ApplicationConstants.MiniVacationEnd)
                 {
-                    TotalVacationDays = 16.64m,
-                    TotalExtraVacationDays = 3.33m
+                    // Special units for the special vacation year
+                    TotalVacationDays = 17m,
+                    TotalExtraVacationDays = 3m
                 };
             }
             if (date < new DateTime(2020, 9, 1)) //Old vacation year

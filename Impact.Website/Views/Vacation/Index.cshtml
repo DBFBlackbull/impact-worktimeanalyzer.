@@ -3,7 +3,7 @@
 @model Impact.Website.Models.VacationViewModel
 @{
     ViewBag.Title = "Ferieoversigt";
-    var remainingVacationDays = Model.VacationYear.TotalVacationDays - @Model.SummedVacationDays;
+    var remainingVacationDays = Model.VacationYear.TotalVacationDays - Model.SummedVacationDays;
     var remainingVacationHours = (remainingVacationDays * Model.NormalWorkDay).Normalize();
     var remainingExtraVacationDays = Model.VacationYear.TotalExtraVacationDays - Model.SummedExtraVacationDays;
     var remainingExtraVacationHour = (remainingExtraVacationDays * Model.NormalWorkDay).Normalize();
