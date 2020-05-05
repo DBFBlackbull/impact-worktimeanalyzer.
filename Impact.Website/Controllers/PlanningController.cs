@@ -39,7 +39,7 @@ namespace Impact.Website.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(JiraIdViewModel viewModel)
+        public ActionResult Index(PlanningViewModel viewModel)
         {
             if (!(HttpContext.Session[ApplicationConstants.SessionName.Token] is SecurityToken token))
                 return RedirectToAction("Index", "Login");
@@ -52,16 +52,16 @@ namespace Impact.Website.Controllers
             
             try
             {
-                int.TryParse(viewModel.SelectedProject, out var projectId); // failure is the same as all
-                viewModel.TimeRegistrations = _timeRepository.GetRegistrationsWithJiraId(viewModel.JiraId, projectId, viewModel.From, viewModel.To, profile, token);
-                if (!viewModel.TimeRegistrations.Any())
-                    viewModel.Message = $"Kunne ikke finde nogle registreringer med Jira ID '{viewModel.JiraId}'. Prøv et andet Jira ID eller et andet tidsinterval";
+                // int.TryParse(viewModel.SelectedProject, out var projectId); // failure is the same as all
+                // viewModel.TimeRegistrations = _timeRepository.GetRegistrationsWithJiraId(viewModel.JiraId, projectId, viewModel.From, viewModel.To, profile, token);
+                // if (!viewModel.TimeRegistrations.Any())
+                //     viewModel.Message = $"Kunne ikke finde nogle registreringer med Jira ID '{viewModel.JiraId}'. Prøv et andet Jira ID eller et andet tidsinterval";
                 
                 return View(viewModel);
             }
             catch (Exception)
             {
-                viewModel.Message = "Kunne ikke hente Timelog data da søgningen var for stor. Vælg to datoer tættere på hinanden";
+                // viewModel.Message = "Kunne ikke hente Timelog data da søgningen var for stor. Vælg to datoer tættere på hinanden";
                 return View(viewModel);
             }
         }

@@ -200,7 +200,7 @@ namespace Impact.DataAccess.Timelog
                 ServiceHandler.Instance.ApiId,
                 ServiceHandler.Instance.ApiPassword,
                 profile.EmployeeId,
-                profile.DepartmentId,
+                Department.All,
                 from,
                 to);
 
@@ -257,7 +257,7 @@ namespace Impact.DataAccess.Timelog
             var missingDates = neededDates.Except(dictionary.Keys).ToDictionary(kv => kv, kv => 0m);
             dictionary = dictionary.Union(missingDates).ToDictionary(kv => kv.Key, kv => kv.Value);
 
-            HandleZeroDays(dictionary);
+            HandleZeroDays(dictionary, start, end);
             foreach (var neededDate in neededDates)
             {
                 WorkingHours[profile.Initials][neededDate] = dictionary[neededDate];
@@ -271,7 +271,7 @@ namespace Impact.DataAccess.Timelog
                 ServiceHandler.Instance.ApiId,
                 ServiceHandler.Instance.ApiPassword,
                 profile.EmployeeId,
-                profile.DepartmentId,
+                Department.All,
                 EmployeeStatus.All,
                 GetReportingDateString(start),
                 GetReportingDateString(end));
@@ -299,7 +299,7 @@ namespace Impact.DataAccess.Timelog
             return dictionary;
         }
 
-        private static void HandleZeroDays(IDictionary<DateTime, decimal> dictionary)
+        private static void HandleZeroDays(IDictionary<DateTime, decimal> dictionary, DateTime start, DateTime end)
         {
             var zeroDays = dictionary
                 .Where(kv => kv.Value == 0)
@@ -309,23 +309,38 @@ namespace Impact.DataAccess.Timelog
             
             foreach (var kvp in zeroDays)
             {
-                var lookupDate = kvp.Key;
-
-                var successLookup = lookupDate.Day > 1;
                 var workHours = dictionary[kvp.Key];
+
+                var lookupBackwardsDate = kvp.Key;
+                var successLookup = lookupBackwardsDate.Day > 1;
+                // Look back through the current month to find usable work hours.
                 while (workHours == 0 && successLookup)
                 {
-                    lookupDate = lookupDate.AddDays(-1);
-                    successLookup = dictionary.TryGetValue(lookupDate, out workHours) 
-                                    && lookupDate.Day < 1;
+                    lookupBackwardsDate = lookupBackwardsDate.AddDays(-1);
+                    successLookup = dictionary.TryGetValue(lookupBackwardsDate, out workHours) 
+                                    && lookupBackwardsDate.Day > 1;
                 }
 
-                lookupDate = kvp.Key;
-                while (workHours == 0)
+                var lookForwardDate = kvp.Key;
+                successLookup = lookForwardDate < end;
+                // Look forward until end to find usable work hours 
+                while (workHours == 0 && successLookup)
                 {
-                    lookupDate = lookupDate.AddDays(1);
-                    dictionary.TryGetValue(lookupDate, out workHours);
+                    lookForwardDate = lookForwardDate.AddDays(1);
+                    successLookup = dictionary.TryGetValue(lookForwardDate, out workHours) 
+                                    && lookForwardDate < end;
                 }
+
+                successLookup = lookupBackwardsDate > start;
+                // Look backwards until the start to find usable work hours
+                while (workHours == 0 && successLookup)
+                {
+                    lookupBackwardsDate = lookupBackwardsDate.AddDays(-1);
+                    successLookup = dictionary.TryGetValue(lookupBackwardsDate, out workHours) 
+                                    && lookupBackwardsDate > start;
+                }
+                
+                // If we haven't found a time at this point we give up and let the value be 0.
                 
                 dictionary[kvp.Key] = workHours;
             }

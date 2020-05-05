@@ -12,6 +12,7 @@ using TimeLog.ReportingApi.SDK;
 using TimeLog.ReportingApi.SDK.ReportingService;
 using TimeLog.TransactionalApi.SDK;
 using TimeLog.TransactionalApi.SDK.OrganisationService;
+using Department = TimeLog.ReportingApi.SDK.Department;
 using Employee = TimeLog.TransactionalApi.SDK.OrganisationService.Employee;
 using ExecutionStatus = TimeLog.TransactionalApi.SDK.OrganisationService.ExecutionStatus;
 using SecurityToken = TimeLog.TransactionalApi.SDK.ProjectManagementService.SecurityToken;
@@ -39,7 +40,7 @@ namespace Impact.Business.Login
                                                  "Please screenshot this error page and send it to PBM");
 
             profile.IsDeveloper = IsDeveloper(profile.Title, profile.DepartmentName);
-            var normalWorkDay  = profile.NormalWorkDay = GetReportingNormalWorkDay(profile.EmployeeId, profile.DepartmentId);;
+            var normalWorkDay  = profile.NormalWorkDay = GetReportingNormalWorkDay(profile.EmployeeId);;
             var normalWorkWeek = profile.NormalWorkWeek = (normalWorkDay * 5).Normalize();
             profile.NormalWorkMonth = TimeLogService.GetNormalWorkMonth(normalWorkWeek); 
 
@@ -102,15 +103,15 @@ namespace Impact.Business.Login
             return reportingProfile;
         }
 
-        private static decimal GetReportingNormalWorkDay(int employeeId, int departmentId)
+        private static decimal GetReportingNormalWorkDay(int employeeId)
         {
             var normalWorkingHoursRaw = ReportingClient.GetEmployeeNormalWorkingHoursRaw(
                 ReportingHandler.SiteCode,
                 ReportingHandler.ApiId,
                 ReportingHandler.ApiPassword,
                 employeeId,
-                departmentId,
-                TimeLog.ReportingApi.SDK.EmployeeStatus.Active);
+                Department.All,
+                EmployeeStatus.Active);
 
             if (normalWorkingHoursRaw.OwnerDocument == null) 
                 return ApplicationConstants.NormalWorkDay;
