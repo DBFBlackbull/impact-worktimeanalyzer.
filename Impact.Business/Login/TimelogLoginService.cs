@@ -132,10 +132,11 @@ namespace Impact.Business.Login
 
         private static bool IsDeveloper(string title, string departmentName)
         {
-            var containsDeveloper = title.IndexOf("developer", StringComparison.InvariantCultureIgnoreCase) >= 0;
+            var containsDeveloper = title.IndexOf("developer", StringComparison.OrdinalIgnoreCase) >= 0;
+            var containsTechLead = title.IndexOf("tech lead", StringComparison.OrdinalIgnoreCase) >= 0;
             var unitDeveloper = UnitDeveloper.IsMatch(departmentName);
 
-            return containsDeveloper || unitDeveloper;
+            return containsDeveloper || containsTechLead || unitDeveloper;
         }
 
         public string FailedLoginMessageHtml()
