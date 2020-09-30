@@ -12,7 +12,8 @@ namespace Impact.DataAccess.Strategies
     {
         private readonly Dictionary<DateTime, decimal> _workingHours;
         private readonly XmlNamespaceManager _xmlNamespaceManager;
-        private const string VacationId = "20"; 
+        private const string VacationId = "20";
+        private const string NewVacationId = "15"; // Introduced on the 30th of September. TimelogName '15 - Ferie (funktionærer)' 
         private const string ExtraVacationId = "60";
         private Dictionary<DateTime, VacationDay> VacationDays { get; }
 
@@ -35,6 +36,9 @@ namespace Impact.DataAccess.Strategies
             switch (registration.SalaryCode)
             {
                 case VacationId:
+                    vacationDay.VacationHours = Convert.ToDecimal(registration.Hours);
+                    return;
+                case NewVacationId:
                     vacationDay.VacationHours = Convert.ToDecimal(registration.Hours);
                     return;
                 case ExtraVacationId:
