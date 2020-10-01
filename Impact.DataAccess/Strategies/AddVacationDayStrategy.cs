@@ -10,14 +10,14 @@ namespace Impact.DataAccess.Strategies
 {
     public class AddVacationDayStrategy : IAddRegistrationStrategy<VacationDay>
     {
-        private readonly Dictionary<DateTime, decimal> _workingHours;
+        private readonly IDictionary<DateTime, decimal> _workingHours;
         private readonly XmlNamespaceManager _xmlNamespaceManager;
         private const string VacationId = "20";
         private const string NewVacationId = "15"; // Introduced on the 30th of September. TimelogName '15 - Ferie (funktionærer)' 
         private const string ExtraVacationId = "60";
         private Dictionary<DateTime, VacationDay> VacationDays { get; }
 
-        public AddVacationDayStrategy(Dictionary<DateTime, decimal> workingHours, XmlNamespaceManager xmlNamespaceManager)
+        public AddVacationDayStrategy(IDictionary<DateTime, decimal> workingHours, XmlNamespaceManager xmlNamespaceManager)
         {
             _workingHours = workingHours;
             _xmlNamespaceManager = xmlNamespaceManager; 

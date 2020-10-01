@@ -26,7 +26,7 @@ namespace Impact.DataAccess.Timelog
     {
         private static readonly ProjectManagementServiceClient TransactionalClient = ProjectManagementHandler.Instance.ProjectManagementClient;
         private static readonly ServiceSoapClient ReportingClient = ServiceHandler.Instance.Client;
-        private static readonly Dictionary<string, Dictionary<DateTime, decimal>> WorkingHours = new Dictionary<string, Dictionary<DateTime, decimal>>();
+        private static readonly Dictionary<string, SortedDictionary<DateTime, decimal>> WorkingHours = new Dictionary<string, SortedDictionary<DateTime, decimal>>();
 
         private const int PageSize = 500;
 
@@ -234,7 +234,7 @@ namespace Impact.DataAccess.Timelog
         private static void ValidateWorkingHours(DateTime from, DateTime to, Profile profile)
         {
             if (!WorkingHours.TryGetValue(profile.Initials, out var dictionary))
-                WorkingHours[profile.Initials] = dictionary = new Dictionary<DateTime, decimal>();
+                WorkingHours[profile.Initials] = dictionary = new SortedDictionary<DateTime, decimal>();
             
             var current = from;
             var neededDates = new SortedSet<DateTime>();
@@ -339,8 +339,9 @@ namespace Impact.DataAccess.Timelog
                 while (workHours == 0 && successLookup)
                 {
                     lookForwardDate = lookForwardDate.AddDays(1);
-                    successLookup = dictionary.TryGetValue(lookForwardDate, out workHours) 
-                                    && lookForwardDate < end;
+                    dictionary.TryGetValue(lookForwardDate, out workHours);
+                    // We look through to the end. Skipping over "holes" in the dictionary.
+                    successLookup = lookForwardDate < end;
                 }
 
                 successLookup = lookupBackwardsDate > start;

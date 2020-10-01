@@ -12,10 +12,10 @@ namespace Impact.DataAccess.Strategies
 {
     public class AddWeekStrategy : IAddRegistrationStrategy<Week>
     {
-        private readonly Dictionary<DateTime, decimal> _workingHours;
+        private readonly IDictionary<DateTime, decimal> _workingHours;
         private ConcurrentDictionary<int, Week> Weeks { get; }
         
-        public AddWeekStrategy(Dictionary<DateTime, decimal> workingHours)
+        public AddWeekStrategy(IDictionary<DateTime, decimal> workingHours)
         {
             _workingHours = workingHours;
             Weeks = new ConcurrentDictionary<int, Week>();
