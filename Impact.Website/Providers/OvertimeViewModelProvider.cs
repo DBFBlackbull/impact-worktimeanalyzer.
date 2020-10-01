@@ -50,25 +50,33 @@ namespace Impact.Website.Providers
 
             var distinctWorkWeeks = rawWeeks.Select(w => w.NormalWorkWeek).Distinct().ToList();
             var normalWorkWeekStrings = new List<Tuple<string, string>>();
-            var manyWorkWeeks = distinctWorkWeeks.Count > 1;
-            if (!manyWorkWeeks)
+            var multipleWorkWeeks = false;
+            switch (distinctWorkWeeks.Count)
             {
-                normalWorkWeekStrings.Add(new Tuple<string, string>("", distinctWorkWeeks.First().ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)));
-            }
-            else
-            {
-                foreach (var districtWorkWeek in distinctWorkWeeks)
+                case 0:
+                    normalWorkWeekStrings.Add(new Tuple<string, string>("", profile.NormalWorkWeek.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)));
+                    break;
+                case 1:
+                    normalWorkWeekStrings.Add(new Tuple<string, string>("", distinctWorkWeeks.First().ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)));
+                    break;
+                default:
                 {
-                    var firstWeek = rawWeeks.First(w => w.NormalWorkWeek == districtWorkWeek);
-                    var lastWeek = rawWeeks.Last(w => w.NormalWorkWeek == districtWorkWeek);
+                    multipleWorkWeeks = true;
+                    foreach (var districtWorkWeek in distinctWorkWeeks)
+                    {
+                        var firstWeek = rawWeeks.First(w => w.NormalWorkWeek == districtWorkWeek);
+                        var lastWeek = rawWeeks.Last(w => w.NormalWorkWeek == districtWorkWeek);
                     
-                    normalWorkWeekStrings.Add(new Tuple<string, string>(
-                        $"Uge {firstWeek.Number} - {lastWeek.Number}:", 
-                        firstWeek.NormalWorkWeek.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)));
+                        normalWorkWeekStrings.Add(new Tuple<string, string>(
+                            $"Uge {firstWeek.Number} - {lastWeek.Number}:", 
+                            firstWeek.NormalWorkWeek.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)));
+                    }
+                    break;
                 }
             }
 
-            var normalWorkWeek = distinctWorkWeeks.Last();
+            var lastWorkWeek = distinctWorkWeeks.LastOrDefault();
+            var normalWorkWeek = lastWorkWeek == 0 ? profile.NormalWorkWeek : lastWorkWeek;
             var interestHoursLimit = (normalWorkWeek + ApplicationConstants.InterestConst).Normalize();
             var movableHoursLimit = (interestHoursLimit + ApplicationConstants.MovableConst).Normalize();
             _flexZero = $"Flex ({normalWorkWeek.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)}-{interestHoursLimit.ToString(ApplicationConstants.DanishCultureInfo.NumberFormat)})";
@@ -98,13 +106,13 @@ namespace Impact.Website.Providers
                 normalizedPreviousWeek.AddRange(rawWeeks.GetRange(normalizedPreviousWeek.Count, count));
             }
             
-            quarterViewModel.BarColumnChartViewModel = CreateWeeksViewModel(quarter, rawWeeks, normalizedPreviousWeek, normalizedAllWeeks, isNormalized, manyWorkWeeks);
+            quarterViewModel.BarColumnChartViewModel = CreateWeeksViewModel(quarter, rawWeeks, normalizedPreviousWeek, normalizedAllWeeks, isNormalized, multipleWorkWeeks);
             
             return quarterViewModel;
         }
 
         private BarColumnChartViewModel CreateWeeksViewModel(Quarter quarter, List<Week> rawWeeks,
-            List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks, bool isNormalized, bool manyWorkWeeks)
+            List<Week> normalizedPreviousWeek, List<Week> normalizedAllWeeks, bool isNormalized, bool multipleWorkWeeks)
         {
             List<object[]> GetDataArray(IEnumerable<Week> weeks, decimal? defaultValue)
             {
@@ -121,11 +129,11 @@ namespace Impact.Website.Providers
                         new Column {Label = _payoutPercent, Type = "number"},
                     }
                 };
-                if (manyWorkWeeks)
+                if (multipleWorkWeeks)
                     googleFormattedWeeksList.First().Insert(1, new Column {Label = "Normaluge", Type = "number"});
 
                 var googleFormattedWeeks = new List<object[]> { googleFormattedWeeksList.First().ToArray() };
-                googleFormattedWeeks.AddRange(weeks.Select(week => week.ToArray(manyWorkWeeks, defaultValue)));
+                googleFormattedWeeks.AddRange(weeks.Select(week => week.ToArray(multipleWorkWeeks, defaultValue)));
                 return googleFormattedWeeks;
             }
 
@@ -176,7 +184,7 @@ namespace Impact.Website.Providers
                     GroupWidth = 50
                 },
             };
-            if (manyWorkWeeks)
+            if (multipleWorkWeeks)
             {
                 optionsViewModel.Colors.Insert(0, ApplicationConstants.Color.Black);
                 optionsViewModel.Series = new BarColumnOptions.OptionsViewModel.SeriesViewModel
