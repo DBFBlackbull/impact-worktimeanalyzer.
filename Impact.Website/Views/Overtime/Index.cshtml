@@ -46,7 +46,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div id="@Model.BalanceChartViewModel.DivId"></div>
+            <div id="@Model.BalanceChartViewModel.DivId" style="height: 250px"></div>
         </div>
     </div>
 </div>
@@ -259,7 +259,7 @@
 
     function calculatePayout() {
         var hourlyRounded = $('#hourlyPay').val();
-        $('#flex0u').val( $('#flex0').val() * 0 );
+        $('#flex0u').val( 0 );
         $('#flex1u').val( round2D( $('#flex1').val() * hourlyRounded) );
         $('#flex2u').val( round2D( $('#flex2').val() * hourlyRounded * 1.5) );
     }

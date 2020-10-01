@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -12,12 +13,12 @@ namespace Impact.DataAccess.Strategies
     public class AddWeekStrategy : IAddRegistrationStrategy<Week>
     {
         private readonly Dictionary<DateTime, decimal> _workingHours;
-        private Dictionary<int, Week> Weeks { get; }
+        private ConcurrentDictionary<int, Week> Weeks { get; }
         
         public AddWeekStrategy(Dictionary<DateTime, decimal> workingHours)
         {
             _workingHours = workingHours;
-            Weeks = new Dictionary<int, Week>();
+            Weeks = new ConcurrentDictionary<int, Week>();
         }
 
         public void AddRegistration(WorkUnitFlat registration)

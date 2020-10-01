@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Impact.Core.Model;
@@ -8,11 +9,11 @@ namespace Impact.DataAccess.Strategies
 {
     public class AddMonthStrategy : IAddRegistrationStrategy<Month>
     {
-        private Dictionary<string, Month> Months { get; }
+        private ConcurrentDictionary<string, Month> Months { get; }
 
         public AddMonthStrategy(DateTime hireDate)
         {
-            Months = new Dictionary<string, Month>();
+            Months = new ConcurrentDictionary<string, Month>();
             var dateTime = new DateTime(hireDate.Year, hireDate.Month, 1);
             while (dateTime < DateTime.Now)
             {
