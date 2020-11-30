@@ -8,12 +8,13 @@ using TimeLog.TransactionalApi.SDK.ProjectManagementService;
 
 namespace Impact.DataAccess.Strategies
 {
-    public class AddVacationDayStrategy : IAddRegistrationStrategy<VacationDay>
+    public class AddVacationDayStrategy //: IAddRegistrationStrategy<VacationDay>
     {
         private readonly IDictionary<DateTime, decimal> _workingHours;
         private readonly XmlNamespaceManager _xmlNamespaceManager;
         private const string VacationId = "20";
         private const string NewVacationId = "15"; // Introduced on the 30th of September. TimelogName '15 - Ferie (funktionærer)' 
+        private const string VacationInAdvanceId = "16"; // Introduced on the 30th of November. TimelogName '16 - Ferie forskud' 
         private const string ExtraVacationId = "60";
         private Dictionary<DateTime, VacationDay> VacationDays { get; }
 
@@ -24,28 +25,28 @@ namespace Impact.DataAccess.Strategies
             VacationDays = new Dictionary<DateTime, VacationDay>();
         }
 
-        public void AddRegistration(WorkUnitFlat registration)
-        {
-            if (registration.SalaryCode != VacationId && registration.SalaryCode != ExtraVacationId)
-                return;
-            
-            var date = registration.Date;
-            if (!VacationDays.TryGetValue(date, out var vacationDay))
-                VacationDays[date] = vacationDay = new VacationDay(date, _workingHours[date]);
-
-            switch (registration.SalaryCode)
-            {
-                case VacationId:
-                    vacationDay.VacationHours = Convert.ToDecimal(registration.Hours);
-                    return;
-                case NewVacationId:
-                    vacationDay.VacationHours = Convert.ToDecimal(registration.Hours);
-                    return;
-                case ExtraVacationId:
-                    vacationDay.ExtraVacationHours = Convert.ToDecimal(registration.Hours);
-                    return;
-            }
-        }
+        // public void AddRegistration(WorkUnitFlat registration)
+        // {
+        //     if (registration.SalaryCode != VacationId && registration.SalaryCode != ExtraVacationId)
+        //         return;
+        //     
+        //     var date = registration.Date;
+        //     if (!VacationDays.TryGetValue(date, out var vacationDay))
+        //         VacationDays[date] = vacationDay = new VacationDay(date, _workingHours[date]);
+        //
+        //     switch (registration.SalaryCode)
+        //     {
+        //         case VacationId:
+        //             vacationDay.VacationHours = Convert.ToDecimal(registration.Hours);
+        //             return;
+        //         case NewVacationId:
+        //             vacationDay.VacationHours = Convert.ToDecimal(registration.Hours);
+        //             return;
+        //         case ExtraVacationId:
+        //             vacationDay.ExtraVacationHours = Convert.ToDecimal(registration.Hours);
+        //             return;
+        //     }
+        // }
 
         public IEnumerable<VacationDay> GetList()
         {
@@ -55,8 +56,13 @@ namespace Impact.DataAccess.Strategies
         public void AddRegistration(XmlNode registration)
         {
             var timeOffCode = registration.SelectSingleNode("tlp:TimeOffCode", _xmlNamespaceManager)?.InnerText;
-            if (timeOffCode != VacationId && timeOffCode != ExtraVacationId)
+            if (timeOffCode != VacationId &&
+                timeOffCode != NewVacationId &&
+                timeOffCode != VacationInAdvanceId &&
+                timeOffCode != ExtraVacationId)
+            {
                 return;
+            }
             
             var date = DateTime.Parse(registration.SelectSingleNode("tlp:Date", _xmlNamespaceManager)?.InnerText);
             var hours = decimal.Parse(registration.SelectSingleNode("tlp:RegHours", _xmlNamespaceManager)?.InnerText ?? "0", CultureInfo.InvariantCulture);
@@ -68,6 +74,8 @@ namespace Impact.DataAccess.Strategies
             switch (timeOffCode)
             {
                 case VacationId:
+                case NewVacationId:
+                case VacationInAdvanceId:
                     vacationDay.VacationHours = hours;
                     return;
                 case ExtraVacationId:
