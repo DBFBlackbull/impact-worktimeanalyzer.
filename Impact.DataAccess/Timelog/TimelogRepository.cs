@@ -32,22 +32,22 @@ namespace Impact.DataAccess.Timelog
 
         public IEnumerable<Week> GetRawWeeksInQuarter(Quarter quarter, Profile profile, SecurityToken token)
         {
-            var from = quarter.From;
-            while (from.DayOfWeek != DayOfWeek.Monday && 
-                   from.DayOfWeek != DayOfWeek.Saturday && 
-                   from.DayOfWeek != DayOfWeek.Sunday)
+            var normalWorkHoursFrom = quarter.From;
+            while (normalWorkHoursFrom.DayOfWeek != DayOfWeek.Monday && 
+                   normalWorkHoursFrom.DayOfWeek != DayOfWeek.Saturday && 
+                   normalWorkHoursFrom.DayOfWeek != DayOfWeek.Sunday)
             {
-                from = from.AddDays(-1);
+                normalWorkHoursFrom = normalWorkHoursFrom.AddDays(-1);
             }
-            var to = quarter.To;
-            while (to.DayOfWeek != DayOfWeek.Friday &&
-                   to.DayOfWeek != DayOfWeek.Saturday && 
-                   to.DayOfWeek != DayOfWeek.Sunday)
+            var normalWorkHoursTo = quarter.To;
+            while (normalWorkHoursTo.DayOfWeek != DayOfWeek.Friday &&
+                   normalWorkHoursTo.DayOfWeek != DayOfWeek.Saturday && 
+                   normalWorkHoursTo.DayOfWeek != DayOfWeek.Sunday)
             {
-                to = to.AddDays(1);
+                normalWorkHoursTo = normalWorkHoursTo.AddDays(1);
             }
 
-            ValidateWorkingHours(from, to, profile);
+            ValidateWorkingHours(normalWorkHoursFrom, normalWorkHoursTo, profile);
             var weeks = GetWorkUnitsData<Week>(quarter.From, quarter.To, token, new AddWeekStrategy(WorkingHours[profile.Initials])).ToList();
 
             return weeks;

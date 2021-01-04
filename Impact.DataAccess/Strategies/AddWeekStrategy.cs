@@ -34,7 +34,7 @@ namespace Impact.DataAccess.Strategies
 
         public IEnumerable<Week> GetList()
         {
-            return Weeks.Values.OrderBy(w => w.Number).ToList();
+            return Weeks.Values.OrderBy(w => w.Dates.Keys.First()).ToList();
         }
         
         private Week CreateWeek(int weekNumber, DateTime dateTime)

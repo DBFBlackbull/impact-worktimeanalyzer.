@@ -13,7 +13,13 @@ namespace Impact.Core.Constants
         private static readonly CalendarWeekRule DanishCalendarWeekRule = DanishCultureInfo.DateTimeFormat.CalendarWeekRule;
         public static int GetWeekNumber(DateTime date)
         {
-            return DanishCalendar.GetWeekOfYear(date, DanishCalendarWeekRule, DanishFirstDayOfWeek);
+            var weekOfYear = DanishCalendar.GetWeekOfYear(date, DanishCalendarWeekRule, DanishFirstDayOfWeek);
+            if (date.Month == 12 && weekOfYear == 53)
+            {
+                if (new DateTime(date.Year, 12, 31).DayOfWeek != DayOfWeek.Thursday)
+                    return 1;
+            }
+            return weekOfYear;
         } 
         
         public static readonly DateTime TimelogStart = new DateTime(2012, 1, 1); // not used today, but handy for the future

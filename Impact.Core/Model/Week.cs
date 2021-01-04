@@ -75,8 +75,6 @@ namespace Impact.Core.Model
             foreach (var kvp in Dates)
             {
                 var date = kvp.Key;
-                if (ApplicationConstants.GetWeekNumber(date) == 53)
-                    continue;
                 
                 if (date < quarter.From || quarter.To < date)
                     QuarterEdgeHours += kvp.Value;
