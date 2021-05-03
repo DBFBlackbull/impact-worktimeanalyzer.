@@ -9,11 +9,11 @@ namespace Impact.DataAccess.Strategies
 {
     public class AddMonthStrategy : IAddRegistrationStrategy<Month>
     {
-        private ConcurrentDictionary<string, Month> Months { get; }
+        private Dictionary<string, Month> Months { get; }
 
         public AddMonthStrategy(DateTime hireDate)
         {
-            Months = new ConcurrentDictionary<string, Month>();
+            Months = new Dictionary<string, Month>();
             var dateTime = new DateTime(hireDate.Year, hireDate.Month, 1);
             while (dateTime < DateTime.Now)
             {

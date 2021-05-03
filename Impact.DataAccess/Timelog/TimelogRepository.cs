@@ -174,7 +174,7 @@ namespace Impact.DataAccess.Timelog
 
         private static IEnumerable<T> GetWorkUnitsData<T>(DateTime from, DateTime to, SecurityToken token, IAddRegistrationStrategy<T> strategy)
         {
-            var tasks = new List<Task>();
+            var tasks = new List<Task<ResponseOfWorkUnitFlat>?>();
             
             var start = from;
             while (start < to)
@@ -184,23 +184,25 @@ namespace Impact.DataAccess.Timelog
                     nextDate = to;
 
                 var workPagedAsync = TransactionalClient.GetWorkPagedAsync(token.Initials, start, nextDate, 1, PageSize, token);
-                var continueWith = workPagedAsync.ContinueWith(task =>
-                {
-                    var result = task.Result;
-                    if (result.ResponseState != ExecutionStatus.Success)
-                        return;
 
-                    var registrations = result.Return;
-
-                    foreach (var registration in registrations)
-                        strategy.AddRegistration(registration);
-                });
-
-                tasks.Add(continueWith);
+                tasks.Add(workPagedAsync);
                 start = nextDate.AddDays(1);
             }
 
             Task.WaitAll(tasks.ToArray());
+
+            foreach (var task in tasks)
+            {
+                var result = task?.Result;
+                if (result?.ResponseState != ExecutionStatus.Success)
+                    continue;
+
+                var registrations = result.Return;
+                foreach (var registration in registrations)
+                {
+                    strategy.AddRegistration(registration);
+                }
+            }
 
             return strategy.GetList();
         }

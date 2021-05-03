@@ -33,7 +33,8 @@ namespace Impact.Website.Controllers
             if (!profile.IsDeveloper)
                 return RedirectToAction("Index", "Site");
 
-            var quarter = _timeService.GetQuarter(DateTime.Now);
+            var dateTime = DateTime.Now;
+            var quarter = _timeService.GetQuarter(dateTime);
             var quarterViewModel = _viewModelProvider.CreateViewModels(quarter, profile, token);
             quarterViewModel.ShowIncludeAllWeeksButton = true;
             return View(quarterViewModel);
